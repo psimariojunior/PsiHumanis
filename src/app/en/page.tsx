@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, lazy, Suspense } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import Image from "next/image"
@@ -10,12 +10,13 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { WhatsAppWidget } from "@/components/whatsapp-widget"
 import {
   ArrowRight, CheckCircle, Sparkles, Shield, Zap, Heart, Brain,
   Users, Globe, Languages,
   Menu, X, Calendar, MessageCircle, ChevronDown
 } from "lucide-react"
+
+const WhatsAppWidget = lazy(() => import("@/components/whatsapp-widget").then(m => ({ default: m.WhatsAppWidget })))
 
 const t = {
   nav: { home: "Home", services: "Services", about: "About", booking: "Booking", faq: "FAQ" },
@@ -521,7 +522,9 @@ export default function LandingPageEN() {
         </div>
       </footer>
 
-      <WhatsAppWidget />
+      <Suspense fallback={null}>
+        <WhatsAppWidget />
+      </Suspense>
     </div>
   )
 }

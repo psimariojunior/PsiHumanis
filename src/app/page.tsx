@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, lazy, Suspense } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import Image from "next/image"
@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { WhatsAppWidget } from "@/components/whatsapp-widget"
-import { VideoTour } from "@/components/video-tour"
 import { setLocale, t, getLocale } from "@/lib/i18n"
 import toast from "react-hot-toast"
 import { BreadcrumbJsonLd, FaqJsonLd } from "@/lib/seo"
@@ -21,6 +19,9 @@ import {
   Stethoscope, FileText, Lock, BarChart3, CalendarCheck,
   Zap, Eye, MessageCircle, ArrowUpRight, CircleDot, Mic, Maximize2
 } from "lucide-react"
+
+const WhatsAppWidget = lazy(() => import("@/components/whatsapp-widget").then(m => ({ default: m.WhatsAppWidget })))
+const VideoTour = lazy(() => import("@/components/video-tour").then(m => ({ default: m.VideoTour })))
 
 const faqItems = [
   { q: "Como funciona a terapia online?", a: "Você agenda um horário, recebe um link seguro por email, e no horário marcado basta clicar para entrar na sala virtual. Tudo criptografado." },
@@ -189,7 +190,7 @@ export default function LandingPage() {
       </header>
 
       {/* ═══════════════════ HERO — Editorial, large type, organic ═══════════════════ */}
-      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-screen flex items-center pt-20 pb-12 overflow-hidden">
+      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-screen flex items-center pt-20 pb-12 overflow-hidden grain-overlay">
         {/* Organic background blobs */}
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-teal-200/30 dark:bg-teal-900/20 blur-[120px] organic-shape" />
         <div className="absolute bottom-[10%] left-[-8%] w-[400px] h-[400px] rounded-full bg-amber-100/40 dark:bg-amber-900/10 blur-[100px] animate-float-delayed" />
@@ -216,7 +217,7 @@ export default function LandingPage() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="flex flex-col sm:flex-row gap-4 mb-12">
               <Link href="/agendar">
-                <Button size="lg" className="btn-premium bg-teal-600 hover:bg-teal-700 text-white shadow-xl shadow-teal-500/20 text-base h-13 px-8 rounded-full font-medium group">
+                <Button size="lg" className="btn-premium btn-press bg-teal-600 hover:bg-teal-700 text-white shadow-xl shadow-teal-500/20 text-base h-13 px-8 rounded-full font-medium group">
                   {t("hero.book", locale)} <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-0.5 transition-transform relative z-10" />
                 </Button>
               </Link>
@@ -278,7 +279,7 @@ export default function LandingPage() {
                     { label: t("hero.stat.patients", locale), value: "380+", icon: Users },
                     { label: t("hero.stat.rating", locale), value: reviewsAvg > 0 ? reviewsAvg.toFixed(1) : "—", icon: Star },
                   ].map((stat) => (
-                    <div key={stat.label} className="text-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+                    <div key={stat.label} className="text-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 stat-glow">
                       <stat.icon className="h-4 w-4 text-teal-500 mx-auto mb-1" />
                       <p className="text-lg font-bold text-slate-900 dark:text-white">{stat.value}</p>
                       <p className="text-[10px] text-slate-500 uppercase tracking-wider">{stat.label}</p>
@@ -302,6 +303,12 @@ export default function LandingPage() {
             </div>
           </motion.div>
         </div>
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
+          <div className="w-6 h-10 rounded-full border-2 border-slate-300 dark:border-slate-600 flex items-start justify-center pt-2">
+            <div className="w-1 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />
+          </div>
+        </div>
       </motion.section>
 
       {/* ═══════════════════ VIDEO DEMO ═══════════════════ */}
@@ -314,7 +321,9 @@ export default function LandingPage() {
           {videoOpen ? (
             <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 dark:shadow-black/30 border border-slate-200 dark:border-slate-800">
               <button onClick={() => setVideoOpen(false)} className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-colors" aria-label="Fechar"><X className="h-5 w-5" /></button>
-              <VideoTour />
+              <Suspense fallback={<div className="aspect-video bg-slate-900 flex items-center justify-center text-white">Carregando...</div>}>
+                <VideoTour />
+              </Suspense>
             </div>
           ) : (
             <button onClick={() => setVideoOpen(true)} className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 dark:shadow-black/30 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 aspect-video flex items-center justify-center group cursor-pointer hover:shadow-slate-900/20 transition-shadow duration-500" aria-label="Assistir demonstração">
@@ -412,7 +421,7 @@ export default function LandingPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-violet-500/10 rounded-3xl blur-3xl" />
               <div className="relative grid sm:grid-cols-2 gap-4">
                 {features.map((f, i) => (
-                  <div key={f.title} className="group p-6 rounded-2xl bg-white/[0.05] border border-white/[0.08] backdrop-blur-sm" style={{ opacity: 1 }}>
+                  <div key={f.title} className="group p-6 rounded-2xl bg-white/[0.05] border border-white/[0.08] backdrop-blur-sm card-lift" style={{ opacity: 1 }}>
                     <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform relative z-10", f.accent)}>
                       <f.icon className="h-5 w-5 text-white" />
                     </div>
@@ -437,7 +446,7 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-slate-200/60 dark:bg-slate-800/60 rounded-2xl overflow-hidden">
             {services.map((service, i) => (
-              <div key={service.title} className={cn("group bg-white dark:bg-slate-950 p-8 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors duration-300 service-item", service.color)}>
+              <div key={service.title} className={cn("group bg-white dark:bg-slate-950 p-8 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors duration-300 service-item card-lift", service.color)}>
                 <service.icon className={cn("h-6 w-6 mb-4 transition-transform group-hover:scale-110 duration-300", service.color)} />
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{service.title}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{service.desc}</p>
@@ -587,7 +596,7 @@ export default function LandingPage() {
             <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight tracking-tight">{t("cta.title", locale)}</h2>
             <p className="text-lg md:text-xl text-teal-100/80 max-w-lg mx-auto">{t("cta.subtitle", locale)}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/agendar"><Button size="lg" className="btn-premium bg-white text-teal-700 hover:bg-teal-50 shadow-xl text-base h-13 px-10 rounded-full font-semibold relative z-10">Agende sua Consulta <ArrowRight className="ml-2 h-5 w-5 relative z-10" /></Button></Link>
+              <Link href="/agendar"><Button size="lg" className="btn-premium btn-press bg-white text-teal-700 hover:bg-teal-50 shadow-xl text-base h-13 px-10 rounded-full font-semibold relative z-10">Agende sua Consulta <ArrowRight className="ml-2 h-5 w-5 relative z-10" /></Button></Link>
               <Link href="/paciente/login"><Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 text-base h-13 px-10 rounded-full font-semibold backdrop-blur-sm">Área do Paciente</Button></Link>
             </div>
             <Link href="/register" className="inline-flex items-center gap-1.5 text-sm text-teal-200 hover:text-white transition-colors pt-2">
@@ -686,7 +695,9 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-      <WhatsAppWidget />
+      <Suspense fallback={null}>
+        <WhatsAppWidget />
+      </Suspense>
     </div>
   )
 }
