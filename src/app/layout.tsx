@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title,
     description,
-    images: ["/og-image.png"],
+    images: ["/og-image.png?v=2"],
     creator: "@psihumanis",
   },
   robots: {
@@ -67,9 +67,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon-32.png",
-    apple: "/pwa-192-v5.png",
+    icon: "/favicon.svg?v=2",
+    shortcut: "/favicon-32.png?v=2",
+    apple: "/apple-touch-icon.png?v=2",
   },
   appleWebApp: {
     capable: true,
