@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
-import { Eye, EyeOff, Loader2, Shield, Zap, CheckCircle, Heart, Sparkles } from "lucide-react"
+import { Eye, EyeOff, Loader2, Shield, Zap, CheckCircle, Heart, Sparkles, Fingerprint } from "lucide-react"
 import toast from "react-hot-toast"
 import { trackLogin } from "@/lib/analytics"
+import { useBiometricAuthPsychologist } from "@/hooks/use-biometric-auth-psy"
+import { Capacitor } from "@capacitor/core"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -19,21 +21,74 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const isNative = Capacitor.isNativePlatform()
+  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, saveCredentials, getStoredCredentials, hasStoredCredentials, enable } = useBiometricAuthPsychologist()
+
+  useEffect(() => {
+    if (isNative && biometricAvailable && biometricEnabled && hasStoredCredentials()) {
+      authenticate().then((success) => {
+        if (success) {
+          const creds = getStoredCredentials()
+          if (creds) {
+            setLoading(true)
+            signIn("credentials", { email: creds.email, password: creds.password, redirect: false })
+              .then((result) => {
+                if (result?.error) { setLoading(false); return }
+                trackLogin("biometric")
+                router.push("/dashboard")
+                router.refresh()
+              })
+              .catch(() => setLoading(false))
+          }
+        }
+      })
+    }
+  }, [isNative, biometricAvailable, biometricEnabled])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     try {
       const result = await signIn("credentials", { email, password, redirect: false })
-      if (result?.error) { toast.error("Email ou senha incorretos"); return }
+      if (result?.error) { toast.error("Email ou senha incorretos"); setLoading(false); return }
+      saveCredentials(email, password)
       trackLogin("email")
       router.push("/dashboard")
       router.refresh()
     } catch {
       toast.error("Erro ao fazer login")
-    } finally {
       setLoading(false)
     }
+  }
+
+  async function handleBiometricLogin() {
+    const success = await authenticate()
+    if (!success) {
+      toast.error("Autenticação biométrica falhou")
+      return
+    }
+    const creds = getStoredCredentials()
+    if (!creds) {
+      toast.error("Nenhuma credencial salva. Faça login com email e senha primeiro")
+      return
+    }
+    setLoading(true)
+    try {
+      const result = await signIn("credentials", { email: creds.email, password: creds.password, redirect: false })
+      if (result?.error) { toast.error("Credenciais expiradas. Faça login novamente"); setLoading(false); return }
+      trackLogin("biometric")
+      router.push("/dashboard")
+      router.refresh()
+    } catch {
+      toast.error("Erro ao autenticar")
+      setLoading(false)
+    }
+  }
+
+  async function handleEnableBiometric() {
+    const ok = await enable()
+    if (ok) toast.success("Biometria ativada!")
+    else toast.error("Ative a biometria no seu dispositivo")
   }
 
   return (
@@ -75,6 +130,20 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white shadow-lg shadow-teal-500/25" disabled={loading}>
                   {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Entrando...</> : "Entrar"}
                 </Button>
+
+                {isNative && biometricAvailable && biometricEnabled && hasStoredCredentials() && (
+                  <Button type="button" variant="outline" className="w-full border-teal-200 dark:border-teal-800 hover:bg-teal-50 dark:hover:bg-teal-950" onClick={handleBiometricLogin} disabled={loading}>
+                    <Fingerprint className="mr-2 h-4 w-4 text-teal-600" />
+                    Entrar com biometria
+                  </Button>
+                )}
+
+                {isNative && biometricAvailable && !biometricEnabled && (
+                  <Button type="button" variant="ghost" className="w-full text-sm text-muted-foreground" onClick={handleEnableBiometric}>
+                    <Fingerprint className="mr-2 h-4 w-4" />
+                    Ativar biometria para próximo acesso
+                  </Button>
+                )}
               </form>
             </CardContent>
           </Card>
