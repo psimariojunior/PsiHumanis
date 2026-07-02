@@ -59,7 +59,7 @@ export default function PricingPage() {
     { q: "Posso começar sem cartão de crédito?", a: "Sim! O trial de 14 dias é gratuito e não exige cartão. Você só insere os dados de pagamento quando decidir assinar." },
     { q: "O que acontece quando o trial expirar?", a: "Seu plano é rebaixado para o plano gratuito, que oferece funcionalidades limitadas. Seus dados não são perdidos." },
     { q: "Posso cancelar quando quiser?", a: "Sim, sem multa ou burocracia. O cancelamento é imediato e você mantém acesso até o final do período pago." },
-    { q: "Tem desconto para pagamento anual?", a: "Entre em contato pelo email psi_mariojunior@hotmail.com para condições especiais de pagamento anual." },
+    { q: "Tem desconto para pagamento anual?", a: "Entre em contato pelo email contato@psihumanis.com.br para condições especiais de pagamento anual." },
     { q: "Posso mudar de plano depois?", a: "Sim, você pode fazer upgrade ou downgrade a qualquer momento. A diferença é proporcional." },
     { q: "Meus dados ficam seguros?", a: "Sim. Criptografia ponta a ponta, servidores no Brasil, conformidade com LGPD e dados isolados por profissional." },
   ]

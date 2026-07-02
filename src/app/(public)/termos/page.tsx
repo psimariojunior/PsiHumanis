@@ -139,8 +139,8 @@ export default function TermosPage() {
             </ul>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed mt-3">
               Para solicitar reembolso ou cancelamento, entre em contato pelo email{" "}
-              <a href="mailto:psi_mariojunior@hotmail.com" className="text-emerald-600 dark:text-emerald-400 hover:underline">
-                psi_mariojunior@hotmail.com
+              <a href="mailto:contato@psihumanis.com.br" className="text-emerald-600 dark:text-emerald-400 hover:underline">
+                contato@psihumanis.com.br
               </a>.
             </p>
           </section>

@@ -60,7 +60,7 @@ export function LocalBusinessJsonLd() {
     description: "Plataforma de gest\u00e3o para psic\u00f3logos com agenda online, prontu\u00e1rios digitais, sala virtual e gest\u00e3o financeira.",
     url: "https://psihumanis.com.br",
     telephone: "+55-31-99286-3861",
-    email: "psi_mariojunior@hotmail.com",
+    email: "contato@psihumanis.com.br",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Belo Horizonte",

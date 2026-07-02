@@ -207,8 +207,8 @@ export default function PrivacidadePage() {
               </p>
               <p className="text-slate-600 dark:text-slate-400">
                 <strong>Email:</strong>{" "}
-                <a href="mailto:psi_mariojunior@hotmail.com" className="text-emerald-600 dark:text-emerald-400 hover:underline">
-                  psi_mariojunior@hotmail.com
+                <a href="mailto:contato@psihumanis.com.br" className="text-emerald-600 dark:text-emerald-400 hover:underline">
+                  contato@psihumanis.com.br
                 </a>
               </p>
               <p className="text-slate-600 dark:text-slate-400">

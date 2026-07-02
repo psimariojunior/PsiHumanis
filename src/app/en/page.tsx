@@ -70,7 +70,7 @@ const t = {
     subtitle: "Get answers about the therapeutic process.",
     items: [
       { q: "How does online therapy work?", a: "You schedule a time, receive a secure link by email, and at the scheduled time just click to enter the virtual room. Everything is encrypted." },
-      { q: "How long is each session?", a: "Sessions last 30 minutes. Frequency is arranged between psychologist and patient." },
+      { q: "How long is each session?", a: "Sessions last 50 minutes. Frequency is arranged between psychologist and patient." },
       { q: "Is confidentiality guaranteed?", a: "Yes. All sessions follow the CRP code of ethics. Encrypted video calls and secure records." },
       { q: "Do I need a medical referral?", a: "No. Book directly without the need for a referral." },
       { q: "What payment methods are accepted?", a: "We accept PIX, credit card, bank slip and bank transfer." },

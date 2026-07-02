@@ -24,7 +24,7 @@ import {
 
 const faqItems = [
   { q: "Como funciona a terapia online?", a: "Você agenda um horário, recebe um link seguro por email, e no horário marcado basta clicar para entrar na sala virtual. Tudo criptografado." },
-  { q: "Qual a duração de cada sessão?", a: "O tempo da sessão é acordado com o profissional, com duração média de 30 minutos. A frequência também é definida em conjunto." },
+  { q: "Qual a duração de cada sessão?", a: "O tempo da sessão é acordado com o profissional, com duração média de 50 minutos. A frequência também é definida em conjunto." },
   { q: "O sigilo é garantido?", a: "Sim. Todas as sessões seguem o código de ética do CRP. Videochamadas criptografadas e registros seguros." },
   { q: "Preciso de encaminhamento médico?", a: "Não. Agende diretamente sem necessidade de encaminhamento." },
   { q: "Quais formas de pagamento?", a: "Aceitamos PIX, cartão de crédito, boleto e transferência bancária." },
@@ -245,7 +245,7 @@ export default function LandingPage() {
                   <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/40 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span className="font-medium">Dr. Mario Jr.</span>
-                    <span className="text-white/40">47:32</span>
+                    <span className="text-white/40">50:00</span>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
@@ -271,12 +271,12 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Stats row */}
+                {/* Stats row — dynamic from API */}
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { label: "Sessões", value: "1.2k+", icon: CalendarCheck },
-                    { label: "Pacientes", value: "380+", icon: Users },
-                    { label: "Avaliação", value: "4.9", icon: Star },
+                    { label: t("hero.stat.sessions", locale), value: reviewsTotal > 0 ? `${reviewsTotal}+` : "—", icon: CalendarCheck },
+                    { label: t("hero.stat.patients", locale), value: "380+", icon: Users },
+                    { label: t("hero.stat.rating", locale), value: reviewsAvg > 0 ? reviewsAvg.toFixed(1) : "—", icon: Star },
                   ].map((stat) => (
                     <div key={stat.label} className="text-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
                       <stat.icon className="h-4 w-4 text-teal-500 mx-auto mb-1" />
@@ -303,6 +303,27 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </motion.section>
+
+      {/* ═══════════════════ FOUNDER BRIDGE — dual audience ═══════════════════ */}
+      <section className="py-12 md:py-16 border-y border-slate-100 dark:border-slate-800/50 bg-gradient-to-b from-teal-50/30 to-transparent dark:from-teal-950/10 dark:to-transparent">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <div className="shrink-0">
+              <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xl ring-4 ring-teal-500/20">
+                <Image src="/profile.jpg" alt="Mário Júnior" width={80} height={80} className="w-full h-full object-cover" />
+              </div>
+            </div>
+            <div className="text-center md:text-left">
+              <p className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-2">{t("founder.bridge.label", locale)}</p>
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-3">{t("founder.bridge.title", locale)}</h2>
+              <p className="text-slate-500 dark:text-slate-400 leading-relaxed">{t("founder.bridge.text", locale)}</p>
+              <Link href="/sobre" className="inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 mt-3 transition-colors">
+                {t("founder.bridge.cta", locale)} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ═══════════════════ VIDEO DEMO ═══════════════════ */}
       <section className="py-16 md:py-24">
@@ -638,7 +659,7 @@ export default function LandingPage() {
               <p className="text-sm text-slate-400 leading-relaxed">Sistema completo de gestão para psicólogos. Agende consultas, emita prontuários, gerencie finanças e realize atendimentos online com segurança.</p>
               <div className="flex items-center gap-3 pt-2">
                 <a href="https://wa.me/5531992863861" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all" aria-label="WhatsApp"><MessageCircle className="h-4 w-4" /></a>
-                <a href="mailto:psi_mariojunior@hotmail.com" className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all" aria-label="Email"><Mail className="h-4 w-4" /></a>
+                <a href="mailto:contato@psihumanis.com.br" className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all" aria-label="Email"><Mail className="h-4 w-4" /></a>
                 <a href="tel:+5531992863861" className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all" aria-label="Telefone"><Phone className="h-4 w-4" /></a>
               </div>
             </div>
@@ -666,7 +687,7 @@ export default function LandingPage() {
             <div>
               <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Contato</h4>
               <ul className="space-y-3">
-                <li className="flex items-center gap-2.5 text-sm text-slate-400"><Mail className="h-4 w-4 text-teal-400 shrink-0" />psi_mariojunior@hotmail.com</li>
+                <li className="flex items-center gap-2.5 text-sm text-slate-400"><Mail className="h-4 w-4 text-teal-400 shrink-0" />contato@psihumanis.com.br</li>
                 <li className="flex items-center gap-2.5 text-sm text-slate-400"><Phone className="h-4 w-4 text-teal-400 shrink-0" />(31) 99286-3861</li>
                 <li className="flex items-center gap-2.5 text-sm text-slate-400"><MapPin className="h-4 w-4 text-teal-400 shrink-0" />Belo Horizonte, MG</li>
               </ul>
