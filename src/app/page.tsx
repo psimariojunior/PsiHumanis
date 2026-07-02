@@ -24,7 +24,7 @@ import {
 
 const faqItems = [
   { q: "Como funciona a terapia online?", a: "Você agenda um horário, recebe um link seguro por email, e no horário marcado basta clicar para entrar na sala virtual. Tudo criptografado." },
-  { q: "Qual a duração de cada sessão?", a: "O tempo da sessão é acordado com o profissional, com duração média de 50 minutos. A frequência também é definida em conjunto." },
+  { q: "Qual a duração de cada sessão?", a: "O tempo da sessão é acordado com o profissional, com duração média de 30 minutos. A frequência também é definida em conjunto." },
   { q: "O sigilo é garantido?", a: "Sim. Todas as sessões seguem o código de ética do CRP. Videochamadas criptografadas e registros seguros." },
   { q: "Preciso de encaminhamento médico?", a: "Não. Agende diretamente sem necessidade de encaminhamento." },
   { q: "Quais formas de pagamento?", a: "Aceitamos PIX, cartão de crédito, boleto e transferência bancária." },
@@ -245,7 +245,7 @@ export default function LandingPage() {
                   <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/40 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span className="font-medium">Dr. Mario Jr.</span>
-                    <span className="text-white/40">50:00</span>
+                    <span className="text-white/40">30:00</span>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
