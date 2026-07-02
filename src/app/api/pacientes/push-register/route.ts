@@ -37,12 +37,14 @@ export async function POST(request: NextRequest) {
         endpoint: pushToken,
         p256dh: "",
         auth: "",
+        fcmToken: pushToken,
         patientId: payload.patientId,
         psychologistId: "",
         platform,
       },
       update: {
         patientId: payload.patientId,
+        fcmToken: pushToken,
         platform,
       },
     })

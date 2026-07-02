@@ -969,6 +969,7 @@ model PushSubscription {
   endpoint        String    @unique
   p256dh          String
   auth            String
+  fcmToken        String?
   platform        String    @default("web")
   patientId       String?
   psychologistId  String?
