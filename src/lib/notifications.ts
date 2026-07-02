@@ -4,6 +4,7 @@ import { logger } from "./logger"
 import { sendAppointmentReminderEmail } from "./email"
 import { sendAppointmentReminderWhatsApp } from "./whatsapp"
 import { sendPushToSubscriptions } from "./push"
+import { sendFcmPush } from "./firebase-fcm"
 
 export async function sendReminderNow(
   patientId: string,
@@ -152,6 +153,26 @@ export async function dispatchNotification(
       errorMessage: sendErr,
     },
   })
+
+  if (!sendErr && notification.patientId) {
+    try {
+      const subs = await prisma.pushSubscription.findMany({
+        where: { patientId: notification.patientId },
+        select: { fcmToken: true },
+      })
+      for (const sub of subs) {
+        if (sub.fcmToken) {
+          await sendFcmPush({
+            token: sub.fcmToken,
+            title: notification.title || "PsiHumanis",
+            body: `${notification.message || "Você tem um lembrete de consulta"}${appointmentDate ? ` — ${appointmentDate} às ${appointmentTime}` : ""}`,
+            url: "/paciente/agenda",
+            tag: `reminder-${notificationId}`,
+          })
+        }
+      }
+    } catch {}
+  }
 
   if (!sendErr) {
     try {
