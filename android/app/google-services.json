@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "693571466689",
+    "project_id": "psihumanis",
+    "storage_bucket": "psihumanis.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693571466689:android:b84d8b4cd4d5a7c7bf6b40",
+        "android_client_info": {
+          "package_name": "com.psihumanis.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC6d-Wice8IrjzW8BNfduAhvssgDJQFLI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
