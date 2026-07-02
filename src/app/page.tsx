@@ -304,27 +304,6 @@ export default function LandingPage() {
         </div>
       </motion.section>
 
-      {/* ═══════════════════ FOUNDER BRIDGE — dual audience ═══════════════════ */}
-      <section className="py-12 md:py-16 border-y border-slate-100 dark:border-slate-800/50 bg-gradient-to-b from-teal-50/30 to-transparent dark:from-teal-950/10 dark:to-transparent">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            <div className="shrink-0">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xl ring-4 ring-teal-500/20">
-                <Image src="/profile.jpg" alt="Mário Júnior" width={80} height={80} className="w-full h-full object-cover" />
-              </div>
-            </div>
-            <div className="text-center md:text-left">
-              <p className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-2">{t("founder.bridge.label", locale)}</p>
-              <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-3">{t("founder.bridge.title", locale)}</h2>
-              <p className="text-slate-500 dark:text-slate-400 leading-relaxed">{t("founder.bridge.text", locale)}</p>
-              <Link href="/sobre" className="inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 mt-3 transition-colors">
-                {t("founder.bridge.cta", locale)} <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ═══════════════════ VIDEO DEMO ═══════════════════ */}
       <section className="py-16 md:py-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
