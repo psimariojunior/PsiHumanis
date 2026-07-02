@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
-import { Eye, EyeOff, Loader2, Shield, Zap, CheckCircle, Heart, Sparkles, Fingerprint } from "lucide-react"
+import { Eye, EyeOff, Loader2, Shield, Zap, CheckCircle, Heart, Sparkles, Fingerprint, ArrowLeft } from "lucide-react"
 import toast from "react-hot-toast"
 import { trackLogin } from "@/lib/analytics"
 import { useBiometricAuthPsychologist } from "@/hooks/use-biometric-auth-psy"
@@ -98,6 +98,10 @@ export default function LoginPage() {
         <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-teal-500/5 blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-teal-400/5 blur-3xl" />
         <div className="relative w-full max-w-md space-y-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2">
+            <ArrowLeft className="h-4 w-4" />
+            Voltar ao início
+          </Link>
           <div className="flex flex-col items-center gap-2 text-center">
             <div className="flex items-center justify-center w-20 h-20 rounded-3xl overflow-hidden bg-gradient-to-br from-teal-600 to-teal-700 shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/20 mb-2">
               <Image src="/logo.png" alt="PsiHumanis" width={80} height={80} className="w-full h-full object-cover" priority />
