@@ -25,3 +25,7 @@ deploy/.env.docker
 # Test results
 test-results/
 playwright-report/
+
+android/app/google-services.json
+*.json.bak
+psihumanis-*.json
