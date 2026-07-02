@@ -7,6 +7,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { CommandPalette } from "@/components/command-palette"
 import { PushNotificationPrompt } from "@/components/push-notification-prompt"
+import { Capacitor } from "@capacitor/core"
+import { registerForPushNotifications, setupPushNotificationListeners } from "@/lib/capacitor-push"
 import { motion, AnimatePresence } from "framer-motion"
 import { Loader2, BookHeart, CalendarDays, History, User, LayoutDashboard, Receipt, Sun, Moon, Menu, X, ClipboardList, FileText, ShieldAlert, FileCheck, ListChecks } from "lucide-react"
 
@@ -75,6 +77,19 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     }
 
     setToken(storedToken)
+
+    if (Capacitor.isNativePlatform()) {
+      setupPushNotificationListeners()
+      registerForPushNotifications().then((pushToken) => {
+        if (pushToken) {
+          fetch("/api/pacientes/push-register", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${storedToken}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ pushToken, platform: Capacitor.getPlatform() }),
+          }).catch(() => {})
+        }
+      })
+    }
 
     fetch("/api/pacientes/me", {
       headers: { Authorization: `Bearer ${storedToken}` },

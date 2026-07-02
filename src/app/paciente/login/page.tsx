@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { usePatientAuth } from "@/components/patient-auth-provider"
+import { useBiometricAuth } from "@/hooks/use-biometric-auth"
+import { Capacitor } from "@capacitor/core"
 import { useTheme } from "next-themes"
 import toast from "react-hot-toast"
-import { Eye, EyeOff, Loader2, LogIn, Sun, Moon } from "lucide-react"
+import { Eye, EyeOff, Loader2, LogIn, Sun, Moon, Fingerprint } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -20,6 +22,27 @@ export default function LoginPage() {
   const router = useRouter()
   const { login } = usePatientAuth()
   const { theme, setTheme } = useTheme()
+  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, hasStoredToken } = useBiometricAuth()
+  const isNative = Capacitor.isNativePlatform()
+
+  useEffect(() => {
+    if (isNative && biometricAvailable && biometricEnabled && hasStoredToken()) {
+      authenticate().then((success) => {
+        if (success) {
+          const token = localStorage.getItem("patient_token")
+          if (token) {
+            fetch("/api/pacientes/me", { headers: { Authorization: `Bearer ${token}` } })
+              .then((r) => r.json())
+              .then((patient) => {
+                login(token, patient)
+                router.push("/paciente")
+              })
+              .catch(() => {})
+          }
+        }
+      })
+    }
+  }, [isNative, biometricAvailable, biometricEnabled])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -112,6 +135,33 @@ export default function LoginPage() {
                   {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogIn className="h-5 w-5 mr-2" />}
                   {loading ? "Entrando..." : "Entrar"}
                 </Button>
+
+                {isNative && biometricAvailable && biometricEnabled && hasStoredToken() && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-12 text-base font-semibold"
+                    onClick={async () => {
+                      const success = await authenticate()
+                      if (success) {
+                        const token = localStorage.getItem("patient_token")
+                        if (token) {
+                          try {
+                            const res = await fetch("/api/pacientes/me", { headers: { Authorization: `Bearer ${token}` } })
+                            const patient = await res.json()
+                            login(token, patient)
+                            router.push("/paciente")
+                          } catch { toast.error("Erro ao autenticar") }
+                        }
+                      } else {
+                        toast.error("Autenticação biométrica falhou")
+                      }
+                    }}
+                  >
+                    <Fingerprint className="h-5 w-5 mr-2" />
+                    Entrar com biometria
+                  </Button>
+                )}
 
                 <div className="text-center text-sm">
                   <Link href="/paciente/recuperar-senha" className="text-muted-foreground hover:text-primary transition-colors">

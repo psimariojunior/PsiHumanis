@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.psihumanis.app",
+      "sha256_cert_fingerprints": [
+        "AD:C5:61:49:86:D5:6E:48:2B:3C:11:8E:8F:00:5B:83:84:67:1D:2E:02:87:D7:BF:EC:47:36:90:B0:EA:F1:A8"
+      ]
+    }
+  }
+]

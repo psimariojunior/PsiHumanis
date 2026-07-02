@@ -96,6 +96,7 @@ model User {
   quickNotes             QuickNote[]
   referralsMade          Referral[]              @relation("ReferrerRelations")
   referralsReceived      Referral[]              @relation("ReferredRelations")
+  pushSubscriptions      PushSubscription[]      @relation("PushSubPsychologist")
 }
 
 model QuickNote {
@@ -229,6 +230,7 @@ model Patient {
   therapyTasks           TherapyTask[]
   receipts               Receipt[]
   waitingEntries         WaitingList[]
+  pushSubscriptions      PushSubscription[]      @relation("PushSubPatient")
 
   @@index([psychologistId])
 }
@@ -960,4 +962,22 @@ model AutomationLog {
   @@index([psychologistId, createdAt])
   @@index([automationId])
   @@index([status])
+}
+
+model PushSubscription {
+  id              String    @id @default(cuid())
+  endpoint        String    @unique
+  p256dh          String
+  auth            String
+  platform        String    @default("web")
+  patientId       String?
+  psychologistId  String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  patient      Patient?  @relation("PushSubPatient", fields: [patientId], references: [id], onDelete: Cascade)
+  psychologist User?     @relation("PushSubPsychologist", fields: [psychologistId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@index([psychologistId])
 }
