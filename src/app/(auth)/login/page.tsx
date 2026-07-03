@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
-import { Eye, EyeOff, Loader2, Shield, Zap, CheckCircle, Heart, Sparkles, Fingerprint, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, Loader2, Shield, Zap, CheckCircle, Heart, Sparkles, Fingerprint, ArrowLeft, Plus, X, User } from "lucide-react"
 import toast from "react-hot-toast"
 import { trackLogin } from "@/lib/analytics"
 import { useBiometricAuthPsychologist } from "@/hooks/use-biometric-auth-psy"
@@ -21,29 +21,11 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null)
   const isNative = Capacitor.isNativePlatform()
-  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, saveCredentials, getStoredCredentials, getAllAccounts, getAccountByEmail, hasStoredCredentials } = useBiometricAuthPsychologist()
+  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, saveCredentials, getAllAccounts, getAccountByEmail, removeAccount } = useBiometricAuthPsychologist()
   const savedAccounts = isNative ? getAllAccounts() : []
-  const showBiometric = isNative && biometricAvailable && biometricEnabled && savedAccounts.length > 0
-
-  useEffect(() => {
-    if (showBiometric && savedAccounts.length === 1) {
-      const creds = savedAccounts[0]
-      authenticate().then((success) => {
-        if (success) {
-          setLoading(true)
-          signIn("credentials", { email: creds.email, password: creds.password, redirect: false })
-            .then((result) => {
-              if (result?.error) { setLoading(false); return }
-              trackLogin("biometric")
-              router.push("/dashboard")
-              router.refresh()
-            })
-            .catch(() => setLoading(false))
-        }
-      })
-    }
-  }, [isNative, biometricAvailable, biometricEnabled])
+  const showAccountList = isNative && biometricAvailable && biometricEnabled && savedAccounts.length > 0
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -60,7 +42,7 @@ export default function LoginPage() {
             iosFallbackTitle: "Usar senha",
           })
           localStorage.setItem("psihumanis-psy-biometric-enabled", "true")
-          toast.success("Biometria ativada! Na próxima vez, entre com biometria.")
+          toast.success("Biometria ativada!")
         } catch {}
       }
       trackLogin("email")
@@ -72,28 +54,38 @@ export default function LoginPage() {
     }
   }
 
-  async function handleBiometricLogin(accountEmail?: string) {
-    const success = await authenticate()
-    if (!success) {
-      toast.error("Autenticação biométrica falhou")
-      return
-    }
-    let creds = accountEmail ? getAccountByEmail(accountEmail) : getStoredCredentials()
-    if (!creds) {
-      toast.error("Nenhuma credencial salva. Faça login com email e senha primeiro")
-      return
-    }
+  async function handleBiometricLogin(accountEmail: string) {
     setLoading(true)
+    setSelectedAccount(accountEmail)
     try {
+      const success = await authenticate()
+      if (!success) {
+        toast.error("Autenticação biométrica falhou")
+        setLoading(false)
+        setSelectedAccount(null)
+        return
+      }
+      const creds = getAccountByEmail(accountEmail)
+      if (!creds) {
+        toast.error("Credencial não encontrada")
+        setLoading(false)
+        setSelectedAccount(null)
+        return
+      }
       const result = await signIn("credentials", { email: creds.email, password: creds.password, redirect: false })
-      if (result?.error) { toast.error("Credenciais expiradas. Faça login novamente"); setLoading(false); return }
+      if (result?.error) { toast.error("Credenciais expiradas. Faça login novamente"); setLoading(false); setSelectedAccount(null); return }
       trackLogin("biometric")
       router.push("/dashboard")
       router.refresh()
     } catch {
       toast.error("Erro ao autenticar")
       setLoading(false)
+      setSelectedAccount(null)
     }
+  }
+
+  function getInitials(email: string) {
+    return email.charAt(0).toUpperCase()
   }
 
   return (
@@ -122,46 +114,81 @@ export default function LoginPage() {
               <CardDescription>Informe suas credenciais para acessar</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Senha</Label>
-                  <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} placeholder="Sua senha" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}>
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-                <Button type="submit" className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white shadow-lg shadow-teal-500/25" disabled={loading}>
-                  {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Entrando...</> : "Entrar"}
-                </Button>
-
-                {showBiometric && (
-                  <div className="space-y-2">
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-                      <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">ou entre com biométrie</span></div>
-                    </div>
-                    {savedAccounts.map((account) => (
-                      <Button
-                        key={account.email}
+              {showAccountList ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground text-center">Escolha uma conta ou use a senha</p>
+                  {savedAccounts.map((account) => (
+                    <div key={account.email} className="flex items-center gap-3">
+                      <button
                         type="button"
-                        variant="outline"
-                        className="w-full border-teal-200 dark:border-teal-800 hover:bg-teal-50 dark:hover:bg-teal-950 justify-start gap-3"
                         onClick={() => handleBiometricLogin(account.email)}
                         disabled={loading}
+                        className="flex-1 flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-700 hover:bg-teal-50 dark:hover:bg-teal-950/30 transition-all group"
                       >
-                        <Fingerprint className="h-4 w-4 text-teal-600 shrink-0" />
-                        <span className="truncate">{account.email}</span>
-                      </Button>
-                    ))}
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shrink-0">
+                          {loading && selectedAccount === account.email ? (
+                            <Loader2 className="h-4 w-4 text-white animate-spin" />
+                          ) : (
+                            <span className="text-sm font-bold text-white">{getInitials(account.email)}</span>
+                          )}
+                        </div>
+                        <div className="flex-1 text-left min-w-0">
+                          <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{account.email}</p>
+                          <p className="text-xs text-muted-foreground">Toque para entrar com biométrie</p>
+                        </div>
+                        <Fingerprint className="h-4 w-4 text-teal-500 shrink-0" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          removeAccount(account.email)
+                          toast.success("Conta removida")
+                        }}
+                        className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors shrink-0"
+                        aria-label="Remover conta"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">ou</span></div>
                   </div>
-                )}
-              </form>
+                  <form onSubmit={handleSubmit} className="space-y-3">
+                    <Input id="email" type="email" placeholder="Outro email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <div className="relative">
+                      <Input id="password" type={showPassword ? "text" : "password"} placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label={showPassword ? "Esconder" : "Mostrar"}>
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                      Entrar com outra conta
+                    </Button>
+                  </form>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Senha</Label>
+                    <div className="relative">
+                      <Input id="password" type={showPassword ? "text" : "password"} placeholder="Sua senha" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}>
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <Button type="submit" className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white shadow-lg shadow-teal-500/25" disabled={loading}>
+                    {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Entrando...</> : "Entrar"}
+                  </Button>
+                </form>
+              )}
             </CardContent>
           </Card>
 
