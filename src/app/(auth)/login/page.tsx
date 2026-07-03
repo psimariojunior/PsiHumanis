@@ -22,7 +22,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const isNative = Capacitor.isNativePlatform()
-  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, saveCredentials, getStoredCredentials, hasStoredCredentials, enable } = useBiometricAuthPsychologist()
+  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, saveCredentials, getStoredCredentials, hasStoredCredentials } = useBiometricAuthPsychologist()
 
   useEffect(() => {
     if (isNative && biometricAvailable && biometricEnabled && hasStoredCredentials()) {
@@ -52,6 +52,17 @@ export default function LoginPage() {
       const result = await signIn("credentials", { email, password, redirect: false })
       if (result?.error) { toast.error("Email ou senha incorretos"); setLoading(false); return }
       saveCredentials(email, password)
+      if (isNative && biometricAvailable && !biometricEnabled) {
+        try {
+          const { BiometricAuth } = await import("@aparajita/capacitor-biometric-auth")
+          await BiometricAuth.authenticate({
+            reason: "Ative a biometria para acesso rápido",
+            iosFallbackTitle: "Usar senha",
+          })
+          localStorage.setItem("psihumanis-psy-biometric-enabled", "true")
+          toast.success("Biometria ativada! Na próxima vez, entre com biometria.")
+        } catch {}
+      }
       trackLogin("email")
       router.push("/dashboard")
       router.refresh()
@@ -83,12 +94,6 @@ export default function LoginPage() {
       toast.error("Erro ao autenticar")
       setLoading(false)
     }
-  }
-
-  async function handleEnableBiometric() {
-    const ok = await enable()
-    if (ok) toast.success("Biometria ativada!")
-    else toast.error("Ative a biometria no seu dispositivo")
   }
 
   return (
@@ -139,13 +144,6 @@ export default function LoginPage() {
                   <Button type="button" variant="outline" className="w-full border-teal-200 dark:border-teal-800 hover:bg-teal-50 dark:hover:bg-teal-950" onClick={handleBiometricLogin} disabled={loading}>
                     <Fingerprint className="mr-2 h-4 w-4 text-teal-600" />
                     Entrar com biometria
-                  </Button>
-                )}
-
-                {isNative && biometricAvailable && !biometricEnabled && (
-                  <Button type="button" variant="ghost" className="w-full text-sm text-muted-foreground" onClick={handleEnableBiometric}>
-                    <Fingerprint className="mr-2 h-4 w-4" />
-                    Ativar biometria para próximo acesso
                   </Button>
                 )}
               </form>
