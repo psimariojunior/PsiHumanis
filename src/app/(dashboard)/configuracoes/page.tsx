@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { getInitials } from "@/lib/utils"
-import { getLocale, setLocale } from "@/lib/i18n"
+import { getLocale, setLocale, t } from "@/lib/i18n"
 import { Save, User, Bell, Lock, Globe, Palette, Shield, CreditCard, Users, Loader2, Calendar, CheckCircle, XCircle, ExternalLink, AlertTriangle, Camera, Download, FileJson, FileSpreadsheet, Eye, Gift, Copy, MessageCircle, BookOpen } from "lucide-react"
 import { BlogEditor } from "@/components/admin/blog-editor"
 import toast from "react-hot-toast"
@@ -289,6 +289,7 @@ function ReferralProgram() {
 }
 
 export default function SettingsPage() {
+  const locale = getLocale()
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -421,7 +422,7 @@ export default function SettingsPage() {
         toast.error(data.error || "Erro ao alterar senha")
         return
       }
-      toast.success("Senha alterada com sucesso!")
+      toast.success(t("toast.passwordChanged", locale))
       setPasswords({ current: "", new: "", confirm: "" })
     } catch {
       toast.error("Erro ao alterar senha")
@@ -464,7 +465,7 @@ export default function SettingsPage() {
       })
       if (!res.ok) throw new Error()
       setProfile(prev => ({ ...prev, avatarUrl: base64 }))
-      toast.success("Foto atualizada com sucesso!")
+      toast.success(t("toast.photoUpdated", locale))
     } catch {
       toast.error("Erro ao enviar foto")
     } finally {
@@ -489,7 +490,7 @@ export default function SettingsPage() {
         console.error("Save error:", err)
         throw new Error()
       }
-      toast.success("Configurações salvas com sucesso!")
+      toast.success(t("toast.configSaved", locale))
     } catch {
       toast.error("Erro ao salvar configurações")
     }

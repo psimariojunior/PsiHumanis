@@ -13,6 +13,7 @@ import { getInitials, formatDate, formatTime } from "@/lib/utils"
 import { Plus, ChevronLeft, ChevronRight, Clock, Video, MapPin, Loader2, CheckCircle, XCircle, Play, Bell, ClipboardEdit, Receipt } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { t, getLocale } from "@/lib/i18n"
 import toast from "react-hot-toast"
 
 const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
@@ -41,6 +42,7 @@ interface PatientOption {
 
 export default function AgendaPage() {
   const router = useRouter()
+  const locale = getLocale()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [view, setView] = useState<"day" | "week" | "month">("day")
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -128,7 +130,7 @@ export default function AgendaPage() {
   const handleUpdateStatus = useCallback(async (id: string, statusOrMethod: string) => {
     try {
       if (statusOrMethod === "DELETE") {
-        if (!confirm("Cancelar esta consulta?")) return
+        if (!confirm(t("confirm.cancelAppointment", locale))) return
         await fetch(`/api/agendamentos/${id}`, { method: "DELETE" })
       } else {
         await fetch(`/api/agendamentos/${id}`, {
@@ -228,7 +230,7 @@ export default function AgendaPage() {
         body: JSON.stringify(body),
       })
       if (!res.ok) throw new Error()
-      toast.success("Consulta agendada com sucesso!")
+      toast.success(t("toast.appointmentScheduled", locale))
       setShowDialog(false)
       fetchAppointments()
     } catch {
@@ -616,7 +618,7 @@ export default function AgendaPage() {
                       }),
                     })
                     if (!res.ok) throw new Error()
-                    toast.success("Fatura criada com sucesso!")
+                    toast.success(t("toast.invoiceCreated", locale))
                     router.push("/cobrancas")
                   } catch {
                     toast.error("Erro ao criar fatura")
