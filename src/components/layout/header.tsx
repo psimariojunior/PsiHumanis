@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
+import { useBiometricAuthPsychologist } from "@/hooks/use-biometric-auth-psy"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -27,6 +28,7 @@ interface HeaderProps {
 export function Header({ onMenuClick, onPaletteOpen }: HeaderProps) {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
+  const { removeAccount } = useBiometricAuthPsychologist()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -123,8 +125,8 @@ export function Header({ onMenuClick, onPaletteOpen }: HeaderProps) {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => {
-                localStorage.removeItem("psihumanis-psy-credentials")
-                localStorage.removeItem("psihumanis-psy-biometric-enabled")
+                const email = session?.user?.email
+                if (email) removeAccount(email)
                 signOut()
               }} className="text-destructive cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" />

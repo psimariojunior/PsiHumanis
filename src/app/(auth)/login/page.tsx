@@ -22,24 +22,24 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const isNative = Capacitor.isNativePlatform()
-  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, saveCredentials, getStoredCredentials, hasStoredCredentials } = useBiometricAuthPsychologist()
+  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, saveCredentials, getStoredCredentials, getAllAccounts, getAccountByEmail, hasStoredCredentials } = useBiometricAuthPsychologist()
+  const savedAccounts = isNative ? getAllAccounts() : []
+  const showBiometric = isNative && biometricAvailable && biometricEnabled && savedAccounts.length > 0
 
   useEffect(() => {
-    if (isNative && biometricAvailable && biometricEnabled && hasStoredCredentials()) {
+    if (showBiometric && savedAccounts.length === 1) {
+      const creds = savedAccounts[0]
       authenticate().then((success) => {
         if (success) {
-          const creds = getStoredCredentials()
-          if (creds) {
-            setLoading(true)
-            signIn("credentials", { email: creds.email, password: creds.password, redirect: false })
-              .then((result) => {
-                if (result?.error) { setLoading(false); return }
-                trackLogin("biometric")
-                router.push("/dashboard")
-                router.refresh()
-              })
-              .catch(() => setLoading(false))
-          }
+          setLoading(true)
+          signIn("credentials", { email: creds.email, password: creds.password, redirect: false })
+            .then((result) => {
+              if (result?.error) { setLoading(false); return }
+              trackLogin("biometric")
+              router.push("/dashboard")
+              router.refresh()
+            })
+            .catch(() => setLoading(false))
         }
       })
     }
@@ -72,13 +72,13 @@ export default function LoginPage() {
     }
   }
 
-  async function handleBiometricLogin() {
+  async function handleBiometricLogin(accountEmail?: string) {
     const success = await authenticate()
     if (!success) {
       toast.error("Autenticação biométrica falhou")
       return
     }
-    const creds = getStoredCredentials()
+    let creds = accountEmail ? getAccountByEmail(accountEmail) : getStoredCredentials()
     if (!creds) {
       toast.error("Nenhuma credencial salva. Faça login com email e senha primeiro")
       return
@@ -140,11 +140,26 @@ export default function LoginPage() {
                   {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Entrando...</> : "Entrar"}
                 </Button>
 
-                {isNative && biometricAvailable && biometricEnabled && hasStoredCredentials() && (
-                  <Button type="button" variant="outline" className="w-full border-teal-200 dark:border-teal-800 hover:bg-teal-50 dark:hover:bg-teal-950" onClick={handleBiometricLogin} disabled={loading}>
-                    <Fingerprint className="mr-2 h-4 w-4 text-teal-600" />
-                    Entrar com biometria
-                  </Button>
+                {showBiometric && (
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                      <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">ou entre com biométrie</span></div>
+                    </div>
+                    {savedAccounts.map((account) => (
+                      <Button
+                        key={account.email}
+                        type="button"
+                        variant="outline"
+                        className="w-full border-teal-200 dark:border-teal-800 hover:bg-teal-50 dark:hover:bg-teal-950 justify-start gap-3"
+                        onClick={() => handleBiometricLogin(account.email)}
+                        disabled={loading}
+                      >
+                        <Fingerprint className="h-4 w-4 text-teal-600 shrink-0" />
+                        <span className="truncate">{account.email}</span>
+                      </Button>
+                    ))}
+                  </div>
                 )}
               </form>
             </CardContent>

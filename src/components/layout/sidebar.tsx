@@ -39,6 +39,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { WaitingRoomBadge } from "@/components/waiting-room-queue"
 import { t, getLocale } from "@/lib/i18n"
+import { useBiometricAuthPsychologist } from "@/hooks/use-biometric-auth-psy"
 
 interface SidebarProps {
   collapsed: boolean
@@ -79,6 +80,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
   const pathname = usePathname()
   const { data: session } = useSession()
   const locale = getLocale()
+  const { removeAccount } = useBiometricAuthPsychologist()
   const isAdmin = session?.user?.role === "ADMIN"
   const isReceptionist = session?.user?.role === "RECEPTIONIST"
   const isClinicAdmin = (session?.user?.role === "CLINIC_ADMIN" || isAdmin) && session?.user?.plan === "clinica"
@@ -200,8 +202,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
               variant="ghost"
               className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
               onClick={() => {
-                localStorage.removeItem("psihumanis-psy-credentials")
-                localStorage.removeItem("psihumanis-psy-biometric-enabled")
+                const email = session?.user?.email
+                if (email) removeAccount(email)
                 signOut({ callbackUrl: "/" })
               }}
             >

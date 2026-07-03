@@ -3,7 +3,7 @@ import { Capacitor } from "@capacitor/core"
 import { BiometricAuth } from "@aparajita/capacitor-biometric-auth"
 
 const BIOMETRIC_PSY_ENABLED_KEY = "psihumanis-psy-biometric-enabled"
-const PSY_CREDENTIALS_KEY = "psihumanis-psy-credentials"
+const PSY_ACCOUNTS_KEY = "psihumanis-psy-accounts"
 
 interface PsyCredentials {
   email: string
@@ -56,28 +56,56 @@ export function useBiometricAuthPsychologist() {
 
   const disable = useCallback(() => {
     localStorage.removeItem(BIOMETRIC_PSY_ENABLED_KEY)
-    localStorage.removeItem(PSY_CREDENTIALS_KEY)
+    localStorage.removeItem(PSY_ACCOUNTS_KEY)
     setIsEnabled(false)
   }, [])
 
   const saveCredentials = useCallback((email: string, password: string) => {
     if (!Capacitor.isNativePlatform()) return
-    localStorage.setItem(PSY_CREDENTIALS_KEY, JSON.stringify({ email, password }))
+    const accounts = getAllAccounts()
+    const existing = accounts.findIndex(a => a.email.toLowerCase() === email.toLowerCase())
+    if (existing >= 0) {
+      accounts[existing] = { email, password }
+    } else {
+      accounts.push({ email, password })
+    }
+    localStorage.setItem(PSY_ACCOUNTS_KEY, JSON.stringify(accounts))
   }, [])
 
-  const getStoredCredentials = useCallback((): PsyCredentials | null => {
-    const raw = localStorage.getItem(PSY_CREDENTIALS_KEY)
-    if (!raw) return null
+  const getAllAccounts = useCallback((): PsyCredentials[] => {
+    const raw = localStorage.getItem(PSY_ACCOUNTS_KEY)
+    if (!raw) return []
     try {
       return JSON.parse(raw)
     } catch {
-      return null
+      return []
     }
   }, [])
 
+  const getStoredCredentials = useCallback((): PsyCredentials | null => {
+    const accounts = getAllAccounts()
+    return accounts.length > 0 ? accounts[accounts.length - 1] : null
+  }, [getAllAccounts])
+
+  const getAccountByEmail = useCallback((email: string): PsyCredentials | null => {
+    const accounts = getAllAccounts()
+    return accounts.find(a => a.email.toLowerCase() === email.toLowerCase()) || null
+  }, [getAllAccounts])
+
+  const removeAccount = useCallback((email: string) => {
+    const accounts = getAllAccounts().filter(a => a.email.toLowerCase() !== email.toLowerCase())
+    if (accounts.length === 0) {
+      localStorage.removeItem(PSY_ACCOUNTS_KEY)
+      localStorage.removeItem(BIOMETRIC_PSY_ENABLED_KEY)
+      setIsEnabled(false)
+    } else {
+      localStorage.setItem(PSY_ACCOUNTS_KEY, JSON.stringify(accounts))
+    }
+  }, [getAllAccounts])
+
   const hasStoredCredentials = useCallback((): boolean => {
-    return !!localStorage.getItem(PSY_CREDENTIALS_KEY)
-  }, [])
+    return getAllAccounts().length > 0
+  }, [getAllAccounts])
 
   return {
     isAvailable,
@@ -88,6 +116,9 @@ export function useBiometricAuthPsychologist() {
     disable,
     saveCredentials,
     getStoredCredentials,
+    getAccountByEmail,
+    getAllAccounts,
+    removeAccount,
     hasStoredCredentials,
   }
 }
