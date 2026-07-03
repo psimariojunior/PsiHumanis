@@ -125,9 +125,7 @@ export function Header({ onMenuClick, onPaletteOpen }: HeaderProps) {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => {
-                const email = session?.user?.email
-                if (email) removeAccount(email)
-                signOut()
+                signOut({ callbackUrl: "/" })
               }} className="text-destructive cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" />
                 Sair

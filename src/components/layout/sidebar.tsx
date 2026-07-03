@@ -202,8 +202,6 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
               variant="ghost"
               className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
               onClick={() => {
-                const email = session?.user?.email
-                if (email) removeAccount(email)
                 signOut({ callbackUrl: "/" })
               }}
             >
