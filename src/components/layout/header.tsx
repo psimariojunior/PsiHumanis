@@ -122,7 +122,11 @@ export function Header({ onMenuClick, onPaletteOpen }: HeaderProps) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => signOut()} className="text-destructive cursor-pointer">
+              <DropdownMenuItem onClick={() => {
+                localStorage.removeItem("psihumanis-psy-credentials")
+                localStorage.removeItem("psihumanis-psy-biometric-enabled")
+                signOut()
+              }} className="text-destructive cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" />
                 Sair
               </DropdownMenuItem>

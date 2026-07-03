@@ -199,7 +199,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
             <Button
               variant="ghost"
               className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => {
+                localStorage.removeItem("psihumanis-psy-credentials")
+                localStorage.removeItem("psihumanis-psy-biometric-enabled")
+                signOut({ callbackUrl: "/" })
+              }}
             >
               <LogOut className="h-4 w-4" />
               <span className="text-sm font-medium">Sair</span>
