@@ -19,15 +19,16 @@ import { QuickNotesFab } from "@/components/dashboard/quick-notes-fab"
 import { TodaySessions } from "@/components/dashboard/today-sessions"
 import { BirthdayAlert } from "@/components/dashboard/birthday-alert"
 import { WeeklyOccupancy } from "@/components/dashboard/weekly-occupancy"
-
-const quickActions = [
-  { label: "Novo Paciente", href: "/pacientes/novo", icon: UserPlus, gradient: "from-teal-600 to-sky-600" },
-  { label: "Prontuário", href: "/prontuarios/novo", icon: FileText, gradient: "from-violet-500 to-purple-600" },
-  { label: "Sala Virtual", href: "/sala-virtual", icon: Video, gradient: "from-cyan-500 to-teal-700" },
-  { label: "Relatórios", href: "/relatorios", icon: BarChart3, gradient: "from-emerald-500 to-teal-600" },
-]
+import { t, getLocale } from "@/lib/i18n"
 
 export default function DashboardHome() {
+  const locale = getLocale()
+  const quickActions = [
+    { label: t("dash.newPatient", locale), href: "/pacientes/novo", icon: UserPlus, gradient: "from-teal-600 to-sky-600" },
+    { label: t("dash.prontuario", locale), href: "/prontuarios/novo", icon: FileText, gradient: "from-violet-500 to-purple-600" },
+    { label: t("dash.virtualRoom", locale), href: "/sala-virtual", icon: Video, gradient: "from-cyan-500 to-teal-700" },
+    { label: t("dash.reports", locale), href: "/relatorios", icon: BarChart3, gradient: "from-emerald-500 to-teal-600" },
+  ]
   const [data, setData] = useState<{
     stats: { totalPatients: number; appointmentsToday: number; monthlyRevenue: number; pendingPayments: number; appointmentChange: number; revenueChange: number }
     monthlyData: { month: string; appointments: number; receita: number }[]
@@ -116,9 +117,9 @@ export default function DashboardHome() {
   const nextAppointment = todaysAppointments[0]
   const greeting = (() => {
     const h = new Date().getHours()
-    if (h < 12) return "Bom dia"
-    if (h < 18) return "Boa tarde"
-    return "Boa noite"
+    if (h < 12) return t("dash.goodMorning", locale)
+    if (h < 18) return t("dash.goodAfternoon", locale)
+    return t("dash.goodEvening", locale)
   })()
 
   const statusVariant = (status: string) => {
@@ -133,12 +134,12 @@ export default function DashboardHome() {
   }
   const statusLabel = (status: string) => {
     switch (status) {
-      case "SCHEDULED": return "Agendado"
-      case "CONFIRMED": return "Confirmado"
-      case "IN_PROGRESS": return "Em andamento"
-      case "COMPLETED": return "Concluído"
-      case "CANCELLED": return "Cancelado"
-      case "NO_SHOW": return "Faltou"
+      case "SCHEDULED": return t("dash.scheduled", locale)
+      case "CONFIRMED": return t("dash.confirmed", locale)
+      case "IN_PROGRESS": return t("dash.inProgress", locale)
+      case "COMPLETED": return t("dash.completed", locale)
+      case "CANCELLED": return t("dash.cancelled", locale)
+      case "NO_SHOW": return locale === "en" ? "No show" : "Faltou"
       default: return status
     }
   }
@@ -186,17 +187,17 @@ export default function DashboardHome() {
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               <Button size="sm" asChild className="bg-white text-slate-950 hover:bg-teal-50">
-                <Link href="/agenda"><Calendar className="mr-1.5 h-4 w-4" />Abrir agenda</Link>
+                <Link href="/agenda"><Calendar className="mr-1.5 h-4 w-4" />{locale === "en" ? "Open calendar" : "Abrir agenda"}</Link>
               </Button>
               <Button size="sm" variant="outline" asChild className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white">
-                <Link href="/relatorios"><BarChart3 className="mr-1.5 h-4 w-4" />Relatórios</Link>
+                <Link href="/relatorios"><BarChart3 className="mr-1.5 h-4 w-4" />{t("dash.reports", locale)}</Link>
               </Button>
             </div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-xl min-w-[220px]">
-            <p className="text-xs uppercase tracking-[0.15em] text-teal-200 mb-2">Próximo foco</p>
+            <p className="text-xs uppercase tracking-[0.15em] text-teal-200 mb-2">{locale === "en" ? "Next focus" : "Próximo foco"}</p>
             <p className="text-lg font-semibold">
-              {nextAppointment ? nextAppointment.patientName : "Agenda livre"}
+              {nextAppointment ? nextAppointment.patientName : t("dash.freeSchedule", locale)}
             </p>
             {nextAppointment && (
               <p className="text-xs text-teal-100/70 mt-1">
@@ -205,11 +206,11 @@ export default function DashboardHome() {
             )}
             <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
               <div className="rounded-xl bg-white/10 p-2 text-center">
-                <p className="text-teal-200 text-xs">Hoje</p>
+                <p className="text-teal-200 text-xs">{t("dash.today", locale)}</p>
                 <p className="text-lg font-bold">{todaysAppointments.length}</p>
               </div>
               <div className="rounded-xl bg-white/10 p-2 text-center">
-                <p className="text-teal-200 text-xs">Recebido</p>
+                <p className="text-teal-200 text-xs">{locale === "en" ? "Received" : "Recebido"}</p>
                 <p className="text-sm font-bold">{currency.format(financialSummary.received)}</p>
               </div>
             </div>
@@ -226,15 +227,15 @@ export default function DashboardHome() {
                 <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="font-semibold text-amber-800 dark:text-amber-200">Configure seus horários de atendimento</p>
+                <p className="font-semibold text-amber-800 dark:text-amber-200">{locale === "en" ? "Set your availability" : "Configure seus horários de atendimento"}</p>
                 <p className="text-sm text-amber-600 dark:text-amber-400">
-                  Pacientes não poderão agendar consultas até que você configure sua agenda.
+                  {locale === "en" ? "Patients won't be able to book until you set your schedule." : "Pacientes não poderão agendar consultas até que você configure sua agenda."}
                 </p>
               </div>
             </div>
             <Button asChild size="sm" className="bg-amber-600 hover:bg-amber-700 text-white shrink-0">
               <Link href="/disponibilidade">
-                <Clock className="mr-2 h-4 w-4" /> Configurar Agora
+                <Clock className="mr-2 h-4 w-4" /> {locale === "en" ? "Set Now" : "Configurar Agora"}
               </Link>
             </Button>
           </div>
@@ -358,7 +359,7 @@ export default function DashboardHome() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <AppointmentList items={todaysAppointments} emptyIcon={Sun} emptyText="Nenhuma consulta hoje" />
+            <AppointmentList items={todaysAppointments} emptyIcon={Sun} emptyText={t("dash.noAppointmentsToday", locale)} />
           </CardContent>
         </Card>
 
@@ -371,7 +372,7 @@ export default function DashboardHome() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <AppointmentList items={tomorrowsAppointments} emptyIcon={Moon} emptyText="Nenhuma consulta amanhã" />
+            <AppointmentList items={tomorrowsAppointments} emptyIcon={Moon} emptyText={t("dash.noAppointmentsTomorrow", locale)} />
           </CardContent>
         </Card>
 

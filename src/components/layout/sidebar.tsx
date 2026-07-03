@@ -38,6 +38,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { WaitingRoomBadge } from "@/components/waiting-room-queue"
+import { t, getLocale } from "@/lib/i18n"
 
 interface SidebarProps {
   collapsed: boolean
@@ -47,44 +48,45 @@ interface SidebarProps {
 }
 
 const baseMenuItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/pacientes", label: "Pacientes", icon: Users },
-  { href: "/agenda", label: "Agenda", icon: Calendar },
-  { href: "/disponibilidade", label: "Disponibilidade", icon: Clock },
-  { href: "/sala-virtual", label: "Sala Virtual", icon: Video },
-  { href: "/sessoes", label: "Sessões", icon: ClipboardList },
-  { href: "/questionarios", label: "Questionários", icon: ClipboardList },
-  { href: "/prontuarios", label: "Prontuários", icon: FileText },
-  { href: "/documentos", label: "Documentos", icon: FileType },
-  { href: "/diario-emocoes", label: "Diário de Emoções", icon: Smile },
-  { href: "/tarefas", label: "Tarefas", icon: ListTodo },
-  { href: "/notificacoes", label: "Notificações", icon: Bell },
-  { href: "/configuracoes", label: "Configurações", icon: Settings },
-  { href: "/ajuda", label: "Ajuda", icon: BookOpen },
-  { href: "/blog", label: "Blog", icon: BookOpen },
+  { href: "/dashboard", labelKey: "Dashboard", icon: LayoutDashboard },
+  { href: "/pacientes", labelKey: "sidebar.patients", label: "Pacientes", icon: Users },
+  { href: "/agenda", labelKey: "sidebar.schedule", label: "Agenda", icon: Calendar },
+  { href: "/disponibilidade", labelKey: "sidebar.availability", label: "Disponibilidade", icon: Clock },
+  { href: "/sala-virtual", labelKey: "sidebar.virtualRoom", label: "Sala Virtual", icon: Video },
+  { href: "/sessoes", labelKey: "sidebar.sessions", label: "Sessões", icon: ClipboardList },
+  { href: "/questionarios", labelKey: "sidebar.questionnaires", label: "Questionários", icon: ClipboardList },
+  { href: "/prontuarios", labelKey: "sidebar.records", label: "Prontuários", icon: FileText },
+  { href: "/documentos", labelKey: "sidebar.documents", label: "Documentos", icon: FileType },
+  { href: "/diario-emocoes", labelKey: "sidebar.emotionDiary", label: "Diário de Emoções", icon: Smile },
+  { href: "/tarefas", labelKey: "sidebar.tasks", label: "Tarefas", icon: ListTodo },
+  { href: "/notificacoes", labelKey: "sidebar.notifications", label: "Notificações", icon: Bell },
+  { href: "/configuracoes", labelKey: "sidebar.settings", label: "Configurações", icon: Settings },
+  { href: "/ajuda", labelKey: "sidebar.help", label: "Ajuda", icon: BookOpen },
+  { href: "/blog", labelKey: "sidebar.blog", label: "Blog", icon: BookOpen },
 ]
 
 const proMenuItems = [
-  { href: "/financeiro", label: "Financeiro", icon: DollarSign },
-  { href: "/cobrancas", label: "Cobranças", icon: Receipt },
-  { href: "/comunicacao", label: "Comunicação", icon: MessageSquare },
-  { href: "/relatorios", label: "Relatórios", icon: BarChart3 },
-  { href: "/recibos", label: "Recibos", icon: Receipt },
-  { href: "/lista-espera", label: "Lista de Espera", icon: ClipboardList },
-  { href: "/automacoes", label: "Automações", icon: Zap },
+  { href: "/financeiro", labelKey: "sidebar.financial", label: "Financeiro", icon: DollarSign },
+  { href: "/cobrancas", labelKey: "sidebar.billing", label: "Cobranças", icon: Receipt },
+  { href: "/comunicacao", labelKey: "sidebar.communication", label: "Comunicação", icon: MessageSquare },
+  { href: "/relatorios", labelKey: "sidebar.reports", label: "Relatórios", icon: BarChart3 },
+  { href: "/recibos", labelKey: "sidebar.receipts", label: "Recibos", icon: Receipt },
+  { href: "/lista-espera", labelKey: "sidebar.waitingList", label: "Lista de Espera", icon: ClipboardList },
+  { href: "/automacoes", labelKey: "sidebar.automations", label: "Automações", icon: Zap },
 ]
 
 export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const locale = getLocale()
   const isAdmin = session?.user?.role === "ADMIN"
   const isReceptionist = session?.user?.role === "RECEPTIONIST"
   const isClinicAdmin = (session?.user?.role === "CLINIC_ADMIN" || isAdmin) && session?.user?.plan === "clinica"
   const hasClinicPlan = session?.user?.plan === "clinica"
 
   const receptionMenuItems = [
-    { href: "/recepcao", label: "Recepção", icon: ClipboardCheck },
-    { href: "/configuracoes", label: "Configurações", icon: Settings },
+    { href: "/recepcao", labelKey: "sidebar.reception", label: "Recepção", icon: ClipboardCheck },
+    { href: "/configuracoes", labelKey: "sidebar.settings", label: "Configurações", icon: Settings },
   ]
 
   const isPaid = session?.user?.plan === "pro" || session?.user?.plan === "clinica"
@@ -92,9 +94,9 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
   const clinicMenuItems = [
     ...baseMenuItems,
     ...proMenuItems,
-    { href: "/outcomes", label: "Clinical Outcomes", icon: Brain },
-    { href: "/recepcao", label: "Recepção", icon: ClipboardCheck },
-    { href: "/clinica", label: "Clínica", icon: Building2 },
+    { href: "/outcomes", labelKey: "sidebar.outcomes", label: "Clinical Outcomes", icon: Brain },
+    { href: "/recepcao", labelKey: "sidebar.reception", label: "Recepção", icon: ClipboardCheck },
+    { href: "/clinica", labelKey: "sidebar.clinic", label: "Clínica", icon: Building2 },
   ]
 
   const proMenu = [...baseMenuItems, ...proMenuItems]
@@ -102,13 +104,13 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
   const allMenuItems = isReceptionist
     ? receptionMenuItems
     : isClinicAdmin
-      ? [...clinicMenuItems, { href: "/admin", label: "Admin", icon: Shield }]
+      ? [...clinicMenuItems, { href: "/admin", labelKey: "sidebar.admin", label: "Admin", icon: Shield }]
       : isAdmin
         ? hasClinicPlan
-          ? [...clinicMenuItems, { href: "/admin", label: "Admin", icon: Shield }]
+          ? [...clinicMenuItems, { href: "/admin", labelKey: "sidebar.admin", label: "Admin", icon: Shield }]
           : isPaid
-            ? [...proMenu, { href: "/admin", label: "Admin", icon: Shield }]
-            : [...baseMenuItems, { href: "/admin", label: "Admin", icon: Shield }]
+            ? [...proMenu, { href: "/admin", labelKey: "sidebar.admin", label: "Admin", icon: Shield }]
+            : [...baseMenuItems, { href: "/admin", labelKey: "sidebar.admin", label: "Admin", icon: Shield }]
         : isPaid
           ? proMenu
           : baseMenuItems
@@ -175,7 +177,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                   <item.icon className="h-4 w-4" />
                   {item.href === "/sala-virtual" && <WaitingRoomBadge />}
                 </div>
-                {!collapsed && <span className="relative">{item.label}</span>}
+                {!collapsed && <span className="relative">{item.labelKey && item.labelKey.startsWith("sidebar.") ? t(item.labelKey, locale) : item.label}</span>}
               </Link>
             )
           })}
