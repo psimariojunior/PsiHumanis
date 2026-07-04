@@ -5,6 +5,8 @@ import { logger } from "./logger"
 export async function registerForPushNotifications(): Promise<string | null> {
   if (!Capacitor.isNativePlatform()) return null
 
+  await new Promise((r) => setTimeout(r, 2000))
+
   try {
     const permission = await PushNotifications.requestPermissions()
     if (permission.receive !== "granted") {

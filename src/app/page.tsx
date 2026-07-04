@@ -2,7 +2,9 @@
 
 import { useState, useEffect, lazy, Suspense } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
+import { Capacitor } from "@capacitor/core"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -59,6 +61,7 @@ const services = [
 ]
 
 export default function LandingPage() {
+  const router = useRouter()
   const [activeFaq, setActiveFaq] = useState<number | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -96,6 +99,12 @@ export default function LandingPage() {
   }, [])
 
   useEffect(() => { setMenuOpen(false) }, [pathname])
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      router.replace("/login")
+    }
+  }, [router])
 
   useEffect(() => {
     fetch("/api/avaliacoes")
