@@ -157,7 +157,7 @@ export default function LandingPage() {
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
               <Link href="/login" className="px-3 py-2 text-[13px] font-bold text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/30 rounded-lg transition-all border border-teal-200 dark:border-teal-700">Psicólogo</Link>
-              <Link href="/paciente/login" className="px-3 py-2 text-[13px] font-bold text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/30 rounded-lg transition-all border border-teal-200 dark:border-teal-700">Paciente</Link>
+              <Link href="/paciente/login" className="px-3 py-2 text-[13px] font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-lg transition-all shadow-md shadow-teal-500/20">Paciente</Link>
               <Link href="/agendar"><Button size="sm" className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg shadow-teal-500/20 text-[13px] h-9 px-5">{t("nav.book", locale)}</Button></Link>
             </nav>
             <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Menu">
@@ -218,9 +218,9 @@ export default function LandingPage() {
                   {t("hero.book", locale)} <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-0.5 transition-transform relative z-10" />
                 </Button>
               </Link>
-              <Link href="/register">
-                <Button size="lg" variant="outline" className="h-13 px-8 rounded-full border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium group relative overflow-hidden">
-                  <span className="relative z-10">{t("saas.login", locale)}</span> <ArrowUpRight className="ml-2 h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity relative z-10" />
+              <Link href="/paciente/login">
+                <Button size="lg" variant="outline" className="h-13 px-8 rounded-full border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/30 font-medium group relative overflow-hidden">
+                  <span className="relative z-10">{locale === "en" ? "Patient Area" : "Área do Paciente"}</span> <ArrowUpRight className="ml-2 h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity relative z-10" />
                 </Button>
               </Link>
             </motion.div>

@@ -13,7 +13,7 @@ import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 import { Capacitor } from "@capacitor/core"
 import { useTheme } from "next-themes"
 import toast from "react-hot-toast"
-import { Eye, EyeOff, Loader2, LogIn, Sun, Moon, Fingerprint } from "lucide-react"
+import { Eye, EyeOff, Loader2, LogIn, Sun, Moon, Fingerprint, ArrowLeft } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -76,6 +76,11 @@ export default function LoginPage() {
     <div className="flex min-h-screen bg-background">
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Link>
+
           <div className="flex flex-col items-center gap-2 text-center mb-8">
             <h1 className="text-2xl font-bold text-foreground">Entrar</h1>
             <p className="text-muted-foreground text-sm">Acesse sua área do paciente</p>
