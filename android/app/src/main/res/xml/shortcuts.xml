@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="nova-consulta"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_nova_consulta"
+        android:shortcutLongLabel="@string/shortcut_nova_consulta_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.psihumanis.app"
+            android:targetClass="com.psihumanis.app.MainActivity"
+            android:data="psihumanis://agenda/nova" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="sala-virtual"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_sala_virtual"
+        android:shortcutLongLabel="@string/shortcut_sala_virtual_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.psihumanis.app"
+            android:targetClass="com.psihumanis.app.MainActivity"
+            android:data="psihumanis://sala-virtual" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="diario"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_diario"
+        android:shortcutLongLabel="@string/shortcut_diario_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.psihumanis.app"
+            android:targetClass="com.psihumanis.app.MainActivity"
+            android:data="psihumanis://paciente/diario" />
+    </shortcut>
+</shortcuts>

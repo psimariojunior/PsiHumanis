@@ -4,4 +4,10 @@
     <string name="title_activity_main">PsiHumanis</string>
     <string name="package_name">com.psihumanis.app</string>
     <string name="custom_url_scheme">com.psihumanis.app</string>
+    <string name="shortcut_nova_consulta">Nova Consulta</string>
+    <string name="shortcut_nova_consulta_long">Agendar uma nova consulta</string>
+    <string name="shortcut_sala_virtual">Sala Virtual</string>
+    <string name="shortcut_sala_virtual_long">Entrar na sala de videochamada</string>
+    <string name="shortcut_diario">Diário</string>
+    <string name="shortcut_diario_long">Registrar emoções do dia</string>
 </resources>
