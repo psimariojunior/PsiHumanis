@@ -431,6 +431,12 @@
   z-index: 0;
 }
 
+/* Hero section — CSS-only depth, no JS scroll listener */
+.hero-parallax {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
 /* Smooth button press effect */
 .btn-press {
   transition: transform 0.15s ease, box-shadow 0.15s ease;

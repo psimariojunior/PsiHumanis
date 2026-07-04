@@ -2,13 +2,11 @@
 
 import { useState, useEffect, lazy, Suspense } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
-import { Capacitor } from "@capacitor/core"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { setLocale, t, getLocale } from "@/lib/i18n"
 import toast from "react-hot-toast"
@@ -61,7 +59,6 @@ const services = [
 ]
 
 export default function LandingPage() {
-  const router = useRouter()
   const [activeFaq, setActiveFaq] = useState<number | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -74,9 +71,6 @@ export default function LandingPage() {
     typeof document !== "undefined" ? document.documentElement.classList.contains("dark") : false
   )
   const locale = getLocale()
-  const { scrollYProgress } = useScroll()
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
-  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.96])
 
   const toggleTheme = () => {
     const html = document.documentElement
@@ -99,12 +93,6 @@ export default function LandingPage() {
   }, [])
 
   useEffect(() => { setMenuOpen(false) }, [pathname])
-
-  useEffect(() => {
-    if (Capacitor.isNativePlatform()) {
-      router.replace("/login")
-    }
-  }, [router])
 
   useEffect(() => {
     fetch("/api/avaliacoes")
@@ -199,7 +187,7 @@ export default function LandingPage() {
       </header>
 
       {/* ═══════════════════ HERO — Editorial, large type, organic ═══════════════════ */}
-      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-screen flex items-center pt-20 pb-12 overflow-hidden grain-overlay">
+      <section className="relative min-h-screen flex items-center pt-20 pb-12 overflow-hidden hero-parallax grain-overlay">
         {/* Organic background blobs */}
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-teal-200/30 dark:bg-teal-900/20 blur-[120px] organic-shape" />
         <div className="absolute bottom-[10%] left-[-8%] w-[400px] h-[400px] rounded-full bg-amber-100/40 dark:bg-amber-900/10 blur-[100px] animate-float-delayed" />
@@ -318,7 +306,7 @@ export default function LandingPage() {
             <div className="w-1 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* ═══════════════════ VIDEO DEMO ═══════════════════ */}
       <section className="py-16 md:py-24">
