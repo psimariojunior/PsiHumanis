@@ -29,3 +29,15 @@ playwright-report/
 android/app/google-services.json
 *.json.bak
 psihumanis-*.json
+
+# PEPK / signing tools
+pepk.jar
+upload-key.zip
+upload.p12
+upload-key.pem
+upload-cert.pem
+psi-humanis-upload-cert.*
+encryption_public_key.pem
+export-key.js
+run-pepk.bat
+exportar-chave.bat
