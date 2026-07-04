@@ -44,7 +44,7 @@ export default function LoginPage() {
         }
       })
     }
-  }, [isNative, biometricAvailable, biometricEnabled])
+  }, [isNative, biometricAvailable, biometricEnabled, authenticate, hasStoredToken, login, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

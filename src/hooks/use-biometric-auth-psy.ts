@@ -60,6 +60,16 @@ export function useBiometricAuthPsychologist() {
     setIsEnabled(false)
   }, [])
 
+  const getAllAccounts = useCallback((): PsyCredentials[] => {
+    const raw = localStorage.getItem(PSY_ACCOUNTS_KEY)
+    if (!raw) return []
+    try {
+      return JSON.parse(raw)
+    } catch {
+      return []
+    }
+  }, [])
+
   const saveCredentials = useCallback((email: string, password: string) => {
     if (!Capacitor.isNativePlatform()) return
     const accounts = getAllAccounts()
@@ -70,17 +80,7 @@ export function useBiometricAuthPsychologist() {
       accounts.push({ email, password })
     }
     localStorage.setItem(PSY_ACCOUNTS_KEY, JSON.stringify(accounts))
-  }, [])
-
-  const getAllAccounts = useCallback((): PsyCredentials[] => {
-    const raw = localStorage.getItem(PSY_ACCOUNTS_KEY)
-    if (!raw) return []
-    try {
-      return JSON.parse(raw)
-    } catch {
-      return []
-    }
-  }, [])
+  }, [getAllAccounts])
 
   const getStoredCredentials = useCallback((): PsyCredentials | null => {
     const accounts = getAllAccounts()
