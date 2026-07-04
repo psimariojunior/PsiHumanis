@@ -37,9 +37,10 @@ export default function AgendaPacientePage() {
   useEffect(() => {
     if (!token) return
     fetchAppointments()
-  }, [token, fetchAppointments])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
 
-  const fetchAppointments = useCallback(() => {
+  const fetchAppointments = () => {
     if (!token) return
     setLoadingAppts(true)
     fetch("/api/pacientes/agendamentos", {
@@ -49,7 +50,7 @@ export default function AgendaPacientePage() {
       .then(setAppointments)
       .catch(() => toast.error("Erro ao carregar agendamentos"))
       .finally(() => setLoadingAppts(false))
-  }, [token])
+  }
 
   const loadAvailability = useCallback(async () => {
     if (!patient?.psychologistId) return

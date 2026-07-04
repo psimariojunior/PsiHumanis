@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePatientAuth } from "@/components/patient-auth-provider"
 import { MoodChart } from "@/components/patient/mood-chart"
@@ -51,9 +51,10 @@ export default function PacienteDashboard() {
   useEffect(() => {
     if (!token) return
     fetchData()
-  }, [token, fetchData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
 
-  const fetchData = useCallback(() => {
+  const fetchData = () => {
     if (!token) return
     Promise.all([
       fetch("/api/pacientes/agendamentos", { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()),
@@ -67,7 +68,7 @@ export default function PacienteDashboard() {
       })
       .catch(() => {})
       .finally(() => setLoadingAppt(false))
-  }, [token])
+  }
 
   const formatDateTime = (iso: string) => {
     const d = new Date(iso)

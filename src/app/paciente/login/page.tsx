@@ -44,7 +44,7 @@ export default function LoginPage() {
         }
       })
     }
-  }, [isNative, biometricAvailable, biometricEnabled, authenticate, hasStoredToken, login, router])
+  }, [isNative, biometricAvailable, biometricEnabled]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
