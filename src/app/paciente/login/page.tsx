@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { usePatientAuth } from "@/components/patient-auth-provider"
 import { useBiometricAuth } from "@/hooks/use-biometric-auth"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 import { Capacitor } from "@capacitor/core"
 import { useTheme } from "next-themes"
 import toast from "react-hot-toast"
@@ -22,6 +23,7 @@ export default function LoginPage() {
   const router = useRouter()
   const { login } = usePatientAuth()
   const { theme, setTheme } = useTheme()
+  const { vibrateSelection, vibrateNotification } = useHapticFeedback()
   const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, hasStoredToken } = useBiometricAuth()
   const isNative = Capacitor.isNativePlatform()
 
@@ -59,9 +61,11 @@ export default function LoginPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Erro ao entrar")
 
+      vibrateNotification()
       login(data.token, data.patient)
       router.push("/paciente")
     } catch (e) {
+      vibrateNotification()
       toast.error(e instanceof Error ? e.message : "Erro ao entrar")
     } finally {
       setLoading(false)

@@ -10,6 +10,7 @@ import { getInitials, formatDate, calculateAge } from "@/lib/utils"
 import { Plus, Mail, Phone, MoreHorizontal, Trash2, Download } from "lucide-react"
 import Link from "next/link"
 import { ColumnDef } from "@tanstack/react-table"
+import { PullToRefresh } from "@/components/pull-to-refresh"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +36,12 @@ export default function PatientsPage() {
   const [deleteTarget, setDeleteTarget] = useState<Patient | null>(null)
 
   useEffect(() => {
+    fetchPatients()
+  }, [])
+
+  const fetchPatients = () => {
     const controller = new AbortController()
+    setLoading(true)
     fetch("/api/pacientes", { signal: controller.signal })
       .then((res) => { if (!res.ok) throw new Error(); return res.json() })
       .then((data) => setPatients(data.patients || []))
@@ -46,7 +52,7 @@ export default function PatientsPage() {
       })
       .finally(() => setLoading(false))
     return () => controller.abort()
-  }, [])
+  }
 
   const columns: ColumnDef<Patient>[] = [
     {
@@ -177,6 +183,7 @@ export default function PatientsPage() {
           </div>
         </div>
 
+      <PullToRefresh onRefresh={async () => { fetchPatients() }}>
       <DataTable
         columns={columns}
         data={patients}
@@ -229,6 +236,7 @@ export default function PatientsPage() {
           </Link>
         )}
       />
+      </PullToRefresh>
 
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setDeleteTarget(null)}>

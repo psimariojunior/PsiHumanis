@@ -13,10 +13,12 @@ import { Eye, EyeOff, Loader2, Shield, Zap, CheckCircle, Heart, Sparkles, Finger
 import toast from "react-hot-toast"
 import { trackLogin } from "@/lib/analytics"
 import { useBiometricAuthPsychologist } from "@/hooks/use-biometric-auth-psy"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 import { Capacitor } from "@capacitor/core"
 
 export default function LoginPage() {
   const router = useRouter()
+  const { vibrateSelection, vibrateNotification } = useHapticFeedback()
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
@@ -32,7 +34,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const result = await signIn("credentials", { email, password, redirect: false })
-      if (result?.error) { toast.error("Email ou senha incorretos"); setLoading(false); return }
+      if (result?.error) { vibrateNotification(); toast.error("Email ou senha incorretos"); setLoading(false); return }
       saveCredentials(email, password)
       if (isNative && biometricAvailable && !biometricEnabled) {
         try {
@@ -45,10 +47,12 @@ export default function LoginPage() {
           toast.success("Biometria ativada!")
         } catch {}
       }
+      vibrateNotification()
       trackLogin("email")
       router.push("/dashboard")
       router.refresh()
     } catch {
+      vibrateNotification()
       toast.error("Erro ao fazer login")
       setLoading(false)
     }

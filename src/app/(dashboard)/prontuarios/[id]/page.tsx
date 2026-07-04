@@ -16,6 +16,8 @@ import { formatDate } from "@/lib/utils"
 import { ArrowLeft, FileText, Lock, Download, Printer, Trash2, Edit, Save, X } from "lucide-react"
 import Link from "next/link"
 import toast from "react-hot-toast"
+import { usePDFExport } from "@/hooks/use-pdf-export"
+import { useSession } from "next-auth/react"
 
 const typeLabels: Record<string, string> = {
   SESSION_NOTE: "Nota de Sessão",
@@ -41,6 +43,8 @@ interface RecordData {
 
 export default function RecordDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter()
+  const { data: session } = useSession()
+  const { generatePDF } = usePDFExport()
   const [record, setRecord] = useState<RecordData | null>(null)
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
@@ -221,7 +225,17 @@ export default function RecordDetailPage({ params }: { params: { id: string } })
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={startEdit}><Edit className="mr-2 h-4 w-4" /> Editar</Button>
-          <Button variant="outline" size="sm" onClick={() => window.print()}><Download className="mr-2 h-4 w-4" /> PDF</Button>
+          <Button variant="outline" size="sm" onClick={() => {
+            if (!record) return
+            generatePDF({
+              title: record.title,
+              patientName: record.patient.name,
+              psychologistName: (session?.user as any)?.name || "Psicólogo",
+              crp: (session?.user as any)?.crp || "00000",
+              sections: [{ heading: typeLabels[record.type] || record.type, content: record.content }],
+              date: new Date().toLocaleDateString("pt-BR")
+            }).then((filename) => toast.success(`PDF gerado: ${filename}`))
+          }}><Download className="mr-2 h-4 w-4" /> PDF</Button>
           <Button variant="outline" size="sm" onClick={() => window.print()}><Printer className="mr-2 h-4 w-4" /> Imprimir</Button>
           <Dialog>
             <DialogTrigger asChild>

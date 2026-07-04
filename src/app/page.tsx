@@ -315,8 +315,8 @@ export default function LandingPage() {
       <section className="py-16 md:py-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">Conheça a plataforma em ação</h2>
-            <p className="text-slate-500 dark:text-slate-400 max-w-lg mx-auto">Agende consultas, gerencie prontuários e realize atendimentos online — tudo em um só lugar.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">{locale === "en" ? "See the platform in action" : "Conheça a plataforma em ação"}</h2>
+            <p className="text-slate-500 dark:text-slate-400 max-w-lg mx-auto">{locale === "en" ? "Schedule appointments, manage records and conduct online sessions — all in one place." : "Agende consultas, gerencie prontuários e realize atendimentos online — tudo em um só lugar."}</p>
           </div>
           {videoOpen ? (
             <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 dark:shadow-black/30 border border-slate-200 dark:border-slate-800">
@@ -326,14 +326,15 @@ export default function LandingPage() {
               </Suspense>
             </div>
           ) : (
-            <button onClick={() => setVideoOpen(true)} className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 dark:shadow-black/30 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 aspect-video flex items-center justify-center group cursor-pointer hover:shadow-slate-900/20 transition-shadow duration-500" aria-label="Assistir demonstração">
+            <button onClick={() => setVideoOpen(true)} className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 dark:shadow-black/30 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 aspect-video flex items-center justify-center group cursor-pointer hover:shadow-slate-900/20 transition-all duration-500 hover:scale-[1.01]" aria-label="Assistir demonstração">
               <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-violet-500/5" />
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-500/0 via-transparent to-violet-500/0 group-hover:from-teal-500/10 group-hover:to-violet-500/10 transition-all duration-700" />
               <div className="relative z-10 text-center">
-                <div className="w-20 h-20 rounded-full bg-teal-600 flex items-center justify-center mx-auto mb-5 shadow-xl shadow-teal-500/30 group-hover:scale-110 group-hover:bg-teal-700 transition-all duration-300">
+                <div className="w-20 h-20 rounded-full bg-teal-600 flex items-center justify-center mx-auto mb-5 shadow-xl shadow-teal-500/30 group-hover:scale-110 group-hover:bg-teal-700 group-hover:shadow-teal-500/50 transition-all duration-300">
                   <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
                 </div>
-                <p className="text-base font-semibold text-slate-800 dark:text-slate-200">Assista à demonstração</p>
-                <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">2 minutos • Veja as funcionalidades principais</p>
+                <p className="text-base font-semibold text-slate-800 dark:text-slate-200">{locale === "en" ? "Watch the demo" : "Assista à demonstração"}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">{locale === "en" ? "2 minutes • See the main features" : "2 minutos • Veja as funcionalidades principais"}</p>
               </div>
             </button>
           )}
@@ -342,16 +343,18 @@ export default function LandingPage() {
 
       {/* ═══════════════════ TRUST BAR ═══════════════════ */}
       <section className="border-y border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="flex flex-wrap justify-center gap-x-10 gap-y-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
             {[
-              { icon: Lock, text: "Dados criptografados" },
-              { icon: Shield, text: "CRP ativo" },
-              { icon: Globe, text: "Online ou presencial" },
-              { icon: Clock, text: "Suporte comercial" },
+              { icon: Lock, text: locale === "en" ? "Encrypted data" : "Dados criptografados" },
+              { icon: Shield, text: locale === "en" ? "Active CRP" : "CRP ativo" },
+              { icon: Globe, text: locale === "en" ? "Online or in-person" : "Online ou presencial" },
+              { icon: Clock, text: locale === "en" ? "Commercial support" : "Suporte comercial" },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2.5">
-                <item.icon className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+              <div key={i} className="flex items-center gap-2.5 group">
+                <div className="w-7 h-7 rounded-lg bg-teal-50 dark:bg-teal-950/30 flex items-center justify-center group-hover:bg-teal-100 dark:group-hover:bg-teal-900/50 transition-colors">
+                  <item.icon className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+                </div>
                 <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{item.text}</span>
               </div>
             ))}
@@ -378,13 +381,13 @@ export default function LandingPage() {
                 { num: "03", icon: Heart, title: t("steps.3", locale), desc: t("steps.3desc", locale) },
               ].map((step, i) => (
                 <div key={step.num} className="relative group">
-                  <div className={cn("flex gap-8 py-10 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300", i === 0 && "border-t")}>
+                  <div className={cn("flex gap-8 py-10 border-b border-slate-200 dark:border-slate-800 transition-all duration-300 hover:bg-slate-50/50 dark:hover:bg-slate-900/30 hover:px-4 hover:-mx-4 rounded-xl", i === 0 && "border-t")}>
                     <div className="flex-shrink-0">
                       <span className="step-number">{step.num}</span>
                     </div>
                     <div className="pt-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/30 flex items-center justify-center group-hover:bg-teal-100 dark:group-hover:bg-teal-900/50 transition-colors">
+                        <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/30 flex items-center justify-center group-hover:bg-teal-100 dark:group-hover:bg-teal-900/50 group-hover:scale-110 transition-all duration-300">
                           <step.icon className="h-5 w-5 text-teal-600 dark:text-teal-400" />
                         </div>
                         <h3 className="text-xl font-semibold text-slate-900 dark:text-white">{step.title}</h3>
@@ -421,8 +424,8 @@ export default function LandingPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-violet-500/10 rounded-3xl blur-3xl" />
               <div className="relative grid sm:grid-cols-2 gap-4">
                 {features.map((f, i) => (
-                  <div key={f.title} className="group p-6 rounded-2xl bg-white/[0.05] border border-white/[0.08] backdrop-blur-sm card-lift" style={{ opacity: 1 }}>
-                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform relative z-10", f.accent)}>
+                  <div key={f.title} className="group p-6 rounded-2xl bg-white/[0.05] border border-white/[0.08] backdrop-blur-sm card-lift hover:bg-white/[0.08] transition-all duration-300" style={{ opacity: 1 }}>
+                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative z-10", f.accent)}>
                       <f.icon className="h-5 w-5 text-white" />
                     </div>
                     <h3 className="font-semibold text-white mb-2 relative z-10" style={{ color: "#fff" }}>{f.title}</h3>
@@ -444,10 +447,12 @@ export default function LandingPage() {
             <p className="text-lg text-slate-500 dark:text-slate-400">{t("services.subtitle", locale)}</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-slate-200/60 dark:bg-slate-800/60 rounded-2xl overflow-hidden">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-slate-200/60 dark:bg-slate-800/60 rounded-2xl overflow-hidden shadow-lg shadow-slate-900/5 dark:shadow-black/20">
             {services.map((service, i) => (
-              <div key={service.title} className={cn("group bg-white dark:bg-slate-950 p-8 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors duration-300 service-item card-lift", service.color)}>
-                <service.icon className={cn("h-6 w-6 mb-4 transition-transform group-hover:scale-110 duration-300", service.color)} />
+              <div key={service.title} className={cn("group bg-white dark:bg-slate-950 p-8 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all duration-300 service-item card-lift hover:z-10 relative", service.color)}>
+                <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <service.icon className={cn("h-6 w-6 transition-colors duration-300", service.color)} />
+                </div>
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{service.title}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{service.desc}</p>
               </div>
@@ -529,15 +534,15 @@ export default function LandingPage() {
               <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
                 {reviews.slice(0, 6).map((r, i) => (
                   <div key={r.id} className="flex-shrink-0 w-[340px] snap-start">
-                    <div className="h-full p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 hover:shadow-lg hover:shadow-slate-900/5 dark:hover:shadow-black/20 transition-all duration-300">
+                    <div className="h-full p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 hover:shadow-xl hover:shadow-slate-900/5 dark:hover:shadow-black/20 hover:-translate-y-1 transition-all duration-300">
                       <Quote className="h-6 w-6 text-teal-200 dark:text-teal-800 mb-4" />
                       <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm mb-6 line-clamp-4">&ldquo;{r.comment}&rdquo;</p>
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-slate-900 dark:text-white text-sm">{r.patientName}</p>
-                          <div className="flex items-center gap-0.5 mt-1">
+                          <div className="flex items-center gap-0.5 mt-1.5">
                             {[1, 2, 3, 4, 5].map((j) => (
-                              <Star key={j} className={cn("h-3 w-3", j <= r.rating ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200 dark:fill-slate-700 dark:text-slate-700")} />
+                              <Star key={j} className={cn("h-3.5 w-3.5", j <= r.rating ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200 dark:fill-slate-700 dark:text-slate-700")} />
                             ))}
                           </div>
                         </div>
@@ -567,13 +572,15 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">{t("faq.title", locale)}</h2>
             <p className="text-lg text-slate-500 dark:text-slate-400">{t("faq.subtitle", locale)}</p>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {faqItems.map((item, i) => (
               <div key={i}>
-                <button onClick={() => setActiveFaq(activeFaq === i ? null : i)} aria-expanded={activeFaq === i} className="w-full text-left p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 hover:border-teal-200 dark:hover:border-teal-800 transition-all duration-200 group">
+                <button onClick={() => setActiveFaq(activeFaq === i ? null : i)} aria-expanded={activeFaq === i} className="w-full text-left p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 hover:border-teal-200 dark:hover:border-teal-800 hover:shadow-md hover:shadow-teal-500/5 transition-all duration-300 group">
                   <div className="flex items-center justify-between gap-4">
                     <span className="font-medium text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{item.q}</span>
-                    <ChevronDown className={cn("h-5 w-5 text-slate-400 shrink-0 transition-transform duration-300", activeFaq === i && "rotate-180 text-teal-500")} />
+                    <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300", activeFaq === i ? "bg-teal-100 dark:bg-teal-900/30" : "bg-slate-100 dark:bg-slate-800")}>
+                      <ChevronDown className={cn("h-4 w-4 transition-all duration-300", activeFaq === i ? "rotate-180 text-teal-600 dark:text-teal-400" : "text-slate-400")} />
+                    </div>
                   </div>
                   <div className={cn("overflow-hidden transition-all duration-300 ease-in-out", activeFaq === i ? "mt-4 max-h-40 opacity-100" : "max-h-0 opacity-0")}>
                     <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{item.a}</p>
@@ -596,8 +603,8 @@ export default function LandingPage() {
             <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight tracking-tight">{t("cta.title", locale)}</h2>
             <p className="text-lg md:text-xl text-teal-100/80 max-w-lg mx-auto">{t("cta.subtitle", locale)}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/agendar"><Button size="lg" className="btn-premium btn-press bg-white text-teal-700 hover:bg-teal-50 shadow-xl text-base h-13 px-10 rounded-full font-semibold relative z-10">Agende sua Consulta <ArrowRight className="ml-2 h-5 w-5 relative z-10" /></Button></Link>
-              <Link href="/paciente/login"><Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 text-base h-13 px-10 rounded-full font-semibold backdrop-blur-sm">Área do Paciente</Button></Link>
+              <Link href="/agendar"><Button size="lg" className="btn-premium btn-press bg-white text-teal-700 hover:bg-teal-50 shadow-xl shadow-white/10 text-base h-13 px-10 rounded-full font-semibold relative z-10 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300">{locale === "en" ? "Schedule your appointment" : "Agende sua Consulta"} <ArrowRight className="ml-2 h-5 w-5 relative z-10" /></Button></Link>
+              <Link href="/paciente/login"><Button size="lg" variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 text-base h-13 px-10 rounded-full font-semibold backdrop-blur-sm transition-all duration-300">{locale === "en" ? "Patient Area" : "Área do Paciente"}</Button></Link>
             </div>
             <Link href="/register" className="inline-flex items-center gap-1.5 text-sm text-teal-200 hover:text-white transition-colors pt-2">
               <Sparkles className="h-3.5 w-3.5" /> {t("cta.psychologist", locale)}
@@ -616,13 +623,13 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-xs text-slate-500 dark:text-slate-500">
             {[
-              { icon: Shield, text: "Dados protegidos", strong: "LGPD" },
-              { icon: CheckCircle, text: "Profissional registrado", strong: "CRP" },
-              { icon: Lock, text: "Conexão", strong: "criptografada" },
-              { icon: Globe, text: "Servidores no", strong: "Brasil" },
+              { icon: Shield, text: locale === "en" ? "Data protected" : "Dados protegidos", strong: "LGPD" },
+              { icon: CheckCircle, text: locale === "en" ? "Registered professional" : "Profissional registrado", strong: "CRP" },
+              { icon: Lock, text: locale === "en" ? "Connection" : "Conexão", strong: locale === "en" ? "encrypted" : "criptografada" },
+              { icon: Globe, text: locale === "en" ? "Servers in" : "Servidores no", strong: locale === "en" ? "Brazil" : "Brasil" },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-1.5">
-                <item.icon className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+              <div key={i} className="flex items-center gap-1.5 group">
+                <item.icon className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
                 <span>{item.text} <strong className="font-semibold text-slate-700 dark:text-slate-300">{item.strong}</strong></span>
               </div>
             ))}

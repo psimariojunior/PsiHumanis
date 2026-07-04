@@ -4,6 +4,7 @@ import { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import toast from "react-hot-toast"
 import { Loader2, Calendar, Clock, ChevronLeft, ChevronRight, Video } from "lucide-react"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
 interface TimeSlot {
   time: string
@@ -44,6 +45,7 @@ export function BookingFlow({
   onClose: () => void
   onSuccess: () => void
 }) {
+  const { vibrateSelection, vibrateNotification } = useHapticFeedback()
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null)
   const [selectedModality, setSelectedModality] = useState("online")
@@ -74,9 +76,11 @@ export function BookingFlow({
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Erro ao agendar")
+      vibrateNotification()
       toast.success("Consulta agendada!")
       onSuccess()
     } catch (e) {
+      vibrateNotification()
       toast.error(e instanceof Error ? e.message : "Erro ao agendar")
     } finally {
       setBookingLoading(false)
@@ -150,7 +154,7 @@ export function BookingFlow({
             {selectedDay && selectedDay.slots.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {selectedDay.slots.map((s) => (
-                  <button key={s.time} onClick={() => setSelectedSlot(s)}
+                  <button key={s.time} onClick={() => { vibrateSelection(); setSelectedSlot(s) }}
                     className="bg-muted hover:bg-primary/10 text-foreground hover:text-primary/80 rounded-xl py-3 px-4 text-sm font-medium transition-all ring-1 ring-border hover:ring-primary/30">
                     <Clock className="h-4 w-4 inline mr-1.5" />{s.time}
                   </button>

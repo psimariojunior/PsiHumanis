@@ -20,9 +20,11 @@ import { TodaySessions } from "@/components/dashboard/today-sessions"
 import { BirthdayAlert } from "@/components/dashboard/birthday-alert"
 import { WeeklyOccupancy } from "@/components/dashboard/weekly-occupancy"
 import { t, getLocale } from "@/lib/i18n"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
 export default function DashboardHome() {
   const locale = getLocale()
+  const { vibrateSelection } = useHapticFeedback()
   const quickActions = [
     { label: t("dash.newPatient", locale), href: "/pacientes/novo", icon: UserPlus, gradient: "from-teal-600 to-sky-600" },
     { label: t("dash.prontuario", locale), href: "/prontuarios/novo", icon: FileText, gradient: "from-violet-500 to-purple-600" },
@@ -156,8 +158,8 @@ export default function DashboardHome() {
     return (
       <div className="space-y-2">
         {items.slice(0, 5).map((apt) => (
-          <div key={apt.id} className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-accent/50">
-            <div className="flex flex-col items-center justify-center w-14 shrink-0">
+          <div key={apt.id} className="flex items-center gap-3 rounded-xl border p-3 transition-all duration-200 hover:bg-accent/50 hover:shadow-md hover:shadow-teal-500/5 cursor-pointer hover:-translate-y-0.5">
+            <div className="flex flex-col items-center justify-center w-14 shrink-0 rounded-lg bg-muted/50 py-1.5">
               <span className="text-sm font-bold leading-none">{formatTime(apt.startTime)}</span>
             </div>
             <div className="flex-1 min-w-0">
@@ -172,11 +174,13 @@ export default function DashboardHome() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Hero */}
       <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-slate-950 via-teal-950 to-slate-900 p-6 text-white shadow-xl sm:p-8">
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-500/20 blur-3xl" />
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-500/20 blur-3xl animate-pulse" />
         <div className="absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="absolute right-10 top-10 h-2 w-2 rounded-full bg-teal-400/60 animate-bounce" style={{ animationDelay: "0.5s" }} />
+        <div className="absolute left-20 bottom-10 h-1.5 w-1.5 rounded-full bg-cyan-400/40 animate-bounce" style={{ animationDelay: "1s" }} />
         <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="space-y-3">
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -194,7 +198,7 @@ export default function DashboardHome() {
               </Button>
             </div>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-xl min-w-[220px]">
+          <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl min-w-[220px] transition-all duration-300 hover:bg-white/15">
             <p className="text-xs uppercase tracking-[0.15em] text-teal-200 mb-2">{locale === "en" ? "Next focus" : "Próximo foco"}</p>
             <p className="text-lg font-semibold">
               {nextAppointment ? nextAppointment.patientName : t("dash.freeSchedule", locale)}
@@ -205,11 +209,11 @@ export default function DashboardHome() {
               </p>
             )}
             <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-              <div className="rounded-xl bg-white/10 p-2 text-center">
+              <div className="rounded-xl bg-white/10 p-2.5 text-center backdrop-blur-sm">
                 <p className="text-teal-200 text-xs">{t("dash.today", locale)}</p>
                 <p className="text-lg font-bold">{todaysAppointments.length}</p>
               </div>
-              <div className="rounded-xl bg-white/10 p-2 text-center">
+              <div className="rounded-xl bg-white/10 p-2.5 text-center backdrop-blur-sm">
                 <p className="text-teal-200 text-xs">{locale === "en" ? "Received" : "Recebido"}</p>
                 <p className="text-sm font-bold">{currency.format(financialSummary.received)}</p>
               </div>
@@ -254,12 +258,14 @@ export default function DashboardHome() {
       {/* Charts + Financial */}
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          <Card>
+          <Card className="transition-all duration-200 hover:shadow-lg hover:shadow-teal-500/5">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-teal-500" />
-                  Receita Mensal
+                  <div className="h-6 w-6 rounded-md bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                    <TrendingUp className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  {locale === "en" ? "Monthly Revenue" : "Receita Mensal"}
                 </CardTitle>
                 <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
                   {(["6", "12", "all"] as const).map((p) => (
@@ -275,11 +281,13 @@ export default function DashboardHome() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="transition-all duration-200 hover:shadow-lg hover:shadow-teal-500/5">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-teal-500" />
-                Agendamentos Mensais
+                <div className="h-6 w-6 rounded-md bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+                  <Calendar className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+                </div>
+                {locale === "en" ? "Monthly Appointments" : "Agendamentos Mensais"}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -289,19 +297,23 @@ export default function DashboardHome() {
         </div>
 
         <div className="space-y-6">
-          <Card className="overflow-hidden border-0 bg-gradient-to-br from-teal-600 to-indigo-700 text-white shadow-lg shadow-teal-500/15">
-            <CardContent className="p-5">
+          <Card className="overflow-hidden border-0 bg-gradient-to-br from-teal-600 via-teal-700 to-indigo-800 text-white shadow-xl shadow-teal-500/20 transition-all duration-300 hover:shadow-2xl hover:shadow-teal-500/30">
+            <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="h-5 w-5 text-teal-200" />
-                <span className="font-semibold text-sm">Meta do Mês</span>
+                <div className="h-8 w-8 rounded-lg bg-white/15 flex items-center justify-center backdrop-blur-sm">
+                  <Sparkles className="h-4 w-4 text-teal-200" />
+                </div>
+                <span className="font-semibold text-sm">{locale === "en" ? "Monthly Goal" : "Meta do Mês"}</span>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-teal-100">Progresso</span>
                   <span className="font-bold">{progressWidth}%</span>
                 </div>
-                <div className="h-2.5 rounded-full bg-white/20 overflow-hidden">
-                  <div className="h-full rounded-full bg-white transition-all duration-1000 ease-out" style={{ width: `${progressWidth}%` }} />
+                <div className="h-3 rounded-full bg-white/15 overflow-hidden">
+                  <div className="h-full rounded-full bg-gradient-to-r from-white/90 to-white transition-all duration-1500 ease-out relative" style={{ width: `${progressWidth}%` }}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_infinite]" />
+                  </div>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-teal-100">Recebido</span>
@@ -317,25 +329,27 @@ export default function DashboardHome() {
 
           <FinancialSummaryCard summary={financialSummary} />
 
-          <Card>
+          <Card className="transition-all duration-200 hover:shadow-lg hover:shadow-teal-500/5">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Activity className="h-4 w-4 text-teal-500" />
-                Indicadores
+                <div className="h-6 w-6 rounded-md bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                  <Activity className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" />
+                </div>
+                {locale === "en" ? "Indicators" : "Indicadores"}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: "Ticket Médio", value: currency.format(indicators.averageTicket), icon: DollarSign },
-                  { label: "Conclusão", value: `${Math.round(indicators.completionRate)}%`, icon: TrendingUp },
-                  { label: "Cancelamento", value: `${Math.round(indicators.cancellationRate)}%`, icon: Activity },
-                  { label: "Ocupação", value: `${Math.round(indicators.occupationRate)}%`, icon: Users },
+                  { label: "Ticket Médio", value: currency.format(indicators.averageTicket), icon: DollarSign, color: "text-emerald-500" },
+                  { label: "Conclusão", value: `${Math.round(indicators.completionRate)}%`, icon: TrendingUp, color: "text-teal-500" },
+                  { label: "Cancelamento", value: `${Math.round(indicators.cancellationRate)}%`, icon: Activity, color: "text-amber-500" },
+                  { label: "Ocupação", value: `${Math.round(indicators.occupationRate)}%`, icon: Users, color: "text-indigo-500" },
                 ].map((item) => (
-                  <div key={item.label} className="bg-muted/50 rounded-xl p-3 text-center">
-                    <item.icon className="h-4 w-4 text-teal-500 mx-auto mb-1" />
+                  <div key={item.label} className="bg-muted/50 rounded-xl p-3.5 text-center transition-all duration-200 hover:bg-muted/80 hover:scale-105">
+                    <item.icon className={cn("h-4 w-4 mx-auto mb-1.5", item.color)} />
                     <p className="text-lg font-bold">{item.value}</p>
-                    <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{item.label}</p>
                   </div>
                 ))}
               </div>
@@ -350,11 +364,13 @@ export default function DashboardHome() {
 
       {/* Bottom Row: Appointments + Quick Actions + Recent Patients */}
       <div className="grid gap-6 lg:grid-cols-4">
-        <Card>
+        <Card className="transition-all duration-200 hover:shadow-lg hover:shadow-teal-500/5">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Sun className="h-4 w-4 text-amber-500" />
-              Hoje
+              <div className="h-7 w-7 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                <Sun className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+              </div>
+              {locale === "en" ? "Today" : "Hoje"}
               <Badge variant="secondary" className="ml-auto text-[10px]">{todaysAppointments.length}</Badge>
             </CardTitle>
           </CardHeader>
@@ -363,11 +379,13 @@ export default function DashboardHome() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-all duration-200 hover:shadow-lg hover:shadow-indigo-500/5">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Moon className="h-4 w-4 text-indigo-500" />
-              Amanhã
+              <div className="h-7 w-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                <Moon className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              {locale === "en" ? "Tomorrow" : "Amanhã"}
               <Badge variant="secondary" className="ml-auto text-[10px]">{tomorrowsAppointments.length}</Badge>
             </CardTitle>
           </CardHeader>
@@ -376,22 +394,24 @@ export default function DashboardHome() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-all duration-200 hover:shadow-lg hover:shadow-teal-500/5">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Zap className="h-4 w-4 text-teal-500" />
-              Ações Rápidas
+              <div className="h-7 w-7 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+                <Zap className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+              </div>
+              {locale === "en" ? "Quick Actions" : "Ações Rápidas"}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {quickActions.map((action) => (
-              <Link key={action.label} href={action.href}>
-                <div className="group flex items-center gap-3 rounded-lg p-2.5 transition-colors hover:bg-accent/50 cursor-pointer">
-                  <div className={cn("flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br shadow-sm transition-all group-hover:scale-110 shrink-0", action.gradient)}>
-                    <action.icon className="h-4 w-4 text-white" />
+            {quickActions.map((action, i) => (
+              <Link key={action.label} href={action.href} onClick={() => vibrateSelection()}>
+                <div className="group flex items-center gap-3 rounded-xl p-3 transition-all duration-200 hover:bg-accent/50 hover:shadow-md hover:shadow-teal-500/5 cursor-pointer hover:-translate-y-0.5">
+                  <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-md transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shrink-0", action.gradient)}>
+                    <action.icon className="h-4.5 w-4.5 text-white" />
                   </div>
                   <span className="text-sm font-medium">{action.label}</span>
-                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-0.5" />
                 </div>
               </Link>
             ))}

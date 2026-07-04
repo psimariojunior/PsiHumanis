@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog"
 import toast from "react-hot-toast"
 import { Loader2, Calendar, Clock, XCircle, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
 interface Appointment {
   id: string
@@ -43,6 +44,7 @@ export function AppointmentList({
   token: string
   onAppointmentsChange: (appointments: Appointment[]) => void
 }) {
+  const { vibrateSelection, vibrateNotification } = useHapticFeedback()
   const [cancelling, setCancelling] = useState<string | null>(null)
   const [cancelTarget, setCancelTarget] = useState<string | null>(null)
   const [cancelReason, setCancelReason] = useState("")
@@ -67,9 +69,11 @@ export function AppointmentList({
         const data = await res.json()
         throw new Error(data.error || "Erro ao cancelar")
       }
+      vibrateNotification()
       toast.success("Consulta cancelada")
       onAppointmentsChange(appointments.map((a) => a.id === appointmentId ? { ...a, status: "CANCELLED" } : a))
     } catch (e) {
+      vibrateNotification()
       toast.error(e instanceof Error ? e.message : "Erro ao cancelar")
     } finally {
       setCancelling(null)
@@ -115,6 +119,7 @@ export function AppointmentList({
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Erro ao remarcar")
 
+      vibrateNotification()
       toast.success(data.message || "Consulta remarcada!")
       onAppointmentsChange(appointments.map((a) =>
         a.id === rescheduleTarget

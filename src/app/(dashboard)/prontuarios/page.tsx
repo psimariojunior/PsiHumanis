@@ -8,6 +8,7 @@ import { formatDate } from "@/lib/utils"
 import { Plus, FileText, Lock, Loader2, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { ColumnDef } from "@tanstack/react-table"
+import { PullToRefresh } from "@/components/pull-to-refresh"
 
 interface MedicalRecordItem {
   id: string
@@ -35,6 +36,11 @@ export default function ProntuariosPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    fetchRecords()
+  }, [])
+
+  const fetchRecords = () => {
+    setLoading(true)
     fetch("/api/records")
       .then((res) => { if (!res.ok) throw new Error(); return res.json() })
       .then((data) => {
@@ -50,7 +56,7 @@ export default function ProntuariosPage() {
       })
       .catch(() => setRecords([]))
       .finally(() => setLoading(false))
-  }, [])
+  }
 
   const columns: ColumnDef<MedicalRecordItem>[] = [
     {
@@ -114,7 +120,9 @@ export default function ProntuariosPage() {
         </p>
       </div>
 
-      <DataTable columns={columns} data={records} searchKey="patientName" searchPlaceholder="Buscar por paciente..." />
+      <PullToRefresh onRefresh={async () => { fetchRecords() }}>
+        <DataTable columns={columns} data={records} searchKey="patientName" searchPlaceholder="Buscar por paciente..." />
+      </PullToRefresh>
     </div>
   )
 }

@@ -9,6 +9,7 @@ import { Loader2, Calendar, ArrowLeft } from "lucide-react"
 import { WelcomeBanner } from "./components/welcome-banner"
 import { AppointmentList } from "./components/appointment-list"
 import { BookingFlow } from "./components/booking-flow"
+import { PullToRefresh } from "@/components/pull-to-refresh"
 
 interface Appointment {
   id: string
@@ -35,6 +36,12 @@ export default function AgendaPacientePage() {
 
   useEffect(() => {
     if (!token) return
+    fetchAppointments()
+  }, [token])
+
+  const fetchAppointments = () => {
+    if (!token) return
+    setLoadingAppts(true)
     fetch("/api/pacientes/agendamentos", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -42,7 +49,7 @@ export default function AgendaPacientePage() {
       .then(setAppointments)
       .catch(() => toast.error("Erro ao carregar agendamentos"))
       .finally(() => setLoadingAppts(false))
-  }, [token])
+  }
 
   const loadAvailability = useCallback(async () => {
     if (!patient?.psychologistId) return
@@ -93,11 +100,13 @@ export default function AgendaPacientePage() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : (
-            <AppointmentList
-              appointments={appointments}
-              token={token || ""}
-              onAppointmentsChange={setAppointments}
-            />
+            <PullToRefresh onRefresh={async () => { fetchAppointments() }}>
+              <AppointmentList
+                appointments={appointments}
+                token={token || ""}
+                onAppointmentsChange={setAppointments}
+              />
+            </PullToRefresh>
           )}
         </div>
       )}

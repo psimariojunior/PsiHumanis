@@ -8,6 +8,9 @@ import { Card } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { CalendarDays, BookHeart, History, User, ChevronRight, Clock, Sparkles, Activity, Brain, ClipboardList, FileText, Shield, Star, TrendingUp, ListTodo, Video } from "lucide-react"
+import { PatientOnboarding } from "@/components/patient-onboarding"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
+import { PullToRefresh } from "@/components/pull-to-refresh"
 
 interface Appointment {
   id: string
@@ -39,12 +42,18 @@ const quickLinks = [
 
 export default function PacienteDashboard() {
   const { patient, token } = usePatientAuth()
+  const { vibrateSelection, vibrateNotification } = useHapticFeedback()
   const [nextAppointment, setNextAppointment] = useState<Appointment | null>(null)
   const [loadingAppt, setLoadingAppt] = useState(true)
   const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([])
   const [sessionCount, setSessionCount] = useState(0)
 
   useEffect(() => {
+    if (!token) return
+    fetchData()
+  }, [token])
+
+  const fetchData = () => {
     if (!token) return
     Promise.all([
       fetch("/api/pacientes/agendamentos", { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()),
@@ -58,7 +67,7 @@ export default function PacienteDashboard() {
       })
       .catch(() => {})
       .finally(() => setLoadingAppt(false))
-  }, [token])
+  }
 
   const formatDateTime = (iso: string) => {
     const d = new Date(iso)
@@ -87,7 +96,9 @@ export default function PacienteDashboard() {
   const roomName = nextAppointment ? `sala-${nextAppointment.id.slice(0, 8)}` : ""
 
   return (
+    <PullToRefresh onRefresh={async () => { fetchData() }}>
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <PatientOnboarding />
       <div className="relative overflow-hidden rounded-[1.75rem] border bg-gradient-to-br from-teal-950 via-teal-900 to-slate-950 p-6 text-white shadow-2xl shadow-teal-950/20">
         <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-teal-400/20 blur-3xl" />
         <div className="absolute -bottom-20 left-10 h-44 w-44 rounded-full bg-cyan-400/10 blur-3xl" />
@@ -145,6 +156,7 @@ export default function PacienteDashboard() {
             {canEnterRoom() && (
               <Link
                 href={`/sala-virtual/entrar?room=${encodeURIComponent(roomName)}`}
+                onClick={() => vibrateNotification()}
                 className="mt-4 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white/20 hover:bg-white/30 transition-all backdrop-blur-sm text-sm font-medium"
               >
                 <Video className="h-4 w-4" />
@@ -171,7 +183,7 @@ export default function PacienteDashboard() {
           { label: "Questionários", desc: "Acompanhe sua evolução clínica", icon: Brain, href: "/paciente/questionarios" },
           { label: "Tarefas terapêuticas", desc: "Veja exercícios enviados", icon: ListTodo, href: "/paciente/tarefas" },
         ].map((item) => (
-          <Link key={item.label} href={item.href}>
+          <Link key={item.label} href={item.href} onClick={() => vibrateSelection()}>
             <Card className="group h-full p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-teal-500/5">
               <item.icon className="h-5 w-5 text-teal-600 transition-transform group-hover:scale-110" />
               <h3 className="mt-3 text-sm font-semibold">{item.label}</h3>
@@ -185,7 +197,7 @@ export default function PacienteDashboard() {
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Acesso rápido</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {quickLinks.map((link) => (
-            <Link key={link.href} href={link.href}>
+            <Link key={link.href} href={link.href} onClick={() => vibrateSelection()}>
               <div className="group relative overflow-hidden bg-card hover:bg-accent rounded-2xl p-5 ring-1 ring-border transition-all duration-200 cursor-pointer hover:shadow-lg hover:shadow-teal-500/5 hover:-translate-y-0.5">
                 <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-500 bg-gradient-to-br", link.gradient)} />
                 <div className="relative">
@@ -201,5 +213,6 @@ export default function PacienteDashboard() {
         </div>
       </div>
     </div>
+    </PullToRefresh>
   )
 }

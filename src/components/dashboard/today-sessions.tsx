@@ -9,6 +9,7 @@ import { Video, Clock, UserCheck, Calendar, Loader2, Bell, ArrowRight } from "lu
 import { cn } from "@/lib/utils"
 import { format, isToday } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
 interface Appointment {
   id: string
@@ -69,6 +70,7 @@ function deriveStatus(apt: Appointment, waitingPatients: WaitingPatient[]): Sess
 }
 
 export function TodaySessions({ appointments }: { appointments: Appointment[] }) {
+  const { vibrateSelection } = useHapticFeedback()
   const [waitingPatients, setWaitingPatients] = useState<WaitingPatient[]>([])
   const [now, setNow] = useState(new Date())
 
@@ -144,7 +146,7 @@ export function TodaySessions({ appointments }: { appointments: Appointment[] })
             <p className="text-sm font-medium text-muted-foreground">Nenhuma sessão agendada para hoje</p>
             <p className="text-xs text-muted-foreground/60 mt-1">Aproveite para organizar sua agenda</p>
             <Button variant="outline" size="sm" className="mt-4" asChild>
-              <Link href="/agenda">
+              <Link href="/agenda" onClick={() => vibrateSelection()}>
                 <Calendar className="h-3.5 w-3.5 mr-1.5" />
                 Abrir Agenda
               </Link>
@@ -229,7 +231,7 @@ export function TodaySessions({ appointments }: { appointments: Appointment[] })
                   <div className="shrink-0">
                     {session.sessionStatus === "waiting" || session.sessionStatus === "in_call" ? (
                       <Button size="sm" className="h-8 px-3 bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm" asChild>
-                        <Link href={`/sala-virtual?room=${encodeURIComponent(session.roomName)}`}>
+                        <Link href={`/sala-virtual?room=${encodeURIComponent(session.roomName)}`} onClick={() => vibrateSelection()}>
                           <Video className="h-3.5 w-3.5 mr-1" />
                           Entrar
                           <ArrowRight className="h-3 w-3 ml-1" />
@@ -237,7 +239,7 @@ export function TodaySessions({ appointments }: { appointments: Appointment[] })
                       </Button>
                     ) : session.sessionStatus === "scheduled" || session.sessionStatus === "confirmed" ? (
                       <Button size="sm" variant="outline" className="h-8 px-3 text-xs" asChild>
-                        <Link href={`/sala-virtual?room=${encodeURIComponent(session.roomName)}`}>
+                        <Link href={`/sala-virtual?room=${encodeURIComponent(session.roomName)}`} onClick={() => vibrateSelection()}>
                           <Video className="h-3.5 w-3.5 mr-1" />
                           Preparar
                         </Link>
