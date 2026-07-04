@@ -11,12 +11,12 @@ import { cn } from "@/lib/utils"
 const ONBOARDING_KEY = "psihumanis_onboarding_completed"
 
 const steps = [
-  { id: "conta", label: "Criar conta", desc: "Seu acesso já está pronto", href: "/configuracoes", done: true, icon: CheckCircle2 },
-  { id: "publico", label: "Publicar perfil", desc: "Configure como pacientes veem você", href: "/configuracoes", icon: Globe, apiCheck: "/api/onboarding/check-profile" },
-  { id: "paciente", label: "Cadastrar primeiro paciente", desc: "Monte sua base clínica", href: "/pacientes/novo", icon: UserPlus, apiCheck: "/api/onboarding/check-patient" },
-  { id: "agendar", label: "Agendar primeira consulta", desc: "Valide seu fluxo de atendimento", href: "/agenda", icon: Calendar, apiCheck: "/api/onboarding/check-appointment" },
+  { id: "conta", label: "Conta criada", desc: "Seu acesso está pronto", href: "/configuracoes", done: true, icon: CheckCircle2 },
+  { id: "publico", label: "Configurar perfil público", desc: "Configure como pacientes veem você", href: "/configuracoes", icon: Globe },
+  { id: "paciente", label: "Cadastrar primeiro paciente", desc: "Monte sua base clínica", href: "/pacientes/novo", icon: UserPlus },
+  { id: "agendar", label: "Agendar primeira consulta", desc: "Valide seu fluxo de atendimento", href: "/agenda", icon: Calendar },
   { id: "sala", label: "Testar sala virtual", desc: "Prepare o atendimento online", href: "/sala-virtual", icon: Video },
-  { id: "pagamentos", label: "Ativar pagamentos", desc: "Organize cobrança e faturas", href: "/pricing", icon: CreditCard },
+  { id: "pagamentos", label: "Ativar pagamentos", desc: "Organize cobrança e faturas", href: "/configuracoes", icon: CreditCard },
   { id: "indicacoes", label: "Compartilhar indicação", desc: "Ganhe 1 mês grátis por amigo", href: "/configuracoes", icon: Gift },
 ]
 
@@ -25,26 +25,19 @@ export function OnboardingChecklist() {
   const [completed, setCompleted] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const [checkedSteps, setCheckedSteps] = useState<Record<string, boolean>>({})
-  const [serverChecks, setServerChecks] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     const val = localStorage.getItem(ONBOARDING_KEY)
     if (val === "true") { setCompleted(true); return }
 
-    steps.forEach((step) => {
-      if (step.apiCheck) {
-        fetch(step.apiCheck)
-          .then((r) => r.json())
-          .then((data) => {
-            if (data.done) setServerChecks((prev) => ({ ...prev, [step.id]: true }))
-          })
-          .catch(() => {})
-      }
-    })
+    const saved = localStorage.getItem("psihumanis_onboarding_steps")
+    if (saved) {
+      try { setCheckedSteps(JSON.parse(saved)) } catch {}
+    }
   }, [])
 
   const completedCount = steps.filter(
-    (s) => s.done || checkedSteps[s.id] || serverChecks[s.id]
+    (s) => s.done || checkedSteps[s.id]
   ).length
   const progress = Math.round((completedCount / steps.length) * 100)
 
@@ -56,6 +49,12 @@ export function OnboardingChecklist() {
   const handleDismiss = () => {
     localStorage.setItem(ONBOARDING_KEY, "true")
     setCompleted(true)
+  }
+
+  const toggleStep = (id: string) => {
+    const next = { ...checkedSteps, [id]: !checkedSteps[id] }
+    setCheckedSteps(next)
+    localStorage.setItem("psihumanis_onboarding_steps", JSON.stringify(next))
   }
 
   if (completed || dismissed) return null
@@ -99,18 +98,13 @@ export function OnboardingChecklist() {
 
         <div className="grid gap-2 sm:grid-cols-2">
           {steps.map((step) => {
-            const isChecked = step.done || checkedSteps[step.id] || serverChecks[step.id]
+            const isChecked = step.done || checkedSteps[step.id]
             const Icon = step.icon
             return (
               <button
                 key={step.id}
                 onClick={() => {
-                  if (!step.done && !serverChecks[step.id]) {
-                    setCheckedSteps((prev) => ({
-                      ...prev,
-                      [step.id]: !prev[step.id],
-                    }))
-                  }
+                  if (!step.done) toggleStep(step.id)
                 }}
                 onDoubleClick={() => router.push(step.href)}
                 className={cn(

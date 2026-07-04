@@ -9,6 +9,7 @@ import { CookieConsent } from "@/components/cookie-consent"
 import { GoogleAnalytics } from "@/components/google-analytics"
 import { OfflineIndicator } from "@/components/offline-indicator"
 import { PushPermissionPrompt } from "@/components/push-permission-prompt"
+import { SplashProvider } from "@/components/splash-provider"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" })
 
@@ -143,11 +144,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Pular para o conteúdo
         </a>
         <Providers>
-          <OfflineIndicator />
-          <PushPermissionPrompt />
-          <main id="main-content" className="animate-fade-in">{children}</main>
-          <SwUpdateNotification />
-          <PwaInstallPrompt />
+          <SplashProvider>
+            <OfflineIndicator />
+            <PushPermissionPrompt />
+            <main id="main-content" className="animate-fade-in">{children}</main>
+            <SwUpdateNotification />
+            <PwaInstallPrompt />
+          </SplashProvider>
         </Providers>
         <Script id="pwa-capture" strategy="beforeInteractive">
           {`
