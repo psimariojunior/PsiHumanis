@@ -1,4 +1,4 @@
-# PsicoFlow — Competitive Analysis
+# PsiHumanis — Competitive Analysis
 
 > Research date: 2026-06-22
 > Sources: Official websites of SimplePractice, Jane App, BetterHelp, iClinic, Conexa Saúde, Zenklub, Doctoralia
@@ -297,10 +297,10 @@
 
 ---
 
-## Gap Analysis: What PsicoFlow is MISSING
+## Gap Analysis: What PsiHumanis is MISSING
 
-### PsicoFlow currently has
-Based on the schema and routes, PsicoFlow already has:
+### PsiHumanis currently has
+Based on the schema and routes, PsiHumanis already has:
 - Patient management with full demographic data
 - Appointments (scheduling, recurring, status workflow)
 - Therapy sessions with SOAP notes
@@ -350,18 +350,18 @@ Based on the schema and routes, PsicoFlow already has:
 | 12 | **Return Visit Reminders** — automated reminders for inactive patients | Jane | HIGH — retention | P1 |
 | 13 | **Automated Waitlist Management** — auto-offer cancelled slots | Jane | MEDIUM — fills gaps | P2 |
 | 14 | **Outcome Measure Tracking** — visualize questionnaire scores over time with graphs | Jane | HIGH — clinical evidence | P1 |
-| 15 | **Auto-generated Website** — professional clinic website synced with platform | Jane (Jane Websites) | MEDIUM — PsicoFlow has landing page already | P2 |
+| 15 | **Auto-generated Website** — professional clinic website synced with platform | Jane (Jane Websites) | MEDIUM — PsiHumanis has landing page already | P2 |
 | 16 | **Insurance/Health Plan Billing** — generate TISS guides, track insurance claims | iClinic | MEDIUM — Brazil-specific | P2 |
 | 17 | **Multi-clinic / Multi-location** — one login, multiple locations | iClinic | MEDIUM — scaling | P2 |
 | 18 | **Professional Repasses / Commissions** — auto-calculate splits for clinics | iClinic | MEDIUM — group practices | P2 |
 | 19 | **Internal Chat** — staff messaging within platform | iClinic | LOW — solo practitioners don't need | P3 |
-| 20 | **Therapist Matching Algorithm** — match patients to therapists by preference | BetterHelp | LOW — PsicoFlow is single-psychologist | P3 |
+| 20 | **Therapist Matching Algorithm** — match patients to therapists by preference | BetterHelp | LOW — PsiHumanis is single-psychologist | P3 |
 | 21 | **Digital Worksheets Library (150+)** — structured therapeutic content | BetterHelp | MEDIUM — patient engagement | P2 |
 | 22 | **Gift Cards / Gift Memberships** — patients gift therapy sessions | Jane, BetterHelp | LOW — nice to have | P3 |
 | 23 | **Corporate / B2B Mental Health** — companies pay for employee therapy | Zenklub, Conexa | HIGH if targeting B2B | P2 |
 | 24 | **ROI Calculator for Companies** — quantify mental health investment return | Zenklub | MEDIUM if B2B | P3 |
 | 25 | **Supervision Support** — mentor/supervisor oversight of trainee therapists | Jane | LOW — niche | P3 |
-| 26 | **Patient Self Check-In** — kiosk/tablet check-in for in-person | Jane | LOW — PsicoFlow is online-first | P3 |
+| 26 | **Patient Self Check-In** — kiosk/tablet check-in for in-person | Jane | LOW — PsiHumanis is online-first | P3 |
 | 27 | **Timesheets** — staff time tracking | Jane | LOW | P3 |
 | 28 | **Inventory / Product Management** — sell physical products | Jane, iClinic | LOW — psychology doesn't need | P3 |
 | 29 | **Reserve with Google** — booking from Google Business profile | Jane, Doctoralia | MEDIUM — SEO/acquisition | P2 |
@@ -428,14 +428,14 @@ Based on the schema and routes, PsicoFlow already has:
    - **Estimated effort**: Medium — charting library + data aggregation
 
 9. **Patient Mobile App (PWA or React Native)**
-   - PsicoFlow is web-only; a dedicated mobile app would improve engagement
+   - PsiHumanis is web-only; a dedicated mobile app would improve engagement
    - Could start as a PWA (installable web app) for lower effort
    - Features: book sessions, view appointments, emotion diary, questionnaires, secure messaging, video calls
    - **Estimated effort**: Medium (PWA) / High (React Native)
 
 10. **Corporate / B2B Portal**
     - Companies sign up and pay for their employees' therapy
-    - Employees use PsicoFlow with a corporate code
+    - Employees use PsiHumanis with a corporate code
     - Company dashboard: aggregate utilization, anonymized outcomes, ROI metrics
     - NR-1 compliance reporting
     - **Estimated effort**: High — new user type (Company), billing model, aggregate reporting
@@ -467,11 +467,11 @@ Based on the schema and routes, PsicoFlow already has:
 | Conexa Saúde | B2B contracts | Custom enterprise pricing |
 | Zenklub | B2B contracts | Custom corporate pricing |
 | Doctoralia | Freemium marketplace + Pro subscription | Free profile + paid Pro features |
-| **PsicoFlow** | **SaaS subscription (Stripe)** | **Currently: trial → paid plans via Stripe** |
+| **PsiHumanis** | **SaaS subscription (Stripe)** | **Currently: trial → paid plans via Stripe** |
 
-### Recommended PsicoFlow pricing positioning
+### Recommended PsiHumanis pricing positioning
 - **Below SimplePractice/Jane** (they target US/Canada with USD/CAD pricing)
-- **At or slightly above iClinic** (iClinic is R$99–299/month; PsicoFlow is psychology-specific, not general medical)
+- **At or slightly above iClinic** (iClinic is R$99–299/month; PsiHumanis is psychology-specific, not general medical)
 - **Suggested tiers**:
   - **Free trial**: 14–30 days
   - **Solo**: R$79/month — 1 psychologist, core features

@@ -26,7 +26,7 @@ Já configurado. Se precisar alterar:
 
 1. Acesse https://business.facebook.com/overview
 2. Clique **"Criar conta"**
-3. Nome da conta: **PsicoFlow**
+3. Nome da conta: **PsiHumanis**
 4. Seu nome: **Mário Júnior**
 5. Email: use o mesmo do Facebook/Instagram
 6. Siga os passos até concluir
@@ -46,7 +46,7 @@ Já configurado. Se precisar alterar:
 1. Acesse https://developers.facebook.com/apps/
 2. Clique **"Criar aplicativo"** (azul, canto superior direito)
 3. Escolha **"Empresa"** como tipo de app
-4. Nome: **PsicoFlow**
+4. Nome: **PsiHumanis**
 5. Email de contato: seu email
 6. Clique **"Criar aplicativo"**
 7. Complete o captcha se pedir
@@ -70,19 +70,19 @@ Já configurado. Se precisar alterar:
 
 1. Acesse https://developers.facebook.com/tools/accesstoken/
 2. Faça login com a mesma conta
-3. Selecione o app **PsicoFlow**
+3. Selecione o app **PsiHumanis**
 4. Clique **"Gerar Token de Acesso"**
 5. Permissões: marque `whatsapp_business_messaging` e `whatsapp_business_management`
 6. Clique **"Gerar"** — copie o token (começa com `EA...`)
 7. Agora vá em https://business.facebook.com/latest/settings/business_users
 8. No menu esquerdo, clique **"Usuários do sistema"**
 9. Clique **"Adicionar"** → **"Usuário do sistema"**
-10. Nome: **PsicoFlowAPI**
+10. Nome: **PsiHumanisAPI**
 11. Função: **Admin**
 12. Clique **"Criar usuário"**
 13. Na página do usuário, vá em **"Token de acesso"**
 14. Clique **"Gerar token"**
-15. Selecione o app **PsicoFlow**
+15. Selecione o app **PsiHumanis**
 16. Permissões: `whats_business_messaging`, `whatsapp_business_management`
 17. Clique **"Gerar"**
 18. **IMPORTANTE**: Copie o token AGORA — depois de fechar não aparece de novo
@@ -105,7 +105,7 @@ Já configurado. Se precisar alterar:
 
 ### 2.8 Adicionar env vars no Vercel
 
-1. Acesse https://vercel.com/psimariojunior/psicoflow/settings/environment-variables
+1. Acesse https://vercel.com/psimariojunior/psihumanis/settings/environment-variables
 2. Adicione duas variáveis (ambas **Production** apenas):
 
 | Nome | Valor |
@@ -128,8 +128,8 @@ O Vercel Hobby **não tem cron nativo**. Use cron-job.org (grátis):
 5. Confirme o email (checa spam!)
 6. Clique **"Create Cronjob"**
 7. Configure:
-   - **Title**: `PsicoFlow - Lembretes`
-   - **URL**: `https://psicoflow-iota.vercel.app/api/cron/lembretes`
+   - **Title**: `PsiHumanis - Lembretes`
+   - **URL**: `https://psihumanis.com.br/api/cron/lembretes`
    - **Execution interval**: `Every 30 minutes`
    - **Request Method**: `GET`
 8. Role e clique **"Create"**
@@ -140,7 +140,7 @@ O Vercel Hobby **não tem cron nativo**. Use cron-job.org (grátis):
 
 ### 4.1 Testar email (já funciona)
 
-1. Acesse o PsicoFlow → **Agenda**
+1. Acesse o PsiHumanis → **Agenda**
 2. Crie uma consulta para **daqui a 2 horas**
 3. Abra os detalhes da consulta
 4. Clique **"Enviar Lembrete"**
@@ -156,7 +156,7 @@ O Vercel Hobby **não tem cron nativo**. Use cron-job.org (grátis):
 ### 4.3 Testar o cron
 
 1. Depois de criar uma consulta futura, acesse manualmente:
-   https://psicoflow-iota.vercel.app/api/cron/lembretes
+   https://psihumanis.com.br/api/cron/lembretes
 2. Resposta esperada: `{ "ok": true, "processed": 2, "sent": 2, "failed": 0 }`
 
 ---

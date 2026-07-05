@@ -1,4 +1,4 @@
-# PsicoFlow - Sistema de Gestão para Psicólogos
+# PsiHumanis - Sistema de Gestão para Psicólogos
 
 Sistema completo de gestão para psicólogos, inspirado no PsicoManager, com designer moderno e intuitivo.
 
@@ -98,8 +98,8 @@ Sistema completo de gestão para psicólogos, inspirado no PsicoManager, com des
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/psicoflow.git
-cd psicoflow
+git clone https://github.com/psimariojunior/PsiHumanis.git
+cd PsiHumanis
 
 # Instale as dependências
 npm install
@@ -120,7 +120,7 @@ npm run dev
 
 ### Banco de Dados
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/psicoflow"
+DATABASE_URL="postgresql://user:password@localhost:5432/psihumanis"
 ```
 
 ### Autenticação
@@ -132,7 +132,7 @@ NEXTAUTH_SECRET="seu-secret-aqui"
 ### Email (Resend)
 ```env
 RESEND_API_KEY="re_xxxxxxxxxxxx"
-EMAIL_FROM="PsicoFlow <onboarding@resend.dev>"
+EMAIL_FROM="PsiHumanis <onboarding@resend.dev>"
 ```
 
 ## 🌐 **Estrutura do Projeto**
@@ -169,4 +169,4 @@ Este projeto está sob a licença MIT.
 
 ---
 
-**PsicoFlow** - Gestão inteligente para sua prática psicológica. 🧠
+**PsiHumanis** - Gestão inteligente para sua prática psicológica.

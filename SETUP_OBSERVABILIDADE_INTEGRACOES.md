@@ -8,12 +8,12 @@ O código da integração já está implementado. Para ativar em produção:
 2. Ative a API `Google Calendar API`.
 3. Crie credenciais OAuth 2.0 do tipo `Web application`.
 4. Configure o redirect URI autorizado:
-   `https://psicoflow-iota.vercel.app/api/integrations/google-calendar/callback`
+   `https://psihumanis.com.br/api/integrations/google-calendar/callback`
 5. Adicione no Vercel Production:
    `GOOGLE_CALENDAR_CLIENT_ID`
    `GOOGLE_CALENDAR_CLIENT_SECRET`
-   `NEXT_PUBLIC_APP_URL=https://psicoflow-iota.vercel.app`
-6. No PsicoFlow, acesse `Configurações > Agenda > Google Calendar` e clique em `Conectar`.
+   `NEXT_PUBLIC_APP_URL=https://psihumanis.com.br`
+6. No PsiHumanis, acesse `Configurações > Agenda > Google Calendar` e clique em `Conectar`.
 
 ## Sentry
 

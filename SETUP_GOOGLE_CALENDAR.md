@@ -14,12 +14,12 @@ Para ativar, siga os passos abaixo.
 
 1. APIs e Serviços → Credenciais → Criar Credenciais → ID do cliente OAuth
 2. Tipo: **Aplicativo Web**
-3. Nome: "PsicoFlow Web Client"
+3. Nome: "PsiHumanis Web Client"
 4. **Origens JavaScript autorizadas** (adicionar):
-   - `https://psicoflow-iota.vercel.app`
+   - `https://psihumanis.com.br`
    - `http://localhost:3000`
 5. **URIs de redirecionamento autorizados** (adicionar):
-   - `https://psicoflow-iota.vercel.app/api/integrations/google-calendar/callback`
+   - `https://psihumanis.com.br/api/integrations/google-calendar/callback`
    - `http://localhost:3000/api/integrations/google-calendar/callback`
 6. Clique em "Criar"
 7. Copie o **ID do cliente** e a **Chave secreta do cliente**
@@ -31,7 +31,7 @@ No dashboard Vercel → Settings → Environment Variables:
 ```
 GOOGLE_CALENDAR_CLIENT_ID=<seu_client_id>
 GOOGLE_CALENDAR_CLIENT_SECRET=<sua_client_secret>
-NEXT_PUBLIC_APP_URL=https://psicoflow-iota.vercel.app
+NEXT_PUBLIC_APP_URL=https://psihumanis.com.br
 ```
 
 ## 4. Testar

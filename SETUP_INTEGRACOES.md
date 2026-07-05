@@ -7,7 +7,7 @@
 1. Acesse https://console.cloud.google.com/
 2. Faça login com sua conta Google (qualquer uma)
 3. Clique no seletor de projeto (topo) → **"Novo Projeto"**
-4. Nome: **PsicoFlow**
+4. Nome: **PsiHumanis**
 5. Clique **"Criar"**
 
 ### 1.2 Ativar API do Google Calendar
@@ -22,17 +22,17 @@
 2. Clique **"Criar credenciais"** → **"ID do cliente OAuth"**
 3. Se pedir para configurar tela de consentimento:
    - **Tipo de usuário**: Externo
-   - **Nome do app**: PsicoFlow
+   - **Nome do app**: PsiHumanis
    - **Email de suporte**: seu email
    - **Escopo**: adicione `.../auth/calendar.events`
    - **Usuários de teste**: seu email
 4. Após configurar a tela, volte e crie as credenciais:
    - **Tipo**: Aplicativo Web
-   - **Nome**: PsicoFlow Web
+   - **Nome**: PsiHumanis Web
    - **Origens JavaScript autorizadas**: deixe vazio
     - **URIs de redirecionamento autorizados**:
       ```
-      https://psicoflow-iota.vercel.app/api/integrations/google-calendar/callback
+      https://psihumanis.com.br/api/integrations/google-calendar/callback
       ```
       (Para testar local: `http://localhost:3000/api/integrations/google-calendar/callback`)
 5. Clique **"Criar"**
@@ -62,8 +62,8 @@
 3. Senha: escolha uma
 4. Complete os dados do negócio:
    - **País**: Brasil
-   - **Nome da empresa**: PsicoFlow
-   - **Site**: `https://psicoflow-iota.vercel.app`
+   - **Nome da empresa**: PsiHumanis
+   - **Site**: `https://psihumanis.com.br`
    - **Tipo de negócio**: Profissional liberal / Psicólogo
 5. Confirme o email
 
@@ -81,7 +81,7 @@
 2. Clique **"Adicionar endpoint"**
 3. **URL do endpoint**:
    ```
-   https://psicoflow-iota.vercel.app/api/pagamentos/webhook
+   https://psihumanis.com.br/api/pagamentos/webhook
    ```
 4. **Eventos para escutar**: marque:
    - `checkout.session.completed`
@@ -112,7 +112,7 @@
 
 ## 3. Adicionar env vars no Vercel
 
-1. Acesse https://vercel.com/psimariojunior/psicoflow/settings/environment-variables
+1. Acesse https://vercel.com/psimariojunior/psihumanis/settings/environment-variables
 2. Adicione **todas** as variáveis acima (Production)
 3. Após adicionar, vá até o deploy mais recente e clique **"Redeploy"**
 
@@ -121,7 +121,7 @@
 ## 4. Testar
 
 ### Google Calendar
-1. Acesse o PsicoFlow → **Configurações** → aba **Agenda**
+1. Acesse o PsiHumanis → **Configurações** → aba **Agenda**
 2. Clique **"Conectar"** ao lado de Google Calendar
 3. Faça login na conta Google
 4. Autorize as permissões
@@ -129,7 +129,7 @@
 6. Verifique se os eventos aparecem no Google Agenda
 
 ### Stripe
-1. Acesse PsicoFlow → **Financeiro** → **Faturas**
+1. Acesse PsiHumanis → **Financeiro** → **Faturas**
 2. Crie uma fatura para um paciente
 3. Acesse a área do paciente → **Minhas Faturas**
 4. Clique **"Pagar com Cartão / PIX / Boleto"**

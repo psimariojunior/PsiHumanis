@@ -1,4 +1,4 @@
-# PsicoFlow — Session Log
+# PsiHumanis — Session Log
 
 ## Goal
 Professional psychology practice website + management platform. Public landing page, SEO optimized, full patient portal, video call, billing, dashboard analytics, Hermes Agent integration.
@@ -9,7 +9,7 @@ Professional psychology practice website + management platform. Public landing p
 - **Deps**: PyYAML, python-dotenv, rich, mcp, etc instalados via uv sync + uv pip
 - **Acesso CLI**: `hermes` (alias via PowerShell profile) ou `& "$env:LOCALAPPDATA\hermes\hermes-agent\.venv\Scripts\python.exe" "$env:LOCALAPPDATA\hermes\hermes-agent\hermes" <comando>`
 - **Provider**: OpenRouter (modelo: `openrouter/free` — gratuito)
-- **Working dir**: `C:\Users\miche\Desktop\PsicoFlow-Completo`
+- **Working dir**: `C:\Users\miche\Desktop\PsiHumanis-Completo`
 - **Alias PowerShell**: `function hermes { ... }` adicionado ao `$PROFILE.CurrentUserAllHosts`
 
 ## Architecture
@@ -59,8 +59,8 @@ Professional psychology practice website + management platform. Public landing p
 - Secrets set as Vercel env vars (Production only)
 
 ### Vercel deployment
-- Git repo: `https://github.com/psimariojunior/psicoflow`
-- Production URL: `https://psicoflow-iota.vercel.app`
+- Git repo: `https://github.com/psimariojunior/PsiHumanis`
+- Production URL: `https://psihumanis.com.br`
 - Build command: `prisma db push --accept-data-loss && next build` (vercel.json)
 - `POSTGRES_PRISMA_URL` env (non-pooled) for DDL via prisma db push
 - Vercel env vars: nextauth vars, LIVEKIT_API_KEY/SECRET, LIVEKIT_URL, DATABASE_URL, POSTGRES_PRISMA_URL, POSTGRES_URL_NON_POOLING, ENCRYPTION_KEY, NEXTAUTH_URL, WHATSAPP_API_TOKEN, WHATSAPP_PHONE_NUMBER_ID, RESEND_API_KEY, EMAIL_FROM, GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET, STRIPE_SECRET_KEY, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET
@@ -128,7 +128,7 @@ Professional psychology practice website + management platform. Public landing p
 ### Pre-Launch Audit Fixes (2026-06-11)
 - **Email**: `src/lib/email.ts` migrado definitivamente para Resend SDK (`resend.emails.send()`) — antes usava `fetch` para SendGrid mas env vars do Vercel tinham `RESEND_API_KEY`
 - **Reset password link**: corrigido de `/reset-password?token=...` → `/paciente/reset-password?token=...` (estava dando 404)
-- **`NEXT_PUBLIC_APP_URL`**: adicionado no Vercel (`https://psicoflow-iota.vercel.app`) — antes caía pra `localhost:3000`
+- **`NEXT_PUBLIC_APP_URL`**: adicionado no Vercel (`https://psihumanis.com.br`) — antes caía pra `localhost:3000`
 - **Login/forgot-password**: agora busca paciente por email em **todos os psicólogos** (antes usava `findFirst` — só funcionava pro primeiro psicólogo cadastrado)
 - **Nome do paciente na pré-chamada**: input não era mais `readOnly` — agora o paciente pode digitar o nome
 - **Rate limit no forgot-password**: limite de 1 requisição por email a cada 2 minutos (em memória)
