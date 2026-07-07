@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       where: { id: invoiceId, psychologistId },
       include: {
         patient: { select: { id: true, name: true, email: true, stripeCustomerId: true } },
-        psychologist: { select: { name: true } },
+        psychologist: { select: { name: true, stripeConnectAccountId: true } },
       },
     })
 
@@ -57,7 +57,9 @@ export async function POST(request: NextRequest) {
     }
 
     const s = getStripe()
-    const session = await s.checkout.sessions.create({
+
+    const platformFeePercent = 10
+    const sessionParams: Record<string, unknown> = {
       customer: stripeCustomerId || undefined,
       payment_method_types: ["card", "boleto"],
       line_items: [
@@ -78,7 +80,19 @@ export async function POST(request: NextRequest) {
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/paciente/faturas?canceled=true`,
       metadata: { invoiceId: invoice.id, psychologistId },
       expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
-    })
+    }
+
+    if (invoice.psychologist.stripeConnectAccountId) {
+      const amount = Math.round(invoice.totalAmount * 100)
+      const platformFee = Math.round(amount * (platformFeePercent / 100))
+      sessionParams.transfer_data = {
+        destination: invoice.psychologist.stripeConnectAccountId,
+        amount: amount - platformFee,
+      }
+      sessionParams.application_fee_amount = platformFee
+    }
+
+    const session = await s.checkout.sessions.create(sessionParams as any)
 
     await prisma.invoice.update({
       where: { id: invoice.id },

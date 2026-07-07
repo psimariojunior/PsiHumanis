@@ -15,6 +15,7 @@ import { getInitials } from "@/lib/utils"
 import { getLocale, setLocale, t } from "@/lib/i18n"
 import { Save, User, Bell, Lock, Globe, Palette, Shield, CreditCard, Users, Loader2, Calendar, CheckCircle, XCircle, ExternalLink, AlertTriangle, Camera, Download, FileJson, FileSpreadsheet, Eye, Gift, Copy, MessageCircle, BookOpen } from "lucide-react"
 import { BlogEditor } from "@/components/admin/blog-editor"
+import { StripeConnectCard } from "@/components/stripe-connect-card"
 import toast from "react-hot-toast"
 
 function GoogleCalendarStatus() {
@@ -945,7 +946,8 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="financial" className="mt-4">
+        <TabsContent value="financial" className="mt-4 space-y-6">
+          <StripeConnectCard />
           <Card>
             <CardHeader>
               <CardTitle>Configuração de Pagamentos</CardTitle>
