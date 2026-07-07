@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { logger } from "@/lib/logger"
 import { scheduleReminders } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
+import { sendFcmPushToMultiple } from "@/lib/firebase-fcm"
 import { rateLimitMiddleware } from "@/lib/rate-limit"
 import { validateOrigin } from "@/lib/csrf"
 import { sanitizeHtml } from "@/lib/security"
@@ -188,6 +189,22 @@ export async function POST(request: NextRequest) {
         <p style="text-align: center; font-size: 0.75rem; color: #999; margin-top: 24px;">PsiHumanis — Gestão de Psicologia</p>
       </div>`
     ).catch((e: unknown) => logger.error("psychologist notification email failed", { error: String(e) }))
+
+    // Push notification to psychologist
+    prisma.pushSubscription.findMany({
+      where: { psychologistId: psychologistIdFinal },
+      select: { fcmToken: true },
+    }).then((subs) => {
+      const tokens = subs.map((s) => s.fcmToken).filter((t): t is string => !!t)
+      if (tokens.length > 0) {
+        sendFcmPushToMultiple(
+          tokens,
+          "Novo Agendamento",
+          `${sanitizedName} agendou consulta para ${dateStr} às ${timeStr}`,
+          "/agenda"
+        ).catch((e) => logger.error("push to psychologist failed", { error: String(e) }))
+      }
+    }).catch((e) => logger.error("push query failed", { error: String(e) }))
 
     return NextResponse.json(
       {

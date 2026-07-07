@@ -8,6 +8,7 @@ import { sanitizeHtml } from "@/lib/security"
 import { requireAuth, apiError, apiSuccess } from "@/lib/api-helpers"
 import { syncAppointmentToCalendar } from "@/lib/google-calendar"
 import { fireTrigger } from "@/lib/automation-engine"
+import { sendFcmPushToMultiple } from "@/lib/firebase-fcm"
 
 export const dynamic = "force-dynamic"
 
@@ -98,6 +99,24 @@ export async function POST(request: Request) {
         appointmentDate: startTime.toLocaleDateString("pt-BR"),
         appointmentTime: startTime.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
       }).catch((e) => logger.error("fireTrigger appointment_booked failed", { error: String(e) }))
+
+      // Push notification to patient
+      prisma.pushSubscription.findMany({
+        where: { patientId: appt.patientId },
+        select: { fcmToken: true },
+      }).then((subs) => {
+        const tokens = subs.map((s) => s.fcmToken).filter((t): t is string => !!t)
+        if (tokens.length > 0) {
+          const dateStr = startTime.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })
+          const timeStr = startTime.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+          sendFcmPushToMultiple(
+            tokens,
+            "Consulta Agendada",
+            `Sua consulta foi agendada para ${dateStr} às ${timeStr}`,
+            "/paciente/agenda"
+          ).catch((e) => logger.error("push to patient failed", { error: String(e) }))
+        }
+      }).catch((e) => logger.error("patient push query failed", { error: String(e) }))
 
       return appt
     }
