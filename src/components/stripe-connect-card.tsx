@@ -158,7 +158,7 @@ export function StripeConnectCard() {
           <>
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                Conecte sua conta Stripe para receber pagamentos dos seus pacientes diretamente na sua conta bancária.
+                Conecte sua conta Stripe para receber pagamentos dos seus pacientes diretamente na sua conta bancária. Sem taxas da plataforma — apenas a taxa do Stripe.
               </p>
               <div className="grid grid-cols-1 gap-2 text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
@@ -175,7 +175,7 @@ export function StripeConnectCard() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
-                  Taxa de 3,99% + R$0,39 por transação (Stripe)
+                  Apenas a taxa do Stripe (3,99% + R$0,39 por transação)
                 </div>
               </div>
             </div>

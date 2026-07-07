@@ -58,7 +58,6 @@ export async function POST(request: NextRequest) {
 
     const s = getStripe()
 
-    const platformFeePercent = 10
     const sessionParams: Record<string, unknown> = {
       customer: stripeCustomerId || undefined,
       payment_method_types: ["card", "boleto"],
@@ -83,13 +82,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (invoice.psychologist.stripeConnectAccountId) {
-      const amount = Math.round(invoice.totalAmount * 100)
-      const platformFee = Math.round(amount * (platformFeePercent / 100))
       sessionParams.transfer_data = {
         destination: invoice.psychologist.stripeConnectAccountId,
-        amount: amount - platformFee,
       }
-      sessionParams.application_fee_amount = platformFee
     }
 
     const session = await s.checkout.sessions.create(sessionParams as any)
