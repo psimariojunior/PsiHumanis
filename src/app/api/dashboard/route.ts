@@ -219,8 +219,9 @@ export async function GET() {
       if (idx >= 0) newPatientsByMonth[idx].count++
     }
 
-    const mapApt = (apt: { id: string; startTime: Date; status: string; modality: string | null; patient: { name: string } }) => ({
+    const mapApt = (apt: { id: string; startTime: Date; status: string; modality: string | null; patient: { id: string; name: string } }) => ({
       id: apt.id,
+      patientId: apt.patient.id,
       patientName: apt.patient.name,
       startTime: apt.startTime,
       status: apt.status,

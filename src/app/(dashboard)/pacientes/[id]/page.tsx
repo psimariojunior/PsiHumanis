@@ -222,9 +222,16 @@ export default function PatientDetailPage({ params }: { params: { id: string } }
             </div>
           </div>
         </div>
-        <Button variant="outline" asChild>
-          <Link href={`/pacientes/${params.id}/edit`}><Pencil className="mr-2 h-4 w-4" /> Editar</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" asChild>
+            <Link href={`/sessoes/modo?patient=${params.id}`}>
+              <ClipboardList className="mr-2 h-4 w-4" /> Modo Sessão
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/pacientes/${params.id}/edit`}><Pencil className="mr-2 h-4 w-4" /> Editar</Link>
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

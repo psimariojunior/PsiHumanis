@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { LiveKitRoom, RoomAudioRenderer } from "@livekit/components-react"
 import "@livekit/components-styles"
-import { Video, Loader2, Link2, Copy, LogOut, Shield, Zap, FileText, Clock, UserCheck, UserX, Bell } from "lucide-react"
+import { Video, Loader2, Link2, Copy, LogOut, Shield, Zap, FileText, Clock, UserCheck, UserX, Bell, ClipboardList } from "lucide-react"
 import toast from "react-hot-toast"
 import { ErrorBoundary } from "@/components/error-boundary"
 import { EnhancedInCallUI } from "@/components/livekit/enhanced-in-call-ui"
@@ -328,6 +328,26 @@ function VirtualRoomPageInner() {
             <p className="text-xs text-muted-foreground">Baixa Latência</p>
           </div>
         </div>
+
+        <Card className="border-0 shadow-lg shadow-primary/5">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shrink-0">
+                <ClipboardList className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold">Modo Sessão</h3>
+                <p className="text-sm text-muted-foreground">Vídeo + Prontuário aberto durante o atendimento</p>
+              </div>
+              <Button asChild variant="outline" className="shrink-0">
+                <Link href="/sessoes/modo">
+                  <ClipboardList className="mr-2 h-4 w-4" />
+                  Abrir Modo Sessão
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

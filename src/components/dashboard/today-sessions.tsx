@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Video, Clock, UserCheck, Calendar, Loader2, Bell, ArrowRight } from "lucide-react"
+import { Video, Clock, UserCheck, Calendar, Loader2, Bell, ArrowRight, ClipboardList } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format, isToday } from "date-fns"
 import { ptBR } from "date-fns/locale"
@@ -13,6 +13,7 @@ import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
 interface Appointment {
   id: string
+  patientId: string
   patientName: string
   startTime: Date
   status: string
@@ -228,15 +229,22 @@ export function TodaySessions({ appointments }: { appointments: Appointment[] })
                   </div>
 
                   {/* Action */}
-                  <div className="shrink-0">
+                  <div className="shrink-0 flex items-center gap-1.5">
                     {session.sessionStatus === "waiting" || session.sessionStatus === "in_call" ? (
-                      <Button size="sm" className="h-8 px-3 bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm" asChild>
-                        <Link href={`/sala-virtual?room=${encodeURIComponent(session.roomName)}`} onClick={() => vibrateSelection()}>
-                          <Video className="h-3.5 w-3.5 mr-1" />
-                          Entrar
-                          <ArrowRight className="h-3 w-3 ml-1" />
-                        </Link>
-                      </Button>
+                      <>
+                        <Button size="sm" variant="outline" className="h-8 px-2 text-xs" asChild>
+                          <Link href={`/sessoes/modo?patient=${session.patientId}&room=${encodeURIComponent(session.roomName)}`} onClick={() => vibrateSelection()}>
+                            <ClipboardList className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
+                        <Button size="sm" className="h-8 px-3 bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm" asChild>
+                          <Link href={`/sala-virtual?room=${encodeURIComponent(session.roomName)}`} onClick={() => vibrateSelection()}>
+                            <Video className="h-3.5 w-3.5 mr-1" />
+                            Entrar
+                            <ArrowRight className="h-3 w-3 ml-1" />
+                          </Link>
+                        </Button>
+                      </>
                     ) : session.sessionStatus === "scheduled" || session.sessionStatus === "confirmed" ? (
                       <Button size="sm" variant="outline" className="h-8 px-3 text-xs" asChild>
                         <Link href={`/sala-virtual?room=${encodeURIComponent(session.roomName)}`} onClick={() => vibrateSelection()}>

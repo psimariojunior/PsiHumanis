@@ -79,6 +79,7 @@ export default function RecursosTerapeuticosPage() {
   const [patients, setPatients] = useState<Patient[]>([])
   const [selectedPatient, setSelectedPatient] = useState("")
   const [assignLoading, setAssignLoading] = useState(false)
+  const [assignNotes, setAssignNotes] = useState("")
 
   const [form, setForm] = useState({ name: "", description: "", type: "", content: "", category: "", tags: "" })
   const [submitting, setSubmitting] = useState(false)
@@ -135,15 +136,19 @@ export default function RecursosTerapeuticosPage() {
       const res = await fetch(`/api/pacientes/${selectedPatient}/tarefas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resourceId: assignResourceId }),
+        body: JSON.stringify({ resourceId: assignResourceId, notes: assignNotes.trim() || undefined }),
       })
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || "Erro ao atribuir")
+      }
       toast.success("Recurso atribuído ao paciente")
       setAssignOpen(false)
       setSelectedPatient("")
       setAssignResourceId(null)
-    } catch {
-      toast.error("Erro ao atribuir recurso")
+      setAssignNotes("")
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao atribuir recurso")
     } finally {
       setAssignLoading(false)
     }
@@ -151,6 +156,7 @@ export default function RecursosTerapeuticosPage() {
 
   function openAssign(resourceId: string) {
     setAssignResourceId(resourceId)
+    setAssignNotes("")
     setAssignOpen(true)
     if (patients.length === 0) {
       fetch("/api/pacientes")
@@ -357,9 +363,18 @@ export default function RecursosTerapeuticosPage() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2">
+              <Label>Instruções para o paciente (opcional)</Label>
+              <Textarea
+                value={assignNotes}
+                onChange={e => setAssignNotes(e.target.value)}
+                rows={3}
+                placeholder="Ex: Faça este exercício 2 vezes por semana antes de dormir"
+              />
+            </div>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => { setAssignOpen(false); setAssignResourceId(null) }}>Cancelar</Button>
-              <Button onClick={handleAssign} disabled={assignLoading}>
+              <Button onClick={handleAssign} disabled={assignLoading || !selectedPatient}>
                 {assignLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Atribuir
               </Button>

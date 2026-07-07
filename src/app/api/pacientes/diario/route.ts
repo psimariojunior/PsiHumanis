@@ -130,6 +130,77 @@ export async function POST(request: Request) {
       },
     })
 
+    if (data.mood <= 2) {
+      try {
+        const patientFull = await prisma.patient.findUnique({
+          where: { id: token.patientId },
+          select: { name: true },
+        })
+        const patientName = patientFull?.name || "Paciente"
+        const moodLabel = data.mood === 1 ? "Muito Baixo" : "Baixo"
+        const emotionsParsed = data.emotions ? JSON.parse(data.emotions) : []
+        const emotionTags = emotionsParsed.length > 0 ? `\nEmoções: ${emotionsParsed.join(", ")}` : ""
+        const noteText = data.notes ? `\nAnotação: "${data.notes}"` : ""
+
+        await prisma.notification.create({
+          data: {
+            title: "Alerta de Crise",
+            message: `O humor de ${patientName} está ${moodLabel} (${data.mood}/5). Possível necessidade de atenção urgente.${emotionTags}${noteText}`,
+            channel: "CRISIS_ALERT",
+            status: "PENDING",
+            psychologistId: patient.psychologistId,
+            patientId: token.patientId,
+          },
+        })
+
+        const { sendFcmPushToMultiple } = await import("@/lib/firebase-fcm")
+        const psyPushSubscriptions = await prisma.pushSubscription.findMany({
+          where: { psychologistId: patient.psychologistId },
+          select: { fcmToken: true },
+        })
+        if (psyPushSubscriptions.length > 0) {
+          const tokens = psyPushSubscriptions.map((s) => s.fcmToken).filter((t): t is string => t !== null)
+          if (tokens.length > 0) {
+            await sendFcmPushToMultiple(
+              tokens,
+              "Alerta de Crise",
+              `${patientName} registrou humor ${moodLabel} (${data.mood}/5). Verifique o diário de emoções.`,
+              "/diario-emocoes"
+            )
+          }
+        }
+
+        const psychologistUser = await prisma.user.findUnique({
+          where: { id: patient.psychologistId },
+          select: { email: true, name: true },
+        })
+        if (psychologistUser?.email) {
+          const { sendEmail } = await import("@/lib/email")
+          await sendEmail(
+            psychologistUser.email,
+            `Alerta de Crise - ${patientName}`,
+            `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: #dc2626; color: white; padding: 16px 24px; border-radius: 12px 12px 0 0;">
+                <h2 style="margin: 0; font-size: 18px;">Alerta de Crise</h2>
+              </div>
+              <div style="background: #fef2f2; padding: 24px; border: 1px solid #fecaca; border-top: none; border-radius: 0 0 12px 12px;">
+                <p style="margin: 0 0 12px; color: #991b1b; font-size: 15px;">
+                  O paciente <strong>${patientName}</strong> registrou um humor <strong>${moodLabel}</strong> (${data.mood}/5) no diário de emoções.
+                </p>
+                ${emotionsParsed.length > 0 ? `<p style="margin: 0 0 8px; color: #7f1d1d;"><strong>Emoções:</strong> ${emotionsParsed.join(", ")}</p>` : ""}
+                ${data.notes ? `<p style="margin: 0 0 8px; color: #7f1d1d;"><strong>Anotação:</strong> "${data.notes}"</p>` : ""}
+                <p style="margin: 16px 0 0; color: #991b1b; font-size: 13px;">
+                  Acesse o diário de emoções para mais detalhes.
+                </p>
+              </div>
+            </div>`
+          )
+        }
+      } catch (err) {
+        logger.error("Error sending crisis alert", { error: String(err) })
+      }
+    }
+
     return NextResponse.json(entry, { status: 201 })
   } catch (error) {
     logger.error("Error creating diary entry", { error: String(error) })

@@ -19,6 +19,7 @@ import { QuickNotesFab } from "@/components/dashboard/quick-notes-fab"
 import { TodaySessions } from "@/components/dashboard/today-sessions"
 import { BirthdayAlert } from "@/components/dashboard/birthday-alert"
 import { WeeklyOccupancy } from "@/components/dashboard/weekly-occupancy"
+import { CrisisAlerts } from "@/components/dashboard/crisis-alerts"
 import { t, getLocale } from "@/lib/i18n"
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
@@ -34,9 +35,9 @@ export default function DashboardHome() {
   const [data, setData] = useState<{
     stats: { totalPatients: number; appointmentsToday: number; monthlyRevenue: number; pendingPayments: number; appointmentChange: number; revenueChange: number }
     monthlyData: { month: string; appointments: number; receita: number }[]
-    appointments: { id: string; patientName: string; startTime: string; status: string; modality: string }[]
-    todaysAppointments: { id: string; patientName: string; startTime: string; status: string; modality: string }[]
-    tomorrowsAppointments: { id: string; patientName: string; startTime: string; status: string; modality: string }[]
+    appointments: { id: string; patientId: string; patientName: string; startTime: string; status: string; modality: string }[]
+    todaysAppointments: { id: string; patientId: string; patientName: string; startTime: string; status: string; modality: string }[]
+    tomorrowsAppointments: { id: string; patientId: string; patientName: string; startTime: string; status: string; modality: string }[]
     patients: { id: string; name: string; email: string | null; phone: string | null; createdAt: string }[]
     financialSummary: { totalRevenue: number; totalExpenses: number; balance: number; pending: number; overdue: number; received: number; goal: number }
     indicators: { averageTicket: number; completionRate: number; cancellationRate: number; occupationRate: number }
@@ -248,6 +249,9 @@ export default function DashboardHome() {
 
       {/* Onboarding */}
       {!onboardingDone && <OnboardingChecklist />}
+
+      {/* Crisis Alerts */}
+      <CrisisAlerts />
 
       {/* Today's sessions with real-time room status */}
       <TodaySessions appointments={todaysAppointments} />
