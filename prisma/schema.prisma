@@ -614,6 +614,17 @@ model ClosedRoom {
   @@index([psychologistId])
 }
 
+model WaitingRoomEntry {
+  id        String   @id @default(cuid())
+  room      String
+  name      String
+  status    String   @default("waiting")
+  createdAt DateTime @default(now())
+
+  @@index([room])
+  @@index([status])
+}
+
 model Receipt {
   id              String    @id @default(cuid())
   number          String    @unique

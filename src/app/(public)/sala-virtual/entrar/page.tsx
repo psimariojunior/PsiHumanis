@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useCallback, useRef, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { Loader2, CreditCard, Lock, ArrowLeft } from "lucide-react"
 import { LiveKitRoom, RoomAudioRenderer } from "@livekit/components-react"
 import "@livekit/components-styles"
 import toast from "react-hot-toast"
@@ -25,6 +25,8 @@ function EntrarSalaForm() {
   const [micOn, setMicOn] = useState(true)
   const [patientName, setPatientName] = useState("")
   const [psychologistPresent, setPsychologistPresent] = useState(false)
+  const [paymentRequired, setPaymentRequired] = useState(false)
+  const [paymentData, setPaymentData] = useState<{ appointmentId: string; amount: number } | null>(null)
   const [cameraReady, setCameraReady] = useState(false)
   const [hd, setHd] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -38,16 +40,21 @@ function EntrarSalaForm() {
     const nameParam = patientName.trim() ? `&name=${encodeURIComponent(patientName.trim())}` : ""
     try {
       const res = await fetch(`/api/livekit/token?room=${encodeURIComponent(roomInput)}&patient=true${nameParam}`)
+      const body = await res.json().catch(() => ({}))
+      if (res.status === 402 && body.error === "PAYMENT_REQUIRED") {
+        setPaymentData({ appointmentId: body.appointmentId, amount: body.amount })
+        setPaymentRequired(true)
+        setConnecting(false)
+        return
+      }
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
         throw new Error(body.error || "Erro ao conectar")
       }
-      const data = await res.json()
       streamRef.current?.getTracks().forEach((t) => t.stop())
       streamRef.current = null
       setCameraReady(false)
       setConnecting(false)
-      setToken(data.token)
+      setToken(body.token)
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao conectar")
       setConnecting(false)
@@ -175,6 +182,68 @@ function EntrarSalaForm() {
         onConnect={handleConnect}
         onPatientNameChange={setPatientName}
       />
+    )
+  }
+
+  if (paymentRequired && paymentData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-6 text-center">
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-amber-500/10 ring-1 ring-amber-500/20 mx-auto">
+            <Lock className="h-8 w-8 text-amber-500" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-white">Pagamento Necessário</h2>
+            <p className="text-slate-400 text-sm">
+              É necessário confirmar o pagamento da sessão antes de entrar na sala virtual.
+            </p>
+          </div>
+          <div className="bg-slate-800/50 rounded-2xl p-6 ring-1 ring-slate-700/50 space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-400">Valor da sessão</span>
+              <span className="text-white font-semibold">
+                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(paymentData.amount)}
+              </span>
+            </div>
+            <div className="h-px bg-slate-700" />
+            <p className="text-xs text-slate-500">
+              Clique abaixo para realizar o pagamento via cartão de crédito ou boleto.
+            </p>
+          </div>
+          <div className="space-y-3">
+            <button
+              onClick={async () => {
+                try {
+                  const res = await fetch("/api/pagamentos/public-checkout", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ invoiceId: paymentData.appointmentId }),
+                  })
+                  const data = await res.json()
+                  if (res.ok && data.url) {
+                    window.location.href = data.url
+                  } else {
+                    toast.error(data.error || "Erro ao criar pagamento")
+                  }
+                } catch {
+                  toast.error("Erro ao processar pagamento")
+                }
+              }}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 text-white font-semibold flex items-center justify-center gap-2 shadow-xl shadow-teal-500/25 hover:from-teal-400 hover:to-teal-500 transition-all"
+            >
+              <CreditCard className="h-5 w-5" />
+              Pagar Agora
+            </button>
+            <button
+              onClick={() => { setPaymentRequired(false); setPaymentData(null) }}
+              className="w-full h-10 rounded-xl text-slate-400 hover:text-white text-sm flex items-center justify-center gap-2 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </button>
+          </div>
+        </div>
+      </div>
     )
   }
 

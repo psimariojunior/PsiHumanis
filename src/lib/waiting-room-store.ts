@@ -1,6 +1,4 @@
-// Shared in-memory waiting room store
-// Used by both /api/livekit/token and /api/livekit/waiting
-// Resets on Vercel cold start — acceptable for real-time transient state
+import { prisma } from "./prisma"
 
 export interface WaitingPatient {
   id: string
@@ -10,60 +8,91 @@ export interface WaitingPatient {
   createdAt: number
 }
 
-const waitingRoom = new Map<string, WaitingPatient>()
-
-// Auto-cleanup entries older than 10 minutes
-function cleanup() {
-  const now = Date.now()
-  const entries = Array.from(waitingRoom.entries())
-  for (const [key, entry] of entries) {
-    if (now - entry.createdAt > 10 * 60 * 1000) {
-      waitingRoom.delete(key)
-    }
+export async function registerPatient(room: string, name: string, status: "waiting" | "approved" = "approved"): Promise<WaitingPatient> {
+  const entry = await prisma.waitingRoomEntry.create({
+    data: { room, name, status },
+  })
+  return {
+    id: entry.id,
+    room: entry.room,
+    name: entry.name,
+    status: entry.status as "waiting" | "approved" | "rejected",
+    createdAt: entry.createdAt.getTime(),
   }
 }
 
-export function registerPatient(room: string, name: string, status: "waiting" | "approved" = "approved"): WaitingPatient {
-  cleanup()
-  const id = `wait-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-  const entry: WaitingPatient = { id, room, name, status, createdAt: Date.now() }
-  waitingRoom.set(id, entry)
-  return entry
+export async function approvePatient(id: string): Promise<boolean> {
+  try {
+    await prisma.waitingRoomEntry.update({
+      where: { id },
+      data: { status: "approved" },
+    })
+    return true
+  } catch {
+    return false
+  }
 }
 
-export function approvePatient(id: string): boolean {
-  cleanup()
-  const entry = waitingRoom.get(id)
-  if (!entry) return false
-  entry.status = "approved"
-  waitingRoom.set(id, entry)
-  return true
+export async function rejectPatient(id: string): Promise<boolean> {
+  try {
+    await prisma.waitingRoomEntry.update({
+      where: { id },
+      data: { status: "rejected" },
+    })
+    return true
+  } catch {
+    return false
+  }
 }
 
-export function rejectPatient(id: string): boolean {
-  cleanup()
-  const entry = waitingRoom.get(id)
-  if (!entry) return false
-  entry.status = "rejected"
-  waitingRoom.set(id, entry)
-  return true
+export async function removePatient(id: string): Promise<void> {
+  try {
+    await prisma.waitingRoomEntry.delete({ where: { id } })
+  } catch {}
 }
 
-export function removePatient(id: string): void {
-  waitingRoom.delete(id)
+export async function getPatient(id: string): Promise<WaitingPatient | null> {
+  const entry = await prisma.waitingRoomEntry.findUnique({ where: { id } })
+  if (!entry) return null
+  return {
+    id: entry.id,
+    room: entry.room,
+    name: entry.name,
+    status: entry.status as "waiting" | "approved" | "rejected",
+    createdAt: entry.createdAt.getTime(),
+  }
 }
 
-export function getPatient(id: string): WaitingPatient | undefined {
-  cleanup()
-  return waitingRoom.get(id)
+export async function getAllPatients(): Promise<WaitingPatient[]> {
+  const entries = await prisma.waitingRoomEntry.findMany({
+    where: { createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) } },
+    orderBy: { createdAt: "desc" },
+  })
+  return entries.map((e) => ({
+    id: e.id,
+    room: e.room,
+    name: e.name,
+    status: e.status as "waiting" | "approved" | "rejected",
+    createdAt: e.createdAt.getTime(),
+  }))
 }
 
-export function getAllPatients(): WaitingPatient[] {
-  cleanup()
-  return Array.from(waitingRoom.values())
+export async function getPatientsByRoom(room: string): Promise<WaitingPatient[]> {
+  const entries = await prisma.waitingRoomEntry.findMany({
+    where: { room, createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) } },
+    orderBy: { createdAt: "desc" },
+  })
+  return entries.map((e) => ({
+    id: e.id,
+    room: e.room,
+    name: e.name,
+    status: e.status as "waiting" | "approved" | "rejected",
+    createdAt: e.createdAt.getTime(),
+  }))
 }
 
-export function getPatientsByRoom(room: string): WaitingPatient[] {
-  cleanup()
-  return Array.from(waitingRoom.values()).filter((p) => p.room === room)
+export async function cleanupOldEntries(): Promise<void> {
+  await prisma.waitingRoomEntry.deleteMany({
+    where: { createdAt: { lt: new Date(Date.now() - 10 * 60 * 1000) } },
+  })
 }

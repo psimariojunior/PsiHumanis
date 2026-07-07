@@ -39,7 +39,6 @@ export async function GET(request: Request) {
     let name: string
 
     if (isPatient) {
-      // Verify there's an active psychologist
       const psychologist = await prisma.user.findFirst({
         where: {
           role: { in: ["PSYCHOLOGIST", "ADMIN"] },
@@ -49,6 +48,26 @@ export async function GET(request: Request) {
       if (!psychologist) {
         return apiError("Nenhum profissional disponível no momento", 403)
       }
+
+      const appointment = await prisma.appointment.findFirst({
+        where: {
+          psychologistId: psychologist.id,
+          modality: "online",
+          status: { notIn: ["CANCELLED", "COMPLETED"] },
+          startTime: { gte: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+        },
+        orderBy: { startTime: "asc" },
+      })
+
+      if (appointment && appointment.paid === false && appointment.price && appointment.price > 0) {
+        return NextResponse.json({
+          error: "PAYMENT_REQUIRED",
+          message: "É necessário confirmar o pagamento antes de entrar na sala.",
+          appointmentId: appointment.id,
+          amount: appointment.price,
+        }, { status: 402 })
+      }
+
       identity = `paciente-${room}-${Date.now()}`
       name = searchParams.get("name") || "Paciente"
     } else {
@@ -63,9 +82,8 @@ export async function GET(request: Request) {
     const at = new AccessToken(apiKey, apiSecret, { identity, name })
     at.addGrant({ roomJoin: true, room, canPublish: true, canSubscribe: true })
 
-    // Auto-register patient as "approved" so dashboard sees them in real-time
     if (isPatient) {
-      registerPatient(room, name, "approved")
+      await registerPatient(room, name, "approved")
     }
 
     return NextResponse.json({ token: await at.toJwt() })
