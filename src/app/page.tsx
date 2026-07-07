@@ -15,7 +15,7 @@ import {
   ArrowRight, CheckCircle, Shield, Heart, Brain,
   Users, Globe, Calendar, ChevronDown, Menu, X, Star,
   Phone, Mail, MapPin, Clock, Quote, Award,
-  Sun, Moon, Languages, Video, Play, Sparkles,
+  Sun, Moon, Languages, Video, Play, Sparkles, TrendingUp,
   Stethoscope, FileText, Lock, BarChart3, CalendarCheck,
   Zap, Eye, MessageCircle, ArrowUpRight, CircleDot, Mic, Maximize2
 } from "lucide-react"
@@ -232,70 +232,58 @@ export default function LandingPage() {
             </motion.div>
           </div>
 
-          {/* Right side — atmospheric illustration */}
-          <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 w-[420px]">
+          {/* Right side — real app screenshot */}
+          <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[380px]">
             <div className="relative">
-              {/* Organic card container */}
-              <div className="relative rounded-[2rem] bg-white dark:bg-slate-900 p-8 shadow-2xl shadow-slate-900/10 dark:shadow-black/30 border border-slate-100 dark:border-slate-800">
-                {/* Simulated video call */}
-                <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 overflow-hidden aspect-[4/3] relative mb-6">
-                  <div className="absolute inset-0 bg-gradient-to-br from-teal-950/40 via-transparent to-violet-950/20" />
-                  <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/40 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="font-medium">Dr. Mario Jr.</span>
-                    <span className="text-white/40">30:00</span>
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center mx-auto shadow-lg shadow-teal-500/30 ring-4 ring-teal-400/20">
-                        <span className="text-xl font-bold text-white">MJ</span>
-                      </div>
-                      <p className="text-white/70 text-xs font-medium mt-3">Consulta online</p>
-                    </div>
-                  </div>
-                  {/* PiP */}
-                  <div className="absolute bottom-12 right-3 w-20 rounded-lg overflow-hidden border-2 border-white/20 shadow-xl aspect-video">
-                    <div className="w-full h-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                      <span className="text-sm font-bold text-white">V</span>
-                    </div>
-                  </div>
-                  {/* Controls */}
-                  <div className="absolute bottom-0 left-0 right-0 pb-4 flex justify-center">
-                    <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-xl rounded-full px-3 py-2 border border-white/10">
-                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white"><Mic className="h-3.5 w-3.5" /></div>
-                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white"><Video className="h-3.5 w-3.5" /></div>
-                      <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white"><Phone className="h-3.5 w-3.5 rotate-[135deg]" /></div>
-                    </div>
-                  </div>
+              {/* Phone frame */}
+              <div className="relative rounded-[2.5rem] bg-slate-900 p-3 shadow-2xl shadow-slate-900/20 dark:shadow-black/40 border border-slate-700/50">
+                {/* Notch */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-slate-900 rounded-b-2xl z-10" />
+                {/* Screen */}
+                <div className="rounded-[2rem] overflow-hidden bg-white dark:bg-slate-950">
+                  <Image src="/hero-dashboard.png" alt="Dashboard PsiHumanis" width={344} height={612} className="w-full h-auto" priority />
                 </div>
+              </div>
 
-                {/* Stats row — dynamic from API */}
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { label: t("hero.stat.sessions", locale), value: reviewsTotal > 0 ? `${reviewsTotal}+` : "—", icon: CalendarCheck },
-                    { label: t("hero.stat.patients", locale), value: "380+", icon: Users },
-                    { label: t("hero.stat.rating", locale), value: reviewsAvg > 0 ? reviewsAvg.toFixed(1) : "—", icon: Star },
-                  ].map((stat) => (
-                    <div key={stat.label} className="text-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 stat-glow">
-                      <stat.icon className="h-4 w-4 text-teal-500 mx-auto mb-1" />
-                      <p className="text-lg font-bold text-slate-900 dark:text-white">{stat.value}</p>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-wider">{stat.label}</p>
-                    </div>
-                  ))}
+              {/* Floating stats card */}
+              <div className="absolute -top-4 -right-6 bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-xl border border-slate-100 dark:border-slate-700 animate-float">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                    <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Receita do mês</p>
+                    <p className="text-lg font-bold text-slate-900 dark:text-white">R$ 4.750</p>
+                  </div>
                 </div>
               </div>
 
               {/* Floating notification */}
-              <div className="absolute -top-3 -right-3 bg-white dark:bg-slate-800 rounded-xl p-3 shadow-xl border border-slate-100 dark:border-slate-700 animate-float">
+              <div className="absolute -bottom-3 -left-6 bg-white dark:bg-slate-800 rounded-2xl p-3 shadow-xl border border-slate-100 dark:border-slate-700 animate-float-delayed">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                    <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <div className="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+                    <Video className="h-4 w-4 text-teal-600 dark:text-teal-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-900 dark:text-white">Sessão concluída</p>
-                    <p className="text-[10px] text-slate-500">Bem-estar garantido</p>
+                    <p className="text-xs font-semibold text-slate-900 dark:text-white">Sala Virtual</p>
+                    <p className="text-[10px] text-slate-500">Videochamada segura</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Stats row */}
+              <div className="flex gap-3 mt-6 px-2">
+                {[
+                  { label: t("hero.stat.sessions", locale), value: reviewsTotal > 0 ? `${reviewsTotal}+` : "120+", icon: CalendarCheck },
+                  { label: t("hero.stat.patients", locale), value: "380+", icon: Users },
+                  { label: t("hero.stat.rating", locale), value: reviewsAvg > 0 ? reviewsAvg.toFixed(1) : "4.9", icon: Star },
+                ].map((stat) => (
+                  <div key={stat.label} className="flex-1 text-center p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 shadow-sm stat-glow">
+                    <stat.icon className="h-4 w-4 text-teal-500 mx-auto mb-1" />
+                    <p className="text-lg font-bold text-slate-900 dark:text-white">{stat.value}</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider">{stat.label}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -335,6 +323,35 @@ export default function LandingPage() {
               </div>
             </button>
           )}
+        </div>
+      </section>
+
+      {/* ═══════════════════ APP SCREENSHOTS ═══════════════════ */}
+      <section className="py-16 md:py-24 bg-slate-50 dark:bg-slate-900/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 px-4 py-1.5 text-xs font-medium border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-400 rounded-full">{locale === "en" ? "Platform" : "Plataforma"}</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">{locale === "en" ? "Everything you need" : "Tudo que você precisa"}</h2>
+            <p className="text-lg text-slate-500 dark:text-slate-400 max-w-lg mx-auto">{locale === "en" ? "Manage your practice from anywhere" : "Gerencie seu consultório de qualquer lugar"}</p>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+            {[
+              { src: "/hero-dashboard.png", label: locale === "en" ? "Dashboard" : "Painel" },
+              { src: "/screenshots/agenda.png", label: locale === "en" ? "Calendar" : "Agenda" },
+              { src: "/screenshots/pacientes.png", label: locale === "en" ? "Patients" : "Pacientes" },
+              { src: "/screenshots/sala-virtual.png", label: locale === "en" ? "Video Call" : "Sala Virtual" },
+              { src: "/screenshots/prontuarios.png", label: locale === "en" ? "Records" : "Prontuários" },
+            ].map((s) => (
+              <div key={s.label} className="flex-shrink-0 w-[220px] snap-center group">
+                <div className="rounded-[2rem] bg-slate-900 p-2 shadow-lg shadow-slate-900/10 dark:shadow-black/30 border border-slate-200/60 dark:border-slate-700/60 group-hover:shadow-xl group-hover:scale-[1.02] transition-all duration-300">
+                  <div className="rounded-[1.5rem] overflow-hidden bg-white dark:bg-slate-950">
+                    <Image src={s.src} alt={s.label} width={204} height={363} className="w-full h-auto" loading="lazy" />
+                  </div>
+                </div>
+                <p className="text-center text-sm font-medium text-slate-600 dark:text-slate-400 mt-3">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
