@@ -10,6 +10,7 @@ import { CommandPalette } from "@/components/command-palette"
 import { KeyboardShortcutsHint } from "@/components/keyboard-shortcuts"
 import { OnboardingTour } from "@/components/onboarding-tour"
 import { GuidedTour } from "@/components/guided-tour"
+import { SpotlightTour } from "@/components/spotlight-tour"
 import { PushNotificationPrompt } from "@/components/push-notification-prompt"
 import { ArrivalNotification } from "@/components/recepcao/arrival-notification"
 import { cn } from "@/lib/utils"
@@ -149,7 +150,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
         <KeyboardShortcutsHint />
         <OnboardingTour />
-        <GuidedTour />
+        <SpotlightTour />
         <PushNotificationPrompt />
         <ArrivalNotification />
       </div>

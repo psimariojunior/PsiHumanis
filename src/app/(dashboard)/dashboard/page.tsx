@@ -179,7 +179,7 @@ export default function DashboardHome() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-slate-950 via-teal-950 to-slate-900 p-6 text-white shadow-xl sm:p-8">
+      <section data-tour="dashboard-hero" className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-slate-950 via-teal-950 to-slate-900 p-6 text-white shadow-xl sm:p-8">
         <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-500/20 blur-3xl animate-pulse" />
         <div className="absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
         <div className="absolute right-10 top-10 h-2 w-2 rounded-full bg-teal-400/60 animate-bounce" style={{ animationDelay: "0.5s" }} />
@@ -280,7 +280,7 @@ export default function DashboardHome() {
       />
 
       {/* Today's sessions with real-time room status */}
-      <TodaySessions appointments={todaysAppointments} />
+      <div data-tour="today-sessions"><TodaySessions appointments={todaysAppointments} /></div>
 
       {/* Stats Cards */}
       <div data-tour="dashboard-stats"><StatsCards stats={stats} /></div>
@@ -424,7 +424,7 @@ export default function DashboardHome() {
           </CardContent>
         </Card>
 
-        <Card className="transition-all duration-200 hover:shadow-lg hover:shadow-teal-500/5">
+        <Card data-tour="quick-actions" className="transition-all duration-200 hover:shadow-lg hover:shadow-teal-500/5">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">

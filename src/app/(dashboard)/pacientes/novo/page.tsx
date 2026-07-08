@@ -68,7 +68,7 @@ export default function NewPatientPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div data-tour="new-patient" className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/pacientes">

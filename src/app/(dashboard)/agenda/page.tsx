@@ -259,7 +259,7 @@ export default function AgendaPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div data-tour="agenda-page" className="space-y-6">
       {/* Availability Guidance Banner */}
       {!hasAvailability && (
         <div className="rounded-2xl border-2 border-dashed border-amber-300 dark:border-amber-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 p-4">
