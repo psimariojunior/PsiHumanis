@@ -1,13 +1,15 @@
 import { Capacitor } from "@capacitor/core"
-import { PushNotifications } from "@capacitor/push-notifications"
 import { logger } from "./logger"
 
 export async function registerForPushNotifications(): Promise<string | null> {
   if (!Capacitor.isNativePlatform()) return null
 
-  await new Promise((r) => setTimeout(r, 2000))
+  // Wait for app to fully initialize
+  await new Promise((r) => setTimeout(r, 4000))
 
   try {
+    const { PushNotifications } = await import("@capacitor/push-notifications")
+    
     const permission = await PushNotifications.requestPermissions()
     if (permission.receive !== "granted") {
       logger.warn("Push notification permission denied")
@@ -40,15 +42,17 @@ export async function registerForPushNotifications(): Promise<string | null> {
 export function setupPushNotificationListeners() {
   if (!Capacitor.isNativePlatform()) return
 
-  PushNotifications.addListener("pushNotificationReceived", (notification) => {
-    logger.info("Push notification received", { title: notification.title, body: notification.body })
-  })
+  import("@capacitor/push-notifications").then(({ PushNotifications }) => {
+    PushNotifications.addListener("pushNotificationReceived", (notification) => {
+      logger.info("Push notification received", { title: notification.title, body: notification.body })
+    })
 
-  PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
-    const data = action.notification.data
-    logger.info("Push notification tapped", { data })
-    if (data?.url) {
-      window.location.href = data.url
-    }
-  })
+    PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
+      const data = action.notification.data
+      logger.info("Push notification tapped", { data })
+      if (data?.url) {
+        window.location.href = data.url
+      }
+    })
+  }).catch(() => {})
 }

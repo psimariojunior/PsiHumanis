@@ -16,12 +16,16 @@ export function PushPermissionPrompt() {
     if (dismissed) return
 
     const timer = setTimeout(() => {
-      PushNotifications.checkPermissions().then((result) => {
-        if (result.receive === "prompt") {
-          setShow(true)
-        }
-      }).catch(() => {})
-    }, 5000)
+      try {
+        PushNotifications.checkPermissions().then((result) => {
+          if (result.receive === "prompt") {
+            setShow(true)
+          }
+        }).catch(() => {})
+      } catch {
+        // Plugin not available or crashed - ignore
+      }
+    }, 8000)
 
     return () => clearTimeout(timer)
   }, [isNative])
