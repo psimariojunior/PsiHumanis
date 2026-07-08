@@ -203,3 +203,18 @@ test.describe("Task API", () => {
     expect([401, 403, 200]).toContain(response.status())
   })
 })
+
+test.describe("Relaxation Page", () => {
+  test("relaxation page loads or redirects", async ({ page }) => {
+    await page.goto("/paciente/relaxamento")
+    const body = await page.locator("body").textContent()
+    expect(body).toBeTruthy()
+  })
+
+  test("relaxation page has content when deployed", async ({ page }) => {
+    const response = await page.goto("/paciente/relaxamento")
+    if (response?.ok()) {
+      await expect(page.locator("body")).toContainText("PsiHumanis")
+    }
+  })
+})

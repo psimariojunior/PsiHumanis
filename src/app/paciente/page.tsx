@@ -27,6 +27,7 @@ interface DiaryEntry {
 }
 
 const quickLinks = [
+  { href: "/paciente/relaxamento", icon: Sparkles, label: "Relaxamento", desc: "Respiração guiada", gradient: "from-teal-400 to-cyan-500", iconBg: "bg-teal-100 dark:bg-teal-900/30" },
   { href: "/paciente/agenda", icon: CalendarDays, label: "Agenda", desc: "Ver consultas", gradient: "from-teal-500 to-indigo-600", iconBg: "bg-teal-100 dark:bg-teal-900/30" },
   { href: "/paciente/diario", icon: BookHeart, label: "Diário", desc: "Registre emoções", gradient: "from-teal-500 to-teal-700", iconBg: "bg-teal-100 dark:bg-teal-900/30" },
   { href: "/paciente/questionarios", icon: ClipboardList, label: "Questionários", desc: "PHQ-9, GAD-7", gradient: "from-indigo-500 to-purple-600", iconBg: "bg-indigo-100 dark:bg-indigo-900/30" },

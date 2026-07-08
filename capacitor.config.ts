@@ -22,17 +22,18 @@ const config: CapacitorConfig = {
       splashImmersive: false,
     },
     StatusBar: {
-      style: 'LIGHT',
+      style: 'DEFAULT',
       backgroundColor: '#0D9488',
+      overlaysWebView: false,
     },
     Keyboard: {
       resize: 'body',
-      style: 'DARK',
+      style: 'DEFAULT',
     },
   },
   android: {
     allowMixedContent: true,
-      backgroundColor: '#0D9488',
+    backgroundColor: '#0D9488',
   },
 };
 
