@@ -97,6 +97,7 @@ model User {
   referralsMade          Referral[]              @relation("ReferrerRelations")
   referralsReceived      Referral[]              @relation("ReferredRelations")
   pushSubscriptions      PushSubscription[]      @relation("PushSubPsychologist")
+  feedbacks              Feedback[]
 }
 
 model QuickNote {
@@ -992,4 +993,21 @@ model PushSubscription {
 
   @@index([patientId])
   @@index([psychologistId])
+}
+
+model Feedback {
+  id              String   @id @default(cuid())
+  rating          Int
+  title           String?
+  message         String
+  category        String   @default("GENERAL")
+  displayName     String?
+  allowPublic     Boolean  @default(false)
+  psychologistId  String
+  psychologist    User     @relation(fields: [psychologistId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@index([psychologistId])
+  @@index([rating])
+  @@index([allowPublic])
 }

@@ -21,6 +21,7 @@ import { BirthdayAlert } from "@/components/dashboard/birthday-alert"
 import { WeeklyOccupancy } from "@/components/dashboard/weekly-occupancy"
 import { CrisisAlerts } from "@/components/dashboard/crisis-alerts"
 import { PracticeHealthScore } from "@/components/dashboard/practice-health-score"
+import { FeedbackPrompt } from "@/components/feedback-prompt"
 import { t, getLocale } from "@/lib/i18n"
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
@@ -451,6 +452,9 @@ export default function DashboardHome() {
       </div>
 
       <QuickNotesFab />
+
+      {/* Feedback Prompt */}
+      <FeedbackPrompt trigger="session_completed" />
     </div>
   )
 }
