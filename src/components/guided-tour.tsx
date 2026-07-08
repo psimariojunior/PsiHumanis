@@ -246,10 +246,10 @@ export function GuidedTour() {
         />
       )}
 
-      <div className="relative z-10 w-full max-w-lg mx-4" key={animKey}>
+      <div className="relative z-10 w-full max-w-lg mx-3 sm:mx-4" key={animKey}>
         <div className="bg-background rounded-3xl shadow-2xl border overflow-hidden animate-tour-slide">
           {/* Top gradient header with illustration */}
-          <div className={cn("relative h-44 bg-gradient-to-br flex items-center justify-center overflow-hidden", step.color)}>
+          <div className={cn("relative h-36 sm:h-44 bg-gradient-to-br flex items-center justify-center overflow-hidden", step.color)}>
             <div className="absolute inset-0 bg-noise opacity-5" />
 
             {/* Floating particles */}
@@ -283,8 +283,8 @@ export function GuidedTour() {
             <div className="relative animate-tour-pop" key={`ill-${animKey}`}>
               {isLast ? (
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl">
-                    <span className="text-5xl">{step.illustration}</span>
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl">
+                    <span className="text-4xl sm:text-5xl">{step.illustration}</span>
                   </div>
                   {/* Confetti */}
                   {Array.from({ length: 12 }).map((_, i) => (
@@ -292,11 +292,11 @@ export function GuidedTour() {
                   ))}
                 </div>
               ) : (
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl animate-tour-glow">
-                    <span className="text-5xl">{step.illustration}</span>
-                  </div>
-                  <div className="absolute -inset-2 rounded-[28px] border-2 border-dashed border-white/20 animate-spin-slow" />
+              <div className="relative">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl animate-tour-glow">
+                  <span className="text-4xl sm:text-5xl">{step.illustration}</span>
+                </div>
+                <div className="absolute -inset-2 rounded-[28px] border-2 border-dashed border-white/20 animate-spin-slow" />
                 </div>
               )}
             </div>
@@ -310,7 +310,7 @@ export function GuidedTour() {
           </div>
 
           {/* Content */}
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-md", step.color)}>
