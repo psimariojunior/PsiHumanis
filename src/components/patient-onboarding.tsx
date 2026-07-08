@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Calendar, BookOpen, ClipboardList, ListTodo, FileText,
@@ -9,116 +9,157 @@ import {
 import { cn } from "@/lib/utils"
 
 const TOUR_KEY = "psihumanis-patient-tour"
-const TOUR_VERSION = "v2"
+const TOUR_VERSION = "v3"
 
 interface TourStep {
   icon: React.ElementType
   title: string
   description: string
   color: string
+  gradient: string
   illustration: string
   tip?: string
+  action?: { label: string; href: string }
+  demo?: "mood" | "agenda" | "diary" | "tasks" | "docs"
 }
 
 const steps: TourStep[] = [
   {
     icon: Heart,
-    title: "Seu Espaço Seguro",
-    description: "Bem-vindo(a)! Este é o seu cantinho seguro. Vamos te mostrar como funciona tudo.",
+    title: "Bem-vindo(a)!",
+    description: "Este é o seu espaço seguro. Tudo sobre seu tratamento está aqui.",
     color: "from-teal-500 to-emerald-500",
+    gradient: "bg-gradient-to-br from-teal-500/10 to-emerald-500/10 border-teal-200 dark:border-teal-800",
     illustration: "💚",
+    demo: "mood",
   },
   {
     icon: Calendar,
-    title: "Sua Agenda",
-    description: "Veja todas as suas consultas em um só lugar. Você pode até cancelar ou remarcar pelo app.",
+    title: "Agenda",
+    description: "Veja suas consultas e remarque se precisar.",
     color: "from-blue-500 to-indigo-500",
+    gradient: "bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border-blue-200 dark:border-blue-800",
     illustration: "📅",
-    tip: "Suas consultas aparecem aqui automaticamente quando o psicólogo agenda.",
+    tip: "O psicólogo agenda automaticamente para você.",
+    action: { label: "Ver agenda", href: "/paciente/agenda" },
+    demo: "agenda",
   },
   {
     icon: BookOpen,
-    title: "Diário de Emoções",
-    description: "Registre como se sente a cada dia. Seu psicólogo acompanha sua evolução junto com você.",
+    title: "Diário",
+    description: "Registre como se sente. Acompanhe sua evolução.",
     color: "from-violet-500 to-purple-500",
+    gradient: "bg-gradient-to-br from-violet-500/10 to-purple-500/10 border-violet-200 dark:border-violet-800",
     illustration: "📝",
-    tip: "Quanto mais registros, mais o psicólogo entende seu progresso!",
+    tip: "Toque nos emojis para testar agora!",
+    demo: "diary",
   },
   {
     icon: ClipboardList,
     title: "Questionários",
-    description: "Seu psicólogo pode enviar questionários para entender melhor você. Responda no seu ritmo.",
+    description: "PHQ-9, GAD-7 e outros. Responda no seu ritmo.",
     color: "from-orange-500 to-amber-500",
+    gradient: "bg-gradient-to-br from-orange-500/10 to-amber-500/10 border-orange-200 dark:border-orange-800",
     illustration: "✅",
   },
   {
     icon: ListTodo,
-    title: "Tarefas Terapêuticas",
-    description: "Atividades e exercícios designados pelo seu terapeuta. Acompanhe seu progresso aqui.",
+    title: "Tarefas",
+    description: "Atividades enviadas pelo seu terapeuta para você em casa.",
     color: "from-rose-500 to-pink-500",
+    gradient: "bg-gradient-to-br from-rose-500/10 to-pink-500/10 border-rose-200 dark:border-rose-800",
     illustration: "📋",
-    tip: "Complete as tarefas para acelerar seu processo terapêutico.",
-  },
-  {
-    icon: FileText,
-    title: "Seus Registros",
-    description: "Laudos, atestados e documentos importantes ficam guardados aqui. Sempre acessível.",
-    color: "from-emerald-500 to-teal-500",
-    illustration: "📁",
+    action: { label: "Ver tarefas", href: "/paciente/tarefas" },
   },
   {
     icon: PartyPopper,
-    title: "Tudo Pronto!",
-    description: "Você conhece tudo que precisa! Acesse sua agenda e comece sua jornada de cuidado.",
+    title: "Tudo pronto!",
+    description: "Explore à vontade. Estamos aqui para ajudar.",
     color: "from-teal-500 to-cyan-500",
+    gradient: "bg-gradient-to-br from-teal-500/10 to-cyan-500/10 border-teal-200 dark:border-teal-800",
     illustration: "🎉",
   },
 ]
 
-function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
-  const [displayed, setDisplayed] = useState("")
-  const [done, setDone] = useState(false)
-
-  useEffect(() => {
-    setDisplayed("")
-    setDone(false)
-    let i = 0
-    const timer = setTimeout(() => {
-      const interval = setInterval(() => {
-        if (i < text.length) {
-          setDisplayed(text.slice(0, i + 1))
-          i++
-        } else {
-          setDone(true)
-          clearInterval(interval)
-        }
-      }, 18)
-      return () => clearInterval(interval)
-    }, delay)
-    return () => clearTimeout(timer)
-  }, [text, delay])
-
+function MoodDemo({ onSelect }: { onSelect: (v: number) => void }) {
+  const [selected, setSelected] = useState<number | null>(null)
+  const emojis = [
+    { v: 1, e: "😔", l: "Baixo" },
+    { v: 2, e: "😟", l: "Ruim" },
+    { v: 3, e: "😐", l: "Ok" },
+    { v: 4, e: "🙂", l: "Bom" },
+    { v: 5, e: "😊", l: "Ótimo" },
+  ]
   return (
-    <span>
-      {displayed}
-      {!done && <span className="inline-block w-0.5 h-4 bg-teal-500 ml-0.5 animate-pulse" />}
-    </span>
+    <div className="flex justify-center gap-1.5">
+      {emojis.map((m) => (
+        <button
+          key={m.v}
+          onClick={() => { setSelected(m.v); onSelect(m.v) }}
+          className={cn(
+            "flex flex-col items-center gap-0.5 rounded-xl p-2 transition-all text-lg",
+            selected === m.v
+              ? "bg-teal-100 dark:bg-teal-900/50 scale-110 shadow-md"
+              : "bg-muted/50 hover:bg-muted active:scale-95"
+          )}
+        >
+          <span>{m.e}</span>
+          <span className="text-[9px] text-muted-foreground">{m.l}</span>
+        </button>
+      ))}
+    </div>
   )
 }
 
-function ConfettiParticle({ delay, x }: { delay: number; x: number }) {
-  const colors = ["bg-teal-400", "bg-blue-400", "bg-purple-400", "bg-pink-400", "bg-yellow-400", "bg-orange-400"]
-  const color = colors[Math.floor(Math.random() * colors.length)]
+function AgendaDemo() {
+  const now = new Date()
+  const tomorrow = new Date(now)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const fmt = tomorrow.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" })
   return (
-    <div
-      className={cn("absolute w-2 h-2 rounded-full animate-tour-confetti", color)}
-      style={{
-        left: `${x}%`,
-        bottom: "50%",
-        animationDelay: `${delay}s`,
-        animationDuration: `${0.6 + Math.random() * 0.6}s`,
-      }}
-    />
+    <div className="space-y-1.5">
+      {[
+        { time: "14:00", status: "Confirmada", color: "bg-emerald-500" },
+        { time: "14:30", status: "Em andamento", color: "bg-blue-500" },
+        { time: "15:00", status: "Aguardando", color: "bg-amber-500" },
+      ].map((a, i) => (
+        <div key={i} className="flex items-center gap-2 rounded-lg bg-background/60 px-2.5 py-1.5 text-xs">
+          <span className="font-mono font-medium text-foreground">{a.time}</span>
+          <span className={cn("h-1.5 w-1.5 rounded-full", a.color)} />
+          <span className="text-muted-foreground">{a.status}</span>
+        </div>
+      ))}
+      <p className="text-[10px] text-muted-foreground text-center pt-0.5">{fmt}</p>
+    </div>
+  )
+}
+
+function DiaryDemo() {
+  const [selected, setSelected] = useState<number | null>(null)
+  const moods = [
+    { v: 1, e: "😔" },
+    { v: 2, e: "😟" },
+    { v: 3, e: "😐" },
+    { v: 4, e: "🙂" },
+    { v: 5, e: "😊" },
+  ]
+  return (
+    <div className="flex justify-center gap-1.5">
+      {moods.map((m) => (
+        <button
+          key={m.v}
+          onClick={() => setSelected(m.v)}
+          className={cn(
+            "text-xl p-1.5 rounded-lg transition-all",
+            selected === m.v
+              ? "bg-violet-100 dark:bg-violet-900/50 scale-125"
+              : "bg-muted/30 hover:bg-muted active:scale-110"
+          )}
+        >
+          {m.e}
+        </button>
+      ))}
+    </div>
   )
 }
 
@@ -127,11 +168,14 @@ export function PatientOnboarding() {
   const [currentStep, setCurrentStep] = useState(0)
   const [animKey, setAnimKey] = useState(0)
   const [showTip, setShowTip] = useState(false)
+  const [demoAction, setDemoAction] = useState<string | null>(null)
+  const touchStartX = useRef(0)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem(TOUR_KEY)
     if (stored === TOUR_VERSION) return
-    const timer = setTimeout(() => setShow(true), 1000)
+    const timer = setTimeout(() => setShow(true), 800)
     return () => clearTimeout(timer)
   }, [])
 
@@ -146,6 +190,7 @@ export function PatientOnboarding() {
 
   function handleNext() {
     setShowTip(false)
+    setDemoAction(null)
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
       setAnimKey((k) => k + 1)
@@ -156,9 +201,22 @@ export function PatientOnboarding() {
 
   function handlePrev() {
     setShowTip(false)
+    setDemoAction(null)
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1)
       setAnimKey((k) => k + 1)
+    }
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    if (Math.abs(dx) > 60) {
+      if (dx < 0 && !isLast) handleNext()
+      else if (dx > 0 && !isFirst) handlePrev()
     }
   }
 
@@ -178,143 +236,160 @@ export function PatientOnboarding() {
   const Icon = step.icon
 
   return (
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-6">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden animate-tour-slide" key={animKey}>
-        {/* Header with illustration */}
-        <div className={cn("relative h-44 sm:h-52 bg-gradient-to-br flex items-center justify-center overflow-hidden", step.color)}>
+    <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm flex flex-col justify-end sm:items-center sm:justify-center p-0 sm:p-4">
+      <div
+        ref={containerRef}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className={cn(
+          "bg-white dark:bg-slate-900 sm:rounded-3xl rounded-t-3xl shadow-2xl w-full sm:max-w-sm overflow-hidden animate-tour-slide",
+          "max-h-[85vh] overflow-y-auto"
+        )}
+        key={animKey}
+      >
+        {/* Compact header bar */}
+        <div className={cn("relative h-28 sm:h-36 bg-gradient-to-br flex items-center justify-center overflow-hidden", step.color)}>
           <div className="absolute inset-0 bg-noise opacity-5" />
 
-          {/* Floating particles */}
-          <div className="absolute top-6 left-10 w-3 h-3 bg-white/20 rounded-full animate-float" />
-          <div className="absolute top-14 right-14 w-2 h-2 bg-white/30 rounded-full animate-float-delayed" />
-          <div className="absolute bottom-12 left-20 w-4 h-4 bg-white/15 rounded-full animate-float" />
-
-          {/* Progress dots */}
-          <div className="absolute top-4 left-4 right-4 flex justify-between">
+          {/* Progress */}
+          <div className="absolute top-3 left-3 right-3 flex items-center gap-1.5">
             {steps.map((_, i) => (
               <div
                 key={i}
                 className={cn(
-                  "h-1.5 rounded-full transition-all duration-500",
-                  i <= currentStep ? "bg-white w-5" : "bg-white/30 w-2"
+                  "h-1 rounded-full transition-all duration-500",
+                  i === currentStep ? "bg-white flex-1" : i < currentStep ? "bg-white/60 flex-1" : "bg-white/25 flex-0.5"
                 )}
               />
             ))}
           </div>
 
-          {/* Close */}
           <button
             onClick={handleDismiss}
-            className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors p-1.5 rounded-full hover:bg-white/10 z-10"
+            className="absolute top-3 right-3 text-white/60 hover:text-white p-1.5 rounded-full hover:bg-white/10 z-10"
             aria-label="Fechar"
           >
             <X className="h-4 w-4" />
           </button>
 
-          {/* Main illustration */}
+          {/* Illustration */}
           <div className="relative animate-tour-pop" key={`ill-${animKey}`}>
-            {isLast ? (
-              <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl">
-                  <span className="text-4xl sm:text-5xl">{step.illustration}</span>
-                </div>
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <ConfettiParticle key={i} delay={i * 0.1} x={15 + Math.random() * 70} />
-                ))}
-              </div>
-            ) : (
-              <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl animate-tour-glow">
-                  <span className="text-4xl sm:text-5xl">{step.illustration}</span>
-                </div>
-                <div className="absolute -inset-2 rounded-[28px] border-2 border-dashed border-white/20 animate-spin-slow" />
-              </div>
+            <div className={cn(
+              "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl",
+              isLast && "animate-tour-glow"
+            )}>
+              <span className="text-3xl sm:text-4xl">{step.illustration}</span>
+            </div>
+            {isLast && (
+              <div className="absolute -inset-1 rounded-[24px] border-2 border-dashed border-white/30 animate-spin-slow" />
             )}
           </div>
 
           {/* Step label */}
-          <div className="absolute bottom-4 left-4">
-            <span className="text-white/80 text-xs font-medium">
-              {isFirst ? "Vamos lá!" : `Passo ${currentStep} de ${steps.length - 1}`}
-            </span>
-          </div>
+          <span className="absolute bottom-2 left-3 text-white/70 text-[10px] font-medium">
+            {currentStep + 1}/{steps.length}
+          </span>
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
-          <div className="space-y-2">
+        <div className="p-4 space-y-3">
+          {/* Title + description */}
+          <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <div className={cn("w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-md", step.color)}>
-                <Icon className="h-4 w-4 text-white" />
+              <div className={cn("w-7 h-7 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-sm", step.color)}>
+                <Icon className="h-3.5 w-3.5 text-white" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{step.title}</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">{step.title}</h3>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              <TypewriterText text={step.description} key={`tw-${animKey}`} />
+            <p className="text-sm text-muted-foreground leading-relaxed pl-9">
+              {step.description}
             </p>
           </div>
 
-          {/* Tip */}
-          {step.tip && !showTip && (
-            <button
-              onClick={() => setShowTip(true)}
-              className="w-full text-left p-3 rounded-xl bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 text-sm text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/50 transition-colors"
-            >
-              <span className="flex items-center gap-2">
-                <Zap className="h-4 w-4 shrink-0" />
-                <span className="font-medium">Dica</span>
-                <ChevronRight className="h-3 w-3 ml-auto" />
-              </span>
-            </button>
+          {/* Interactive demo */}
+          {step.demo === "mood" && (
+            <div className="pl-9">
+              <p className="text-[10px] text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">Toque para testar:</p>
+              <MoodDemo onSelect={(v) => setDemoAction(`Humor: ${v}/5`)} />
+              {demoAction && (
+                <p className="text-[10px] text-teal-600 dark:text-teal-400 text-center mt-1 animate-fade-in">
+                  ✓ {demoAction} — assim funciona!
+                </p>
+              )}
+            </div>
           )}
-          {step.tip && showTip && (
-            <div className="p-3 rounded-xl bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 text-sm text-teal-700 dark:text-teal-300 animate-fade-in">
-              <span className="flex items-start gap-2">
-                <Zap className="h-4 w-4 shrink-0 mt-0.5" />
-                <span>{step.tip}</span>
+
+          {step.demo === "agenda" && (
+            <div className="pl-9">
+              <p className="text-[10px] text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">Sua agenda ficará assim:</p>
+              <AgendaDemo />
+            </div>
+          )}
+
+          {step.demo === "diary" && (
+            <div className="pl-9">
+              <p className="text-[10px] text-muted-foreground mb-1.5 font-medium uppercase tracking-wider">Registrar emoções:</p>
+              <DiaryDemo />
+            </div>
+          )}
+
+          {/* Tip */}
+          {step.tip && (
+            <div className={cn(
+              "pl-9 p-2.5 rounded-xl border text-xs",
+              step.gradient
+            )}>
+              <span className="flex items-start gap-1.5">
+                <Zap className="h-3 w-3 shrink-0 mt-0.5 text-teal-500" />
+                <span className="text-muted-foreground">{step.tip}</span>
               </span>
+            </div>
+          )}
+
+          {/* Action link */}
+          {step.action && (
+            <div className="pl-9">
+              <a
+                href={step.action.href}
+                className="inline-flex items-center gap-1 text-xs font-medium text-teal-600 dark:text-teal-400 hover:underline"
+                onClick={handleDismiss}
+              >
+                {step.action.label}
+                <ChevronRight className="h-3 w-3" />
+              </a>
             </div>
           )}
 
           {/* Navigation */}
-          <div className="flex gap-3 pt-1">
+          <div className="flex gap-2 pt-1">
             {!isFirst && (
-              <Button variant="outline" onClick={handlePrev} className="flex-1 h-10">
-                <ChevronLeft className="h-4 w-4 mr-1" />
+              <Button variant="outline" onClick={handlePrev} className="h-9 text-xs">
+                <ChevronLeft className="h-3.5 w-3.5 mr-1" />
                 Voltar
               </Button>
             )}
             <Button
               onClick={handleNext}
               className={cn(
-                "flex-1 h-10 text-white font-semibold shadow-lg transition-all",
+                "flex-1 h-9 text-white font-semibold text-xs shadow-md transition-all",
                 isFirst || isLast
-                  ? "bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 shadow-teal-500/25 hover:shadow-teal-500/40"
-                  : "bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-teal-500/25 hover:shadow-teal-500/40"
+                  ? "bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600"
+                  : "bg-teal-600 hover:bg-teal-700"
               )}
             >
               {isFirst ? (
-                <>
-                  <Sparkles className="h-4 w-4 mr-1.5" />
-                  Vamos lá!
-                </>
+                <><Sparkles className="h-3.5 w-3.5 mr-1" />Vamos lá!</>
               ) : isLast ? (
-                <>
-                  <PartyPopper className="h-4 w-4 mr-1.5" />
-                  Começar!
-                </>
+                <><PartyPopper className="h-3.5 w-3.5 mr-1" />Começar!</>
               ) : (
-                <>
-                  Próximo
-                  <ChevronRight className="h-4 w-4 ml-1.5" />
-                </>
+                <>Próximo<ChevronRight className="h-3.5 w-3.5 ml-1" /></>
               )}
             </Button>
           </div>
 
           <button
             onClick={handleDismiss}
-            className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
+            className="w-full text-center text-[11px] text-muted-foreground hover:text-foreground transition-colors py-0.5"
           >
             Pular introdução
           </button>

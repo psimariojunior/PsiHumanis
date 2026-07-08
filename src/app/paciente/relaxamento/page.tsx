@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowLeft, Play, Pause, RotateCcw, Volume2, VolumeX, Wind, Waves, TreePine, CloudRain, Moon, Sun } from "lucide-react"
+import { ArrowLeft, Play, Pause, RotateCcw, Volume2, VolumeX, Wind, Waves, TreePine, CloudRain, Moon } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
+import { createRain, createOcean, createForest, createWind, createNight, type SoundController, type SoundFactory } from "@/lib/ambient-sounds"
 
 type BreathingPattern = {
   name: string
@@ -20,14 +21,12 @@ type BreathingPattern = {
   gradient: string
 }
 
-type AmbientSound = {
+type AmbientSoundDef = {
   id: string
   name: string
   nameEn: string
   icon: React.ReactNode
-  frequency: number
-  type: OscillatorType
-  volume: number
+  factory: SoundFactory
 }
 
 const breathingPatterns: BreathingPattern[] = [
@@ -88,52 +87,12 @@ const breathingPatterns: BreathingPattern[] = [
   },
 ]
 
-const ambientSounds: AmbientSound[] = [
-  {
-    id: "rain",
-    name: "Chuva",
-    nameEn: "Rain",
-    icon: <CloudRain className="h-5 w-5" />,
-    frequency: 200,
-    type: "sawtooth",
-    volume: 0.03,
-  },
-  {
-    id: "ocean",
-    name: "Oceano",
-    nameEn: "Ocean",
-    icon: <Waves className="h-5 w-5" />,
-    frequency: 120,
-    type: "sine",
-    volume: 0.04,
-  },
-  {
-    id: "forest",
-    name: "Floresta",
-    nameEn: "Forest",
-    icon: <TreePine className="h-5 w-5" />,
-    frequency: 400,
-    type: "triangle",
-    volume: 0.02,
-  },
-  {
-    id: "wind",
-    name: "Vento",
-    nameEn: "Wind",
-    icon: <Wind className="h-5 w-5" />,
-    frequency: 300,
-    type: "sawtooth",
-    volume: 0.025,
-  },
-  {
-    id: "night",
-    name: "Noite",
-    nameEn: "Night",
-    icon: <Moon className="h-5 w-5" />,
-    frequency: 80,
-    type: "sine",
-    volume: 0.035,
-  },
+const ambientSounds: AmbientSoundDef[] = [
+  { id: "rain", name: "Chuva", nameEn: "Rain", icon: <CloudRain className="h-5 w-5" />, factory: createRain },
+  { id: "ocean", name: "Oceano", nameEn: "Ocean", icon: <Waves className="h-5 w-5" />, factory: createOcean },
+  { id: "forest", name: "Floresta", nameEn: "Forest", icon: <TreePine className="h-5 w-5" />, factory: createForest },
+  { id: "wind", name: "Vento", nameEn: "Wind", icon: <Wind className="h-5 w-5" />, factory: createWind },
+  { id: "night", name: "Noite", nameEn: "Night", icon: <Moon className="h-5 w-5" />, factory: createNight },
 ]
 
 export default function RelaxamentoPage() {
@@ -144,13 +103,12 @@ export default function RelaxamentoPage() {
   const [countdown, setCountdown] = useState(0)
   const [cycleCount, setCycleCount] = useState(0)
   const [totalTime, setTotalTime] = useState(0)
-  const [selectedSound, setSelectedSound] = useState<AmbientSound | null>(null)
+  const [selectedSound, setSelectedSound] = useState<AmbientSoundDef | null>(null)
   const [soundVolume, setSoundVolume] = useState(0.5)
   const [isMuted, setIsMuted] = useState(false)
 
   const audioCtxRef = useRef<AudioContext | null>(null)
-  const oscillatorRef = useRef<OscillatorNode | null>(null)
-  const gainNodeRef = useRef<GainNode | null>(null)
+  const soundCtrlRef = useRef<SoundController | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const phaseTimerRef = useRef<NodeJS.Timeout | null>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -267,55 +225,28 @@ export default function RelaxamentoPage() {
   }, [phase, countdown, drawBreathingCircle, selectedPattern, isActive])
 
   const startSound = useCallback(
-    (sound: AmbientSound) => {
+    (sound: AmbientSoundDef) => {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
       }
-      const ctx = audioCtxRef.current
-
-      if (oscillatorRef.current) {
-        oscillatorRef.current.stop()
+      if (soundCtrlRef.current) {
+        soundCtrlRef.current.stop()
+        soundCtrlRef.current = null
       }
-
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      const filter = ctx.createBiquadFilter()
-
-      osc.type = sound.type
-      osc.frequency.setValueAtTime(sound.frequency, ctx.currentTime)
-
-      filter.type = "lowpass"
-      filter.frequency.setValueAtTime(800, ctx.currentTime)
-      filter.Q.setValueAtTime(1, ctx.currentTime)
-
-      gain.gain.setValueAtTime(0, ctx.currentTime)
-      gain.gain.linearRampToValueAtTime(sound.volume * soundVolume, ctx.currentTime + 0.5)
-
-      osc.connect(filter)
-      filter.connect(gain)
-      gain.connect(ctx.destination)
-
-      osc.start()
-      oscillatorRef.current = osc
-      gainNodeRef.current = gain
+      soundCtrlRef.current = sound.factory(audioCtxRef.current, soundVolume)
     },
     [soundVolume]
   )
 
   const stopSound = useCallback(() => {
-    if (gainNodeRef.current && audioCtxRef.current) {
-      gainNodeRef.current.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 0.3)
+    if (soundCtrlRef.current) {
+      soundCtrlRef.current.stop()
+      soundCtrlRef.current = null
     }
-    setTimeout(() => {
-      if (oscillatorRef.current) {
-        try { oscillatorRef.current.stop() } catch {}
-        oscillatorRef.current = null
-      }
-    }, 350)
   }, [])
 
   const toggleSound = useCallback(
-    (sound: AmbientSound) => {
+    (sound: AmbientSoundDef) => {
       if (selectedSound?.id === sound.id) {
         setSelectedSound(null)
         stopSound()
@@ -409,21 +340,15 @@ export default function RelaxamentoPage() {
 
   useEffect(() => {
     if (selectedSound && !isMuted) {
-      if (gainNodeRef.current && audioCtxRef.current) {
-        gainNodeRef.current.gain.linearRampToValueAtTime(selectedSound.volume * soundVolume, audioCtxRef.current.currentTime + 0.1)
-      }
+      soundCtrlRef.current?.setVolume(soundVolume)
     }
   }, [soundVolume, selectedSound, isMuted])
 
   useEffect(() => {
     if (isMuted) {
-      if (gainNodeRef.current && audioCtxRef.current) {
-        gainNodeRef.current.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 0.1)
-      }
+      soundCtrlRef.current?.setVolume(0)
     } else if (selectedSound) {
-      if (gainNodeRef.current && audioCtxRef.current) {
-        gainNodeRef.current.gain.linearRampToValueAtTime(selectedSound.volume * soundVolume, audioCtxRef.current.currentTime + 0.1)
-      }
+      soundCtrlRef.current?.setVolume(soundVolume)
     }
   }, [isMuted, selectedSound, soundVolume])
 
