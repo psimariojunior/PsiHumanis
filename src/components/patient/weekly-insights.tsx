@@ -119,7 +119,8 @@ export function WeeklyInsights({ entries }: WeeklyInsightsProps) {
     const emotionCounts: Record<string, number> = {}
     last7.forEach((e) => {
       if (e.emotions) {
-        e.emotions.forEach((emo) => {
+        const parsed = Array.isArray(e.emotions) ? e.emotions : (typeof e.emotions === "string" ? (() => { try { return JSON.parse(e.emotions) } catch { return [] } })() : [])
+        parsed.forEach((emo: string) => {
           emotionCounts[emo] = (emotionCounts[emo] || 0) + 1
         })
       }
