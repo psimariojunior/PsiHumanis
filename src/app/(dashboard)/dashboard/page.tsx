@@ -10,7 +10,7 @@ import { OnboardingChecklist } from "@/components/onboarding-checklist"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Calendar, UserPlus, FileText, Video, Sparkles, ArrowRight, BarChart3, TrendingUp, Users, DollarSign, Clock, Activity, CalendarDays, Sun, Moon, AlertTriangle, Zap } from "lucide-react"
+import { Plus, Calendar, UserPlus, FileText, Video, Sparkles, ArrowRight, BarChart3, TrendingUp, Users, DollarSign, Clock, Activity, CalendarDays, Sun, Moon, AlertTriangle, Zap, Target, Shield } from "lucide-react"
 import Link from "next/link"
 import toast from "react-hot-toast"
 import { cn, formatTime } from "@/lib/utils"
@@ -20,6 +20,7 @@ import { TodaySessions } from "@/components/dashboard/today-sessions"
 import { BirthdayAlert } from "@/components/dashboard/birthday-alert"
 import { WeeklyOccupancy } from "@/components/dashboard/weekly-occupancy"
 import { CrisisAlerts } from "@/components/dashboard/crisis-alerts"
+import { PracticeHealthScore } from "@/components/dashboard/practice-health-score"
 import { t, getLocale } from "@/lib/i18n"
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
@@ -252,6 +253,30 @@ export default function DashboardHome() {
 
       {/* Crisis Alerts */}
       <CrisisAlerts />
+
+      {/* Practice Health Score */}
+      <PracticeHealthScore
+        score={Math.min(100, Math.round(
+          (indicators.completionRate * 0.3) +
+          (indicators.occupationRate * 0.3) +
+          ((100 - indicators.cancellationRate) * 0.2) +
+          (stats.appointmentsToday > 0 ? 20 : 0)
+        ))}
+        trend={stats.appointmentChange > 0 ? "up" : stats.appointmentChange < 0 ? "down" : "stable"}
+        factors={[
+          { label: "Taxa de conclusão", value: Math.round(indicators.completionRate), max: 100, icon: <Target className="h-3 w-3" />, color: "text-emerald-500" },
+          { label: "Ocupação", value: Math.round(indicators.occupationRate), max: 100, icon: <Zap className="h-3 w-3" />, color: "text-teal-500" },
+          { label: "Presença", value: Math.round(100 - indicators.cancellationRate), max: 100, icon: <Shield className="h-3 w-3" />, color: "text-cyan-500" },
+          { label: "Ticket médio", value: Math.min(100, Math.round(indicators.averageTicket / 2)), max: 100, icon: <DollarSign className="h-3 w-3" />, color: "text-violet-500" },
+        ]}
+        message={
+          indicators.completionRate > 80
+            ? "Excelente! Sua prática está saudável e seus pacientes estão engajados."
+            : indicators.completionRate > 60
+            ? "Bom trabalho! Continue focado na qualidade do atendimento."
+            : "Atenção: muitas sessões canceladas. Revise a agenda e comunicação."
+        }
+      />
 
       {/* Today's sessions with real-time room status */}
       <TodaySessions appointments={todaysAppointments} />

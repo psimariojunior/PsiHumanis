@@ -11,6 +11,9 @@ import { CalendarDays, BookHeart, History, User, ChevronRight, Clock, Sparkles, 
 import { PatientOnboarding } from "@/components/patient-onboarding"
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 import { PullToRefresh } from "@/components/pull-to-refresh"
+import { QuickMoodCheckin } from "@/components/patient/quick-mood-checkin"
+import { StreakBadge } from "@/components/patient/streak-badge"
+import { WeeklyInsights } from "@/components/patient/weekly-insights"
 
 interface Appointment {
   id: string
@@ -178,6 +181,62 @@ export default function PacienteDashboard() {
       )}
 
       <MoodChart entries={diaryEntries} />
+
+      {/* Quick Mood Check-in */}
+      <QuickMoodCheckin
+        lastMood={diaryEntries.length > 0 ? diaryEntries[diaryEntries.length - 1].mood : undefined}
+        onMoodSelected={(mood) => {
+          fetch("/api/pacientes/diario", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ mood, emotions: [], notes: "" }),
+          })
+        }}
+      />
+
+      {/* Streak Badge */}
+      <StreakBadge
+        currentStreak={(() => {
+          let streak = 0
+          const today = new Date()
+          for (let i = 0; i < 30; i++) {
+            const date = new Date(today)
+            date.setDate(date.getDate() - i)
+            const dateStr = date.toISOString().split("T")[0]
+            if (diaryEntries.some((e) => e.date.startsWith(dateStr))) {
+              streak++
+            } else {
+              break
+            }
+          }
+          return streak
+        })()}
+        longestStreak={(() => {
+          let max = 0
+          let current = 0
+          const sorted = [...diaryEntries].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          for (let i = 0; i < sorted.length; i++) {
+            if (i === 0) {
+              current = 1
+            } else {
+              const prev = new Date(sorted[i - 1].date)
+              const curr = new Date(sorted[i].date)
+              const diff = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24)
+              if (diff <= 1) {
+                current++
+              } else {
+                max = Math.max(max, current)
+                current = 1
+              }
+            }
+          }
+          return Math.max(max, current)
+        })()}
+        totalEntries={diaryEntries.length}
+      />
+
+      {/* Weekly Insights */}
+      <WeeklyInsights entries={diaryEntries} />
 
       <div className="grid gap-3 sm:grid-cols-3">
         {[

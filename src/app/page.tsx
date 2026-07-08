@@ -22,6 +22,7 @@ import {
 
 const WhatsAppWidget = lazy(() => import("@/components/whatsapp-widget").then(m => ({ default: m.WhatsAppWidget })))
 const VideoTour = lazy(() => import("@/components/video-tour").then(m => ({ default: m.VideoTour })))
+const SocialProof = lazy(() => import("@/components/social-proof").then(m => ({ default: m.SocialProof })))
 
 const faqItems = [
   { q: "Como funciona a terapia online?", a: "Você agenda um horário, recebe um link seguro por email, e no horário marcado basta clicar para entrar na sala virtual. Tudo criptografado." },
@@ -449,6 +450,13 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Social Proof */}
+      <section className="py-16 md:py-20 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900/50 dark:to-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SocialProof />
         </div>
       </section>
 
