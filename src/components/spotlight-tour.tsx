@@ -56,10 +56,10 @@ const tourSteps: TourStep[] = [
   {
     id: "sidebar",
     title: "Menu de Navegação",
-    description: "Use o menu lateral para acessar todas as funcionalidades: agenda, pacientes, prontuários.",
-    target: "[data-tour='sidebar-menu']",
+    description: "No celular, toque no ícone de menu. No computador, use o menu lateral para acessar tudo.",
+    target: "[data-tour='sidebar-menu'], [data-tour='mobile-menu']",
     href: "/dashboard",
-    position: "right",
+    position: "bottom",
   },
   {
     id: "new-patient",

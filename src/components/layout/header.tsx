@@ -50,7 +50,7 @@ export function Header({ onMenuClick, onPaletteOpen }: HeaderProps) {
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden">
+          <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden" data-tour="mobile-menu">
             <Menu className="h-5 w-5" />
           </Button>
           <div className="relative pl-3 border-l-2 border-teal-500/30">
