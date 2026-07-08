@@ -1,9 +1,28 @@
 import { useState, useEffect, useCallback } from "react"
-import { Capacitor } from "@capacitor/core"
-import { BiometricAuth } from "@aparajita/capacitor-biometric-auth"
 
 const BIOMETRIC_ENABLED_KEY = "psihumanis-biometric-enabled"
 const PATIENT_TOKEN_KEY = "patient_token"
+
+let biometricModule: any = null
+let loadPromise: Promise<void> | null = null
+let isNative = false
+
+async function loadBiometric() {
+  if (biometricModule) return
+  if (loadPromise) return loadPromise
+  loadPromise = (async () => {
+    try {
+      const { Capacitor } = await import("@capacitor/core")
+      isNative = Capacitor.isNativePlatform()
+      if (!isNative) return
+      const { BiometricAuth } = await import("@aparajita/capacitor-biometric-auth")
+      biometricModule = BiometricAuth
+    } catch {
+      // Web or missing native plugin
+    }
+  })()
+  return loadPromise
+}
 
 export function useBiometricAuth() {
   const [isAvailable, setIsAvailable] = useState(false)
@@ -11,19 +30,26 @@ export function useBiometricAuth() {
   const [isAuthenticating, setIsAuthenticating] = useState(false)
 
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return
-
-    BiometricAuth.checkBiometry().then((result) => {
-      setIsAvailable(result.isAvailable)
-      setIsEnabled(localStorage.getItem(BIOMETRIC_ENABLED_KEY) === "true")
-    }).catch(() => {})
+    let mounted = true
+    ;(async () => {
+      await loadBiometric()
+      if (!mounted || !biometricModule) return
+      try {
+        const result = await biometricModule.checkBiometry()
+        if (mounted) {
+          setIsAvailable(result.isAvailable)
+          setIsEnabled(localStorage.getItem(BIOMETRIC_ENABLED_KEY) === "true")
+        }
+      } catch {}
+    })()
+    return () => { mounted = false }
   }, [])
 
   const authenticate = useCallback(async (): Promise<boolean> => {
     if (!isAvailable || !isEnabled) return false
     setIsAuthenticating(true)
     try {
-      await BiometricAuth.authenticate({
+      await biometricModule?.authenticate({
         reason: "Use sua biometria para acessar o PsiHumanis",
         iosFallbackTitle: "Usar senha",
       })
@@ -36,9 +62,9 @@ export function useBiometricAuth() {
   }, [isAvailable, isEnabled])
 
   const enable = useCallback(async (): Promise<boolean> => {
-    if (!Capacitor.isNativePlatform()) return false
+    if (!isNative || !biometricModule) return false
     try {
-      await BiometricAuth.authenticate({
+      await biometricModule.authenticate({
         reason: "Ative a biometria para acesso rápido",
         iosFallbackTitle: "Usar senha",
       })

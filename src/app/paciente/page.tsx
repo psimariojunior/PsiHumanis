@@ -65,10 +65,12 @@ export default function PacienteDashboard() {
       fetch("/api/pacientes/diario", { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()),
     ])
       .then(([appts, diary]) => {
-        const upcoming = (appts as Appointment[]).filter((a) => a.status !== "CANCELLED" && new Date(a.startTime) > new Date()).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+        const apptsArray = Array.isArray(appts) ? appts : []
+        const diaryArray = Array.isArray(diary) ? diary : []
+        const upcoming = (apptsArray as Appointment[]).filter((a) => a.status !== "CANCELLED" && new Date(a.startTime) > new Date()).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
         setNextAppointment(upcoming[0] || null)
-        setSessionCount((appts as Appointment[]).filter((a) => a.status !== "CANCELLED" && new Date(a.startTime) <= new Date()).length)
-        setDiaryEntries((diary as DiaryEntry[]) || [])
+        setSessionCount(apptsArray.filter((a: any) => a.status !== "CANCELLED" && new Date(a.startTime) <= new Date()).length)
+        setDiaryEntries(diaryArray as DiaryEntry[])
       })
       .catch(() => {})
       .finally(() => setLoadingAppt(false))

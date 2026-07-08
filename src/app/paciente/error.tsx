@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect } from "react"
+
 export default function PatientError({
   error,
   reset,
@@ -7,6 +9,13 @@ export default function PatientError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  useEffect(() => {
+    console.error("[PatientError] Erro na página do paciente:", error)
+    console.error("[PatientError] Digest:", error?.digest)
+    console.error("[PatientError] Message:", error?.message)
+    console.error("[PatientError] Stack:", error?.stack)
+  }, [error])
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-950">
       <div className="text-center px-6">

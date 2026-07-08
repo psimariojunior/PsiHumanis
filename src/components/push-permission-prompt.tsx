@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Bell, X } from "lucide-react"
 import { Capacitor } from "@capacitor/core"
-import { PushNotifications } from "@capacitor/push-notifications"
 
 export function PushPermissionPrompt() {
   const [show, setShow] = useState(false)
@@ -16,15 +15,13 @@ export function PushPermissionPrompt() {
     if (dismissed) return
 
     const timer = setTimeout(() => {
-      try {
+      import("@capacitor/push-notifications").then(({ PushNotifications }) => {
         PushNotifications.checkPermissions().then((result) => {
           if (result.receive === "prompt") {
             setShow(true)
           }
         }).catch(() => {})
-      } catch {
-        // Plugin not available or crashed - ignore
-      }
+      }).catch(() => {})
     }, 8000)
 
     return () => clearTimeout(timer)
@@ -32,6 +29,7 @@ export function PushPermissionPrompt() {
 
   async function handleAllow() {
     try {
+      const { PushNotifications } = await import("@capacitor/push-notifications")
       await PushNotifications.requestPermissions()
       localStorage.setItem("psihumanis-push-prompt-dismissed", "true")
     } catch {}
