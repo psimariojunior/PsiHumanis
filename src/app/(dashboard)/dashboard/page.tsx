@@ -22,6 +22,7 @@ import { WeeklyOccupancy } from "@/components/dashboard/weekly-occupancy"
 import { CrisisAlerts } from "@/components/dashboard/crisis-alerts"
 import { PracticeHealthScore } from "@/components/dashboard/practice-health-score"
 import { FeedbackPrompt } from "@/components/feedback-prompt"
+import { ShareBookingLink } from "@/components/share-booking-link"
 import { t, getLocale } from "@/lib/i18n"
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 
@@ -224,6 +225,9 @@ export default function DashboardHome() {
           </div>
         </div>
       </section>
+
+      {/* Share Booking Link */}
+      <ShareBookingLink />
 
       {/* Availability Banner */}
       {!hasAvailability && (
