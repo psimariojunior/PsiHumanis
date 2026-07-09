@@ -85,7 +85,7 @@ export function BookingFlow({
     } finally {
       setBookingLoading(false)
     }
-  }, [selectedSlot, token, patientName, patientEmail, patientPhone, selectedModality, psychologistId, onSuccess])
+  }, [selectedSlot, token, patientName, patientEmail, patientPhone, selectedModality, psychologistId, onSuccess, vibrateNotification])
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">

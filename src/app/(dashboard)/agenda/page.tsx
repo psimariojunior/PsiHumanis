@@ -146,7 +146,7 @@ export default function AgendaPage() {
     } catch {
       toast.error("Erro ao atualizar status")
     }
-  }, [fetchAppointments])
+  }, [fetchAppointments, locale])
 
   const handleSendReminder = useCallback(async (appt: Appt) => {
     const channels = []

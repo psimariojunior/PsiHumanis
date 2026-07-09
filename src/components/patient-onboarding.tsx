@@ -148,19 +148,19 @@ export function PatientOnboarding() {
   const isLast = currentStep === steps.length - 1
   const isFirst = currentStep === 0
 
-  function dismiss() {
+  const dismiss = useCallback(() => {
     localStorage.setItem(TOUR_KEY, TOUR_VERSION)
     setShow(false)
-  }
-  function next() {
+  }, [])
+  const next = useCallback(() => {
     setDemoAction(null)
     if (currentStep < steps.length - 1) { setCurrentStep(currentStep + 1); setAnimKey((k) => k + 1) }
     else dismiss()
-  }
-  function prev() {
+  }, [currentStep, dismiss])
+  const prev = useCallback(() => {
     setDemoAction(null)
     if (currentStep > 0) { setCurrentStep(currentStep - 1); setAnimKey((k) => k + 1) }
-  }
+  }, [currentStep])
 
   function onTouchStart(e: React.TouchEvent) { touchStartX.current = e.touches[0].clientX }
   function onTouchEnd(e: React.TouchEvent) {
@@ -177,7 +177,7 @@ export function PatientOnboarding() {
     }
     window.addEventListener("keydown", h)
     return () => window.removeEventListener("keydown", h)
-  }, [show, currentStep])
+  }, [show, currentStep, next, prev, dismiss])
 
   if (!show) return null
   const Icon = step.icon
