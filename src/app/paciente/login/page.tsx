@@ -67,6 +67,19 @@ export default function LoginPage() {
 
       vibrateNotification()
       login(data.token, data.patient)
+
+      if (isNative && biometricAvailable) {
+        try {
+          const { BiometricAuth } = await import("@aparajita/capacitor-biometric-auth")
+          await BiometricAuth.authenticate({
+            reason: "Ative a biometria para acesso rápido",
+            iosFallbackTitle: "Usar senha",
+          })
+          localStorage.setItem("psihumanis-biometric-enabled", "true")
+          toast.success("Biometria ativada!")
+        } catch {}
+      }
+
       router.push("/paciente")
     } catch (e) {
       vibrateNotification()
