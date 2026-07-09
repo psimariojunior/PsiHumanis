@@ -8,12 +8,27 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { usePatientAuth } from "@/components/patient-auth-provider"
-import { useBiometricAuth } from "@/hooks/use-biometric-auth"
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 import { Capacitor } from "@capacitor/core"
 import { useTheme } from "next-themes"
 import toast from "react-hot-toast"
-import { Eye, EyeOff, Loader2, LogIn, Sun, Moon, Fingerprint, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, Loader2, LogIn, Sun, Moon, Fingerprint, ArrowLeft, X } from "lucide-react"
+
+const PATIENT_CREDS_KEY = "psihumanis-patient-creds"
+const BIOMETRIC_KEY = "psihumanis-biometric-enabled"
+
+interface StoredCreds { email: string; password: string }
+
+function getStoredCreds(): StoredCreds | null {
+  try { return JSON.parse(localStorage.getItem(PATIENT_CREDS_KEY) || "null") } catch { return null }
+}
+function saveCreds(email: string, password: string) {
+  localStorage.setItem(PATIENT_CREDS_KEY, JSON.stringify({ email, password }))
+}
+function removeCreds() {
+  localStorage.removeItem(PATIENT_CREDS_KEY)
+  localStorage.removeItem(BIOMETRIC_KEY)
+}
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -23,32 +38,61 @@ export default function LoginPage() {
   const router = useRouter()
   const { login } = usePatientAuth()
   const { theme, setTheme } = useTheme()
-  const { vibrateSelection, vibrateNotification } = useHapticFeedback()
-  const { isAvailable: biometricAvailable, authenticate, hasStoredToken } = useBiometricAuth()
+  const { vibrateNotification } = useHapticFeedback()
   const [isNative, setIsNative] = useState(false)
+  const [biometricReady, setBiometricReady] = useState(false)
+  const [storedCreds, setStoredCreds] = useState<StoredCreds | null>(null)
 
   useEffect(() => {
     try { setIsNative(Capacitor.isNativePlatform()) } catch {}
   }, [])
 
   useEffect(() => {
-    if (isNative && biometricAvailable && hasStoredToken()) {
-      authenticate().then((success) => {
-        if (success) {
-          const token = localStorage.getItem("patient_token")
-          if (token) {
-            fetch("/api/pacientes/me", { headers: { Authorization: `Bearer ${token}` } })
-              .then((r) => r.json())
-              .then((patient) => {
-                login(token, patient)
-                router.push("/paciente")
-              })
-              .catch(() => {})
-          }
+    if (!isNative) return
+    ;(async () => {
+      try {
+        const { BiometricAuth } = await import("@aparajita/capacitor-biometric-auth")
+        const result = await BiometricAuth.checkBiometry()
+        if (result.isAvailable) {
+          setBiometricReady(true)
+          setStoredCreds(getStoredCreds())
         }
-      })
+      } catch {}
+    })()
+  }, [isNative])
+
+  async function handleBiometricLogin() {
+    if (!storedCreds) {
+      toast.error("Faça login com email e senha uma vez para ativar a biometria")
+      return
     }
-  }, [isNative, biometricAvailable]) // eslint-disable-line react-hooks/exhaustive-deps
+    setLoading(true)
+    try {
+      const { BiometricAuth } = await import("@aparajita/capacitor-biometric-auth")
+      await BiometricAuth.authenticate({
+        reason: "Use sua biometria para acessar o PsiHumanis",
+        iosFallbackTitle: "Usar senha",
+      })
+      const res = await fetch("/api/pacientes/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: storedCreds.email, password: storedCreds.password }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Erro ao entrar")
+      vibrateNotification()
+      login(data.token, data.patient)
+      router.push("/paciente")
+    } catch (e) {
+      if (e instanceof Error && e.message !== "User cancelled") {
+        removeCreds()
+        setStoredCreds(null)
+        toast.error("Credenciais expiradas. Faça login com email e senha novamente")
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,24 +110,26 @@ export default function LoginPage() {
       if (!res.ok) throw new Error(data.error || "Erro ao entrar")
 
       vibrateNotification()
-      login(data.token, data.patient)
+      saveCreds(email.trim(), password)
+      setStoredCreds(getStoredCreds())
 
-      if (isNative && biometricAvailable) {
+      if (isNative && biometricReady) {
         try {
           const { BiometricAuth } = await import("@aparajita/capacitor-biometric-auth")
           await BiometricAuth.authenticate({
             reason: "Ative a biometria para acesso rápido",
             iosFallbackTitle: "Usar senha",
           })
-          localStorage.setItem("psihumanis-biometric-enabled", "true")
+          localStorage.setItem(BIOMETRIC_KEY, "true")
           toast.success("Biometria ativada!")
         } catch {}
       }
 
+      login(data.token, data.patient)
       router.push("/paciente")
     } catch (e) {
       vibrateNotification()
-      toast.error(e instanceof Error ? e.message : "Erro ao entrar")
+      toast.error(e instanceof Error ? e.message : "Erro ao fazer login")
     } finally {
       setLoading(false)
     }
@@ -117,88 +163,96 @@ export default function LoginPage() {
               <CardDescription>Informe seu email e senha para acessar</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Senha</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-0 top-0 h-full px-3"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full h-12 text-base font-semibold"
-                  disabled={loading || !email.trim() || !password.trim()}
-                >
-                  {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogIn className="h-5 w-5 mr-2" />}
-                  {loading ? "Entrando..." : "Entrar"}
-                </Button>
-
-                {isNative && biometricAvailable && (
-                  <Button
+              {isNative && biometricReady && storedCreds ? (
+                <div className="space-y-3">
+                  <button
                     type="button"
-                    variant="outline"
-                    className="w-full h-12 text-base font-semibold"
-                    onClick={async () => {
-                      if (!hasStoredToken()) {
-                        toast.error("Faça login com email e senha uma vez para ativar a biometria")
-                        return
-                      }
-                      const success = await authenticate()
-                      if (success) {
-                        const token = localStorage.getItem("patient_token")
-                        if (token) {
-                          try {
-                            const res = await fetch("/api/pacientes/me", { headers: { Authorization: `Bearer ${token}` } })
-                            const patient = await res.json()
-                            login(token, patient)
-                            router.push("/paciente")
-                          } catch { toast.error("Erro ao autenticar") }
-                        }
-                      } else {
-                        toast.error("Autenticação biométrica falhou")
-                      }
-                    }}
+                    onClick={handleBiometricLogin}
+                    disabled={loading}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-700 hover:bg-teal-50 dark:hover:bg-teal-950/30 transition-all"
                   >
-                    <Fingerprint className="h-5 w-5 mr-2" />
-                    Entrar com biometria
-                  </Button>
-                )}
-
-                <div className="text-center text-sm">
-                  <Link href="/paciente/recuperar-senha" className="text-muted-foreground hover:text-primary transition-colors">
-                    Esqueci minha senha
-                  </Link>
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shrink-0">
+                      {loading ? <Loader2 className="h-4 w-4 text-white animate-spin" /> : <Fingerprint className="h-5 w-5 text-white" />}
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{storedCreds.email}</p>
+                      <p className="text-xs text-muted-foreground">Toque para entrar com biometria</p>
+                    </div>
+                    <Fingerprint className="h-4 w-4 text-teal-500 shrink-0" />
+                  </button>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">ou</span></div>
+                  </div>
+                  <form onSubmit={handleSubmit} className="space-y-3">
+                    <Input id="email" type="email" placeholder="Outro email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <div className="relative">
+                      <Input id="password" type={showPassword ? "text" : "password"} placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label="Mostrar senha">
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogIn className="mr-2 h-4 w-4" />}
+                      Entrar com outra conta
+                    </Button>
+                  </form>
+                  <button
+                    onClick={() => { removeCreds(); setStoredCreds(null); toast.success("Biometria desativada") }}
+                    className="w-full flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors py-1"
+                  >
+                    <X className="h-3 w-3" /> Remover biometria
+                  </button>
                 </div>
-              </form>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Senha</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 h-full px-3"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                      </Button>
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full h-12 text-base font-semibold"
+                    disabled={loading || !email.trim() || !password.trim()}
+                  >
+                    {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogIn className="h-5 w-5 mr-2" />}
+                    {loading ? "Entrando..." : "Entrar"}
+                  </Button>
+                </form>
+              )}
+
+              <div className="text-center text-sm mt-4">
+                <Link href="/paciente/recuperar-senha" className="text-muted-foreground hover:text-primary transition-colors">
+                  Esqueci minha senha
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
