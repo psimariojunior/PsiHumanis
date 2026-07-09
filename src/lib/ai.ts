@@ -1,8 +1,12 @@
-import Groq from "groq-sdk"
+let groqClient: Awaited<ReturnType<typeof import("groq-sdk").default>> | null = null
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-})
+async function getGroq() {
+  if (!groqClient) {
+    const { default: Groq } = await import("groq-sdk")
+    groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY })
+  }
+  return groqClient
+}
 
 export interface AIResponse {
   content: string
@@ -27,7 +31,7 @@ IMPORTANTE:
 
 export async function summarizeSession(notes: string, patientName?: string): Promise<AIResponse> {
   try {
-    const completion = await groq.chat.completions.create({
+    const completion = await (await getGroq()).chat.completions.create({
       messages: [
         { role: "system", content: PSYCHOLOGIST_SYSTEM },
         {
@@ -49,7 +53,7 @@ export async function suggestTreatment(assessment: string, history?: string): Pr
   try {
     const prompt = `Com base nas seguintes informações clínicas, sugira abordagens e técnicas terapêuticas adequadas. Não faça diagnósticos, apenas sugira hipóteses e caminhos para investigação:\n\nAvaliação:\n${assessment}${history ? `\n\nHistórico:\n${history}` : ""}`
 
-    const completion = await groq.chat.completions.create({
+    const completion = await (await getGroq()).chat.completions.create({
       messages: [
         { role: "system", content: PSYCHOLOGIST_SYSTEM },
         { role: "user", content: prompt },
@@ -83,7 +87,7 @@ Gere:
 3. Pontos de atenção
 4. Recomendações para as próximas sessões`
 
-    const completion = await groq.chat.completions.create({
+    const completion = await (await getGroq()).chat.completions.create({
       messages: [
         { role: "system", content: PSYCHOLOGIST_SYSTEM },
         { role: "user", content: prompt },
@@ -102,7 +106,7 @@ export async function suggestTasks(sessionNotes: string, patientContext?: string
   try {
     const prompt = `Com base na sessão abaixo, sugira 3-5 tarefas terapêuticas para o paciente realizar entre as sessões. Inclua descrição, objetivo e duração estimada:\n\nSessão:\n${sessionNotes}${patientContext ? `\nContexto do paciente: ${patientContext}` : ""}`
 
-    const completion = await groq.chat.completions.create({
+    const completion = await (await getGroq()).chat.completions.create({
       messages: [
         { role: "system", content: PSYCHOLOGIST_SYSTEM },
         { role: "user", content: prompt },
@@ -127,7 +131,7 @@ Forneça:
 3. Possíveis gatilhos
 4. Sugestões de acompanhamento`
 
-    const completion = await groq.chat.completions.create({
+    const completion = await (await getGroq()).chat.completions.create({
       messages: [
         { role: "system", content: PSYCHOLOGIST_SYSTEM },
         { role: "user", content: prompt },
@@ -150,7 +154,7 @@ export async function chat(userMessage: string, context?: string): Promise<AIRes
     if (context) messages.push({ role: "assistant", content: `Contexto anterior:\n${context}` })
     messages.push({ role: "user", content: userMessage })
 
-    const completion = await groq.chat.completions.create({
+    const completion = await (await getGroq()).chat.completions.create({
       messages,
       model: "llama-3.3-70b-versatile",
       temperature: 0.5,
