@@ -95,15 +95,15 @@ export function AIAssistant() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30 flex items-center justify-center hover:scale-110 transition-all"
+        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
       >
-        <Sparkles className="h-6 w-6" />
+        <Sparkles className="h-5 w-5 sm:h-6 sm:w-6" />
       </button>
     )
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[520px] max-h-[calc(100vh-96px)] bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+    <div className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[380px] sm:max-w-[calc(100vw-48px)] h-[100dvh] sm:h-[520px] sm:max-h-[calc(100vh-96px)] bg-card sm:border sm:border-border sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
         <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ export function AIAssistant() {
       </div>
 
       {/* Quick actions */}
-      <div className="flex gap-1.5 px-3 py-2 border-b border-border overflow-x-auto">
+      <div className="flex gap-1.5 px-3 py-2 border-b border-border overflow-x-auto scrollbar-none">
         {QUICK_ACTIONS.map((a) => (
           <button
             key={a.id}
@@ -175,7 +175,7 @@ export function AIAssistant() {
       </div>
 
       {/* Input */}
-      <div className="border-t border-border p-3">
+      <div className="border-t border-border p-3 pb-[max(12px,env(safe-area-inset-bottom))]">
         {activeAction && (
           <div className="mb-2 text-xs text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 px-2 py-1 rounded-lg">
             {QUICK_ACTIONS.find((a) => a.id === activeAction)?.label} ativo
