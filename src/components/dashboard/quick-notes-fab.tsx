@@ -85,7 +85,7 @@ export function QuickNotesFab() {
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-xl shadow-amber-500/30 transition-all duration-300 hover:scale-110 hover:shadow-2xl active:scale-95",
+          "fixed bottom-[56px] right-4 sm:right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-xl shadow-amber-500/30 transition-all duration-300 hover:scale-110 hover:shadow-2xl active:scale-95",
           open && "rotate-90"
         )}
         aria-label="Anotações rápidas"
@@ -100,7 +100,7 @@ export function QuickNotesFab() {
 
       {/* Panel */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-40 w-[22rem] max-w-[calc(100vw-2rem)] animate-in slide-in-from-bottom-4 fade-in duration-200">
+        <div className="fixed bottom-[120px] right-4 sm:right-6 z-40 w-[22rem] max-w-[calc(100vw-2rem)] animate-in slide-in-from-bottom-4 fade-in duration-200">
           <div className="rounded-2xl border bg-card shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between border-b bg-gradient-to-r from-amber-500/10 to-orange-500/10 px-4 py-3">
               <div className="flex items-center gap-2">

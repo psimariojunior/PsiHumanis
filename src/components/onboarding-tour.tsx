@@ -185,7 +185,7 @@ export function OnboardingTour() {
     <>
       {/* Floating guide card - bottom right, doesn't block content */}
       <div
-        className="fixed bottom-6 right-6 z-[95] w-[380px] max-w-[calc(100vw-3rem)]"
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 z-[95] w-[380px] max-w-[calc(100vw-3rem)]"
         style={{
           opacity: anim === "in" ? 1 : 0,
           transform: anim === "in" ? "translateY(0) scale(1)" : "translateY(12px) scale(0.98)",
