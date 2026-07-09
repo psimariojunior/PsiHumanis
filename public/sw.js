@@ -1,6 +1,6 @@
-const CACHE = "psihumanis-v13"
-const STATIC_CACHE = "psihumanis-static-v13"
-const IMAGE_CACHE = "psihumanis-images-v13"
+const CACHE = "psihumanis-v14"
+const STATIC_CACHE = "psihumanis-static-v14"
+const IMAGE_CACHE = "psihumanis-images-v14"
 
 const PRECACHE_URLS = [
   "/offline.html",

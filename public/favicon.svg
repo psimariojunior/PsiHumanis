@@ -1,10 +1,18 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0D9488"/>
       <stop offset="100%" stop-color="#0F766E"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="8" fill="url(#g)"/>
-  <text x="16" y="23" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="18" fill="white">Ψ</text>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <!-- Head silhouette facing left -->
+  <path d="M256 80c-44 0-80 36-80 80 0 28 14 52 36 66l-16 30c-2 4-1 8 2 10l40 28c2 2 5 1 6-2l12-38c16 8 34 12 52 12 44 0 80-36 80-80s-36-80-80-80z" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Neck line -->
+  <path d="M256 296c0 0-20 40-20 80" fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/>
+  <!-- Ψ symbol inside head -->
+  <path d="M240 170v-30c0-8 6-14 14-14h4c8 0 14 6 14 14v30c0 8-6 14-14 14h-4c-8 0-14-6-14-14z" fill="white"/>
+  <line x1="258" y1="140" x2="258" y2="120" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <path d="M242 140c-10 0-18-4-18-10s8-10 18-10" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+  <path d="M274 140c10 0 18-4 18-10s-8-10-18-10" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
 </svg>
