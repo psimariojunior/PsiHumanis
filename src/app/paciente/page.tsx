@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { CalendarDays, BookHeart, History, User, ChevronRight, Clock, Sparkles, Activity, Brain, ClipboardList, FileText, Shield, Star, TrendingUp, ListTodo, Video } from "lucide-react"
-import { PatientOnboarding } from "@/components/patient-onboarding"
 import { useHapticFeedback } from "@/hooks/use-haptic-feedback"
 import { PullToRefresh } from "@/components/pull-to-refresh"
 import { QuickMoodCheckin } from "@/components/patient/quick-mood-checkin"
@@ -105,7 +104,6 @@ export default function PacienteDashboard() {
   return (
     <PullToRefresh onRefresh={async () => { fetchData() }}>
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-      <PatientOnboarding />
       <div className="relative overflow-hidden rounded-[1.75rem] border bg-gradient-to-br from-teal-950 via-teal-900 to-slate-950 p-6 text-white shadow-2xl shadow-teal-950/20">
         <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-teal-400/20 blur-3xl" />
         <div className="absolute -bottom-20 left-10 h-44 w-44 rounded-full bg-cyan-400/10 blur-3xl" />

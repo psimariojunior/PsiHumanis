@@ -28,7 +28,7 @@ export default function LoginPage() {
   const isNative = Capacitor.isNativePlatform()
 
   useEffect(() => {
-    if (isNative && biometricAvailable && biometricEnabled && hasStoredToken()) {
+    if (isNative && biometricAvailable && hasStoredToken()) {
       authenticate().then((success) => {
         if (success) {
           const token = localStorage.getItem("patient_token")
@@ -44,7 +44,7 @@ export default function LoginPage() {
         }
       })
     }
-  }, [isNative, biometricAvailable, biometricEnabled]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isNative, biometricAvailable]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -145,7 +145,7 @@ export default function LoginPage() {
                   {loading ? "Entrando..." : "Entrar"}
                 </Button>
 
-                {isNative && biometricAvailable && biometricEnabled && hasStoredToken() && (
+                {isNative && biometricAvailable && hasStoredToken() && (
                   <Button
                     type="button"
                     variant="outline"

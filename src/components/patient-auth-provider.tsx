@@ -9,6 +9,7 @@ import { CommandPalette } from "@/components/command-palette"
 import { PushNotificationPrompt } from "@/components/push-notification-prompt"
 import { Capacitor } from "@capacitor/core"
 import { registerForPushNotifications, setupPushNotificationListeners } from "@/lib/capacitor-push"
+import { PatientOnboarding } from "@/components/patient-onboarding"
 import { motion, AnimatePresence } from "framer-motion"
 import { Loader2, BookHeart, CalendarDays, History, User, LayoutDashboard, Receipt, Sun, Moon, Menu, X, ClipboardList, FileText, ShieldAlert, FileCheck, ListChecks } from "lucide-react"
 
@@ -264,6 +265,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
             {children}
           </motion.div>
         </AnimatePresence>
+        <PatientOnboarding />
       </div>
     <PushNotificationPrompt /></PatientAuthContext.Provider>
   )

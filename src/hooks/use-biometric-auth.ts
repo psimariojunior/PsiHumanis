@@ -46,7 +46,7 @@ export function useBiometricAuth() {
   }, [])
 
   const authenticate = useCallback(async (): Promise<boolean> => {
-    if (!isAvailable || !isEnabled) return false
+    if (!isAvailable) return false
     setIsAuthenticating(true)
     try {
       await biometricModule?.authenticate({
@@ -59,7 +59,7 @@ export function useBiometricAuth() {
     } finally {
       setIsAuthenticating(false)
     }
-  }, [isAvailable, isEnabled])
+  }, [isAvailable])
 
   const enable = useCallback(async (): Promise<boolean> => {
     if (!isNative || !biometricModule) return false
