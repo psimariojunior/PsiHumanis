@@ -13,6 +13,7 @@ import { GuidedTour } from "@/components/guided-tour"
 import { SpotlightTour } from "@/components/spotlight-tour"
 import { PushNotificationPrompt } from "@/components/push-notification-prompt"
 import { ArrivalNotification } from "@/components/recepcao/arrival-notification"
+import { AIAssistant } from "@/components/ai-assistant"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { AlertTriangle, X, ArrowRight } from "lucide-react"
@@ -153,6 +154,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <SpotlightTour />
         <PushNotificationPrompt />
         <ArrivalNotification />
+        <AIAssistant />
       </div>
     </div>
   )
