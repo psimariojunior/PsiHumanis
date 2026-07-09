@@ -24,8 +24,12 @@ export default function LoginPage() {
   const { login } = usePatientAuth()
   const { theme, setTheme } = useTheme()
   const { vibrateSelection, vibrateNotification } = useHapticFeedback()
-  const { isAvailable: biometricAvailable, isEnabled: biometricEnabled, authenticate, hasStoredToken } = useBiometricAuth()
-  const isNative = Capacitor.isNativePlatform()
+  const { isAvailable: biometricAvailable, authenticate, hasStoredToken } = useBiometricAuth()
+  const [isNative, setIsNative] = useState(false)
+
+  useEffect(() => {
+    try { setIsNative(Capacitor.isNativePlatform()) } catch {}
+  }, [])
 
   useEffect(() => {
     if (isNative && biometricAvailable && hasStoredToken()) {
@@ -145,12 +149,16 @@ export default function LoginPage() {
                   {loading ? "Entrando..." : "Entrar"}
                 </Button>
 
-                {isNative && biometricAvailable && hasStoredToken() && (
+                {isNative && biometricAvailable && (
                   <Button
                     type="button"
                     variant="outline"
                     className="w-full h-12 text-base font-semibold"
                     onClick={async () => {
+                      if (!hasStoredToken()) {
+                        toast.error("Faça login com email e senha uma vez para ativar a biometria")
+                        return
+                      }
                       const success = await authenticate()
                       if (success) {
                         const token = localStorage.getItem("patient_token")
