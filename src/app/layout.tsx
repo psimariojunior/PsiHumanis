@@ -70,9 +70,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.svg?v=3",
-    shortcut: "/favicon-32.png?v=3",
-    apple: "/apple-touch-icon.png?v=3",
+    icon: "/favicon-32.png?v=4",
+    shortcut: "/favicon-32.png?v=4",
+    apple: "/apple-touch-icon.png?v=4",
   },
   appleWebApp: {
     capable: true,
