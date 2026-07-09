@@ -1,9 +1,10 @@
-let groqClient: Awaited<ReturnType<typeof import("groq-sdk").default>> | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let groqClient: any = null
 
 async function getGroq() {
   if (!groqClient) {
-    const { default: Groq } = await import("groq-sdk")
-    groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY })
+    const mod = await import("groq-sdk")
+    groqClient = new mod.default({ apiKey: process.env.GROQ_API_KEY })
   }
   return groqClient
 }

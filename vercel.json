@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
   "buildCommand": "(prisma migrate deploy 2>/dev/null || prisma db push --accept-data-loss --skip-generate 2>/dev/null || true) && prisma generate && next build",
-  "installCommand": "npm install --loglevel=error",
+  "installCommand": "npm install",
   "outputDirectory": ".next"
 }
