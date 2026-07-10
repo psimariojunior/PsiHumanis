@@ -1,0 +1,233 @@
+﻿--------- beginning of system
+07-08 14:20:51.131  1908  8410 D ActivityManager: checkAllowBackground: uid=10547 pkg=com.instagram.android startMode=2 onallowlist=false onallowlist(ei)=false
+07-08 14:20:51.131  1908  2296 D ActivityManager: checkAllowBackground: uid=10547 pkg=com.instagram.android rec=UidRecord{50fe86d u0a547 SVC  idle change:procadj procs:0 seq(800517,796442)} caps=------ always=true idle=true
+07-08 14:20:51.131  1908  2296 I ActivityManager: App 10547/com.instagram.android targets O+, restricted
+07-08 14:20:51.131  1908  2296 D ActivityManager: checkAllowBackground: uid=10547 pkg=com.instagram.android startMode=2 onallowlist=false onallowlist(ei)=false
+--------- beginning of main
+07-08 14:20:51.139 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.142 25191 25191 W SoLoader: Initializing SoLoader: 0
+07-08 14:20:51.142 25191 25191 I SoLoader: Recording new base apk path: /data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk
+07-08 14:20:51.142 25191 25191 I SoLoader: Previously recorded 0 base apk paths.
+07-08 14:20:51.142 25191 25191 I SoLoader: Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+07-08 14:20:51.142 25191 25191 I SoLoader: Preparing SO source: DirectorySoSource[root = /system_ext/lib64 flags = 2]
+07-08 14:20:51.142 25191 25191 I SoLoader: Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+07-08 14:20:51.142 25191 25191 I SoLoader: Preparing SO source: DirectApkSoSource[root = [/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk!/lib/arm64-v8a, /data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/split_config.arm64_v8a.apk!/lib/arm64-v8a, /data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/split_config.xxhdpi.apk!/lib/arm64-v8a]]
+07-08 14:20:51.144  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 69 ms
+07-08 14:20:51.144  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821585 spend:145104010 (35585206043141 - 35585060939131) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.155 24511 25219 D ProfileInstaller: Skipping profile installation for com.psihumanis.app
+07-08 14:20:51.156 25191 25191 I SoLoader: Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/lib/arm64 flags = 0]]
+07-08 14:20:51.156 25191 25191 W SoLoader: SoLoader initialized: 8
+07-08 14:20:51.166 25191 25191 D nativeloader: Load /data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/split_config.arm64_v8a.apk!/lib/arm64-v8a/libsuperpack.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.171 25191 25191 W SoLoader: Loading wa_log on the main thread
+07-08 14:20:51.173 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libwa_log.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.167 25191 25191 W om.whatsapp.w4b: type=1400 audit(0.0:81424): avc:  granted  { execute } for  path="/data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libwa_log.so" dev="dm-50" ino=70859 scontext=u:r:untrusted_app:s0:c44,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c44,c257,c512,c768 tclass=file app=com.mgoogle.android.gms
+07-08 14:20:51.173 25191 25191 W SoLoader: Loading essential on the main thread
+07-08 14:20:51.171 25191 25191 W om.whatsapp.w4b: type=1400 audit(0.0:81425): avc:  granted  { execute } for  path="/data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libc++_shared.so" dev="dm-50" ino=593514 scontext=u:r:untrusted_app:s0:c44,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c44,c257,c512,c768 tclass=file app=com.mgoogle.android.gms
+07-08 14:20:51.174 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libc++_shared.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.175 24615 24723 I ProtoXDBBufferWrapper: ProtoXDBBufferWrapper.flushToStorage():158 Flushed 6 data item(s) to storage.
+07-08 14:20:51.171 25191 25191 W om.whatsapp.w4b: type=1400 audit(0.0:81426): avc:  granted  { execute } for  path="/data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libfbjni.so" dev="dm-50" ino=593363 scontext=u:r:untrusted_app:s0:c44,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c44,c257,c512,c768 tclass=file app=com.mgoogle.android.gms
+07-08 14:20:51.176 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libfbjni.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.177 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libfbsofterror.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.179 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libglog.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.180 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libfb.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.180 25191 25191 W SoLoader: Loading fb on the main thread
+07-08 14:20:51.182   574   574 I lowmemorykiller: lmkd usap min_adj:700, 700, 6
+07-08 14:20:51.182   574   574 D lowmemorykiller: No processes to kill with adj score >= 700
+07-08 14:20:51.182 25191 25191 I om.whatsapp.w4b: Thread[1,tid=25191,Native,Thread*=0xb4000070ee9ecc00,peer=0x72ad48c8,"main"] recursive attempt to load library "/data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libfb.so"
+07-08 14:20:51.185 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libessential.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.185 25191 25191 I essential-jni: JNI_OnLoad start
+07-08 14:20:51.185 25191 25191 I essential-jni: fbjni lambda running
+07-08 14:20:51.185 25191 25191 I essential-jni: JNI_OnLoad lambda complete
+07-08 14:20:51.192 25191 25191 I SigquitBasedANRDetector: Function PaletteWriteCrashThreadStacks hooked with result=0
+07-08 14:20:51.193 25191 25191 W SoLoader: Loading rtvip on the main thread
+07-08 14:20:51.194 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/librtvip.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.195 25191 25191 W SoLoader: Loading rtvip on the main thread
+07-08 14:20:51.196 25191 25191 E rtvip   : error 10 (0xd503245f)
+07-08 14:20:51.196 25191 25191 E rtvip   : error 2
+07-08 14:20:51.196 25191 25191 W SoLoader: Loading vlc on the main thread
+07-08 14:20:51.197 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libvlc.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.198 25191 25191 W SoLoader: Loading native_utils on the main thread
+07-08 14:20:51.199 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libnative_utils.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.199 25191 25191 W SoLoader: Loading curve25519 on the main thread
+07-08 14:20:51.200 25191 25191 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libcurve25519.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.207   574   574 D lowmemorykiller: No processes to kill with adj score >= 700
+07-08 14:20:51.213 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.214  1908  8410 I ActivityManager: Flag disabled. Ignoring finishAttachApplication from uid: 10300. pid: 25191
+07-08 14:20:51.219  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 69 ms
+07-08 14:20:51.220  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821600 spend:145004635 (35585281225224 - 35585136220589) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.222 25191 25191 E FileUtils: err open mi_exception_log errno=2
+07-08 14:20:51.222 25191 25191 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.240 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libar-bundle3.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.242 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libsimplejni.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.249 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libgraphutil.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.253 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libgraphstorecerealutil.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.259  1908  3733 D CompatibilityChangeReporter: Compat change id reported: 261072174; UID 10300; state: ENABLED
+07-08 14:20:51.268 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libwhatsappmerged.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.276 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libopus_mlow.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.288 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.294  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 68 ms
+07-08 14:20:51.295  1908  3482 E AnrScenarioRecongition: updateSystemPSI: java.lang.ArrayIndexOutOfBoundsException: length=1; index=1
+07-08 14:20:51.295  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821615 spend:145084948 (35585356406214 - 35585211321266) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.297  1908  3482 D ActivityManager: checkAllowBackground: uid=10300 pkg=com.whatsapp.w4b rec=UidRecord{40c753c u0a300 RCVR allowlist change:active procs:0 seq(800476,800465)} caps=------ always=false idle=false
+07-08 14:20:51.298 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libar-bundle2.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.302  1908  2690 I MiuiNetworkPolicy: updateUidState uid = 10300, uidState = 10
+07-08 14:20:51.307   574   574 D lowmemorykiller: No processes to kill with adj score >= 700
+07-08 14:20:51.312 25191 25217 W libc    : Access denied finding property "ro.hardware.chipname"
+07-08 14:20:51.317 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libexecutorch.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.320 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libfortify.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.325 20695 21196 E msys    : E[N mns:DGWClient]_LogError(290)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+07-08 14:20:51.326 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libpyspeech.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.329 20695 21196 E msys    : E[N mns:DGWClient]_LogError(290)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+07-08 14:20:51.345 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.352 25191 25217 D nativeloader: Load /data/data/com.whatsapp.w4b/files/decompressed/libs.spo/libwhatsapp.so using class loader ns clns-5 (caller=/data/app/~~-rwNh9lUkeyflKTVPwQlow==/com.whatsapp.w4b-W7zgzcJbrjxuqYx089TDvw==/base.apk): ok
+07-08 14:20:51.352  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 52 ms
+07-08 14:20:51.353  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821630 spend:128275573 (35585414848297 - 35585286572724) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.375 25191 25242 I WhatsAppJni: EnsureThreadAttached: attached current thread to JVM
+07-08 14:20:51.386  1908  8410 E AnrScenarioRecongition: updateSystemPSI: java.lang.ArrayIndexOutOfBoundsException: length=1; index=1
+07-08 14:20:51.389  1908  8410 D ActivityManager: checkAllowBackground: uid=10300 pkg=com.whatsapp.w4b rec=UidRecord{40c753c u0a300 SVC  allowlist change:procstate procs:0 seq(800524,800465)} caps=------ always=false idle=false
+07-08 14:20:51.404 18021 18021 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.auth.aang.events.services.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+07-08 14:20:51.404 25191 25247 I WhatsAppJni: EnsureThreadAttached: attached current thread to JVM
+07-08 14:20:51.405 25191 25248 I WhatsAppJni: EnsureThreadAttached: attached current thread to JVM
+07-08 14:20:51.407   574   574 D lowmemorykiller: No processes to kill with adj score >= 700
+07-08 14:20:51.412  1908  2356 I ActivityManager: Killing 25191:com.whatsapp.w4b/u0a300 (adj 500): MiuiMemoryService(started-services)
+07-08 14:20:51.413  1908  2356 I libc    : kill: send 9 to pid 25191 real pid 25191
+07-08 14:20:51.414  1908  2324 I libc    : kill: send 9 to pid -25191 real pid -25191
+07-08 14:20:51.415  1908  2324 I libc    : kill: send 9 to pid 25191 real pid 25191
+07-08 14:20:51.420  1908  2324 I libc    : kill: send 9 to pid -25191 real pid -25191
+07-08 14:20:51.420  1908  2324 I libprocessgroup: Successfully killed process cgroup uid 10300 pid 25191 in 5ms
+07-08 14:20:51.437 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.444  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 85 ms
+07-08 14:20:51.445  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821645 spend:144968073 (35585506748454 - 35585361780381) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.457  1908  3763 I tsched_scene: binder died pkg=com.whatsapp.w4b, cb=miui.turbosched.ITurboSchedManager$ITurboSchedStateChangeCallback$Stub$Proxy@c220ad0
+07-08 14:20:51.458  1908  2779 E ProcessManager: error write exception log
+07-08 14:20:51.458   897   897 I Zygote  : Process 25191 exited due to signal 9 (Killed)
+07-08 14:20:51.459  6891 29365 D ProcessObserverV10: onProcessDied:pid = 25191,died-uid=10300
+07-08 14:20:51.460  1908  1986 D DisplayManagerService: Drop pending events for gone uid 10300
+07-08 14:20:51.462  1908  2690 I MiuiNetworkPolicy: removeUidState uid = 10300
+07-08 14:20:51.475  1908  8418 I whetstone.activity: Power Event callback listener is empty for resId=256
+07-08 14:20:51.476  1908  8418 D BatteryStatsManagerStub: notifyEvent for resId=256 used 0ms
+07-08 14:20:51.479  1908  2690 I MiuiNetworkPolicy: updateUidState uid = 10141, uidState = 10
+07-08 14:20:51.479  1908  2690 I MiuiNetworkPolicy: updateUidState uid = 10091, uidState = 10
+07-08 14:20:51.510 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.511  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 64 ms
+07-08 14:20:51.512  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821660 spend:153380105 (35585573580954 - 35585420200849) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.583 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.587  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 60 ms
+07-08 14:20:51.588  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821668 spend:140551771 (35585648869183 - 35585508317412) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.599  1908  2296 I ActivityManager: Test idle failed due to 9c85148 20695:com.instagram.android/u0a547 not runnable because EMPTY
+07-08 14:20:51.672 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.679  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 77 ms
+07-08 14:20:51.680  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821690 spend:153433854 (35585740733453 - 35585587299599) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.727 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.729  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821705 spend:128280156 (35585790765901 - 35585662485745) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.745  1908  2388 I AppsFilter: interaction: PackageSetting{7e6ec2a com.fido.asm/10104} -> PackageSetting{8e503fc com.facebook.appmanager/10141} BLOCKED
+07-08 14:20:51.750  1908  2388 I ActivityManager: Broadcast action android.intent.action.PACKAGE_CHANGED forcing include-background
+07-08 14:20:51.783  3260  3260 D MiuiClockController: receive package changed com.facebook.appmanager
+07-08 14:20:51.789  3260  3260 D LockScreenMagazineController: received broadcast android.intent.action.PACKAGE_CHANGED
+07-08 14:20:51.791  3251  3251 D CarrierSvcBindHelper: onPackageModified: com.facebook.appmanager
+07-08 14:20:51.791  3260  3260 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 2
+07-08 14:20:51.801  1908  8410 D PerfShielderService: com.psihumanis.app|com.psihumanis.app/com.psihumanis.app.MainActivity|3888|35585863350797|179|6|54
+07-08 14:20:51.801  6137 28871 W MiuiPerfServiceClient: interceptAndQueuing:24511|com.psihumanis.app|3888|179|35585863350797|Slow swap buffers|54
+07-08 14:20:51.801 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.802  1908  1908 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.802  1908  1908 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.803  1908  1908 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.803  1908  1908 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.804  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 60 ms
+07-08 14:20:51.806  1908  1908 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.807  1908  1908 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.810  1908  2561 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.811  1908  2561 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.811  1908  2561 W JobScheduler.JobStatus: Exempted app com.android.vending considered buggy
+07-08 14:20:51.826  3251  3251 D CarrierSvcBindHelper: No carrier app for: 0
+07-08 14:20:51.826  3251  3251 D CarrierSvcBindHelper: No carrier app for: 1
+07-08 14:20:51.828  1908  2973 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10230; state: DISABLED
+07-08 14:20:51.828  1908  2973 D CompatibilityChangeReporter: Compat change id reported: 177438394; UID 10230; state: DISABLED
+07-08 14:20:51.828  1908  2973 D CompatibilityChangeReporter: Compat change id reported: 135772972; UID 10230; state: DISABLED
+07-08 14:20:51.828  1908  2973 D CompatibilityChangeReporter: Compat change id reported: 135754954; UID 10230; state: ENABLED
+07-08 14:20:51.829  1908  2297 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10230; state: ENABLED
+07-08 14:20:51.832  3251  3878 D ImsResolver: maybeAddedImsService, packageName: com.facebook.appmanager
+07-08 14:20:51.834  3317  3317 D Launcher.Model: LauncherAppsCallback onPackageChanged|com.facebook.appmanager|UserHandle{0}|false
+07-08 14:20:51.839  3317  3463 D Launcher.Model: Got broadcast:Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: (has extras) }
+07-08 14:20:51.840   897   897 D Zygote  : Forked child process 25253
+07-08 14:20:51.840  3317  3317 D Launcher.Model: onPackageChanged: packageName = com.facebook.appmanager
+07-08 14:20:51.840  3317  3317 D Launcher.Model: checkAssistantBlurSupport: 
+07-08 14:20:51.841  1908  2297 I ActivityManager: Start proc 25253:com.google.android.permissioncontroller/u0a230 for service {com.google.android.permissioncontroller/com.android.permissioncontroller.permission.service.PermissionControllerServiceImpl} caller=android
+07-08 14:20:51.847  3317  3463 D Launcher.AllAppsList: updatePackage, packageName=com.facebook.appmanager, loadMissing=false, user=UserHandle{0}, matchedSize=0
+07-08 14:20:51.851  3317  3463 D Launcher.Model: onReceiveBackground, mAllAppsList=add=[], remove=[], modified=[]
+07-08 14:20:51.861 25253 25253 E Zygote  : process_name_ptr:25253 com.google.android.permissioncontroller
+07-08 14:20:51.865 25253 25253 I ssioncontroller: Using generational CollectorTypeCC GC.
+07-08 14:20:51.873 25253 25253 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+07-08 14:20:51.876 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.877 25253 25253 I MessageMonitor: Load libmiui_runtime
+07-08 14:20:51.879 25253 25253 E ssioncontroller: Can't find memory status under: /sys/block/zram0/
+07-08 14:20:51.879  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 61 ms
+07-08 14:20:51.880  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821735 spend:135931458 (35585941109547 - 35585805178089) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.875 25253 25253 W re-initialized>: type=1400 audit(0.0:81446): avc:  denied  { search } for  name="zram0" dev="sysfs" ino=47123 scontext=u:r:permissioncontroller_app:s0:c230,c256,c512,c768 tcontext=u:object_r:sysfs_zram:s0 tclass=dir permissive=0 app=com.google.android.permissioncontroller
+07-08 14:20:51.875 25253 25253 W re-initialized>: type=1400 audit(0.0:81447): avc:  denied  { search } for  name="zram0" dev="sysfs" ino=47123 scontext=u:r:permissioncontroller_app:s0:c230,c256,c512,c768 tcontext=u:object_r:sysfs_zram:s0 tclass=dir permissive=0 app=com.google.android.permissioncontroller
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: getAppVersionCode failure
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: android.content.pm.PackageManager$NameNotFoundException: com.miui.personalassistant
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at android.app.ApplicationPackageManager.getPackageInfoAsUser(ApplicationPackageManager.java:259)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at android.app.ApplicationPackageManager.getPackageInfo(ApplicationPackageManager.java:219)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at android.app.ApplicationPackageManager.getPackageInfo(ApplicationPackageManager.java:213)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.miui.home.launcher.common.Utilities.getAppVersionCode(Utilities.java:1223)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.miui.home.launcher.ApplicationConfig.checkVersionCode(ApplicationConfig.java:161)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.miui.home.launcher.ApplicationConfig.setSupportHomeBlur(ApplicationConfig.java:151)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.miui.home.launcher.ApplicationConfig.updateSupportHomeBlur(ApplicationConfig.java:156)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.miui.home.launcher.LauncherModel.checkAssistantBlurSupport(LauncherModel.java:587)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.miui.home.launcher.LauncherModel.access$1600(LauncherModel.java:171)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.miui.home.launcher.LauncherModel$LauncherAppsCallback.onPackageChanged(LauncherModel.java:408)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.miui.home.library.compat.LauncherAppsCompatVL$WrappedCallback.onPackageChanged(LauncherAppsCompatVL.java:111)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at android.content.pm.LauncherApps$CallbackMessageHandler.handleMessage(LauncherApps.java:1906)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at android.os.Handler.dispatchMessage(Handler.java:106)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at android.os.Looper.loopOnce(Looper.java:222)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at android.os.Looper.loop(Looper.java:314)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at android.app.ActivityThread.main(ActivityThread.java:8857)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at java.lang.reflect.Method.invoke(Native Method)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:565)
+07-08 14:20:51.881  3317  3317 W Launcher.Utilities: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1013)
+07-08 14:20:51.881  3317  3317 D Launcher.Model: checkAssistantBlurSupport: post AssistantBlurSupportChangeMessage 
+07-08 14:20:51.881  3317  3317 D EventBus: No subscribers registered for event class com.miui.home.launcher.common.messages.AssistantBlurSupportChangeMessage
+07-08 14:20:51.881  3317  3317 D EventBus: No subscribers registered for event class org.greenrobot.eventbus.NoSubscriberEvent
+07-08 14:20:51.881  3317  3317 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.884  1908  8418 D SymlinkUtils: attachApplication file op go pass: 0 ms
+07-08 14:20:51.885  1908  8418 I SmartPower: com.google.android.permissioncontroller/10230(25253): died->background(6273ms) R(process start ) adj=-10000.
+07-08 14:20:51.887  1908  8418 D CompatibilityChangeReporter: Compat change id reported: 168419799; UID 10230; state: DISABLED
+07-08 14:20:51.888  1908  8418 D CompatibilityChangeReporter: Compat change id reported: 273564678; UID 10230; state: DISABLED
+07-08 14:20:51.888  1908  8418 D CompatibilityInfo: mCompatibilityFlags - 0
+07-08 14:20:51.888  1908  8418 D CompatibilityInfo: applicationDensity - 440
+07-08 14:20:51.888  1908  8418 D CompatibilityInfo: applicationScale - 1.0
+07-08 14:20:51.891  1908  2777 D isUidValid: uid = 10230
+07-08 14:20:51.895  1908  2690 I MiuiNetworkPolicy: updateUidState uid = 10230, uidState = 6
+07-08 14:20:51.895 25253 25253 I HighMemoryManager: High memory monitor not enabled
+07-08 14:20:51.896 25253 25253 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10230; state: ENABLED
+07-08 14:20:51.896 25253 25253 D CompatibilityChangeReporter: Compat change id reported: 242716250; UID 10230; state: ENABLED
+07-08 14:20:51.900  1908  8418 D CompatibilityChangeReporter: Compat change id reported: 170503758; UID 10230; state: ENABLED
+07-08 14:20:51.908   574   574 D lowmemorykiller: No processes to kill with adj score >= 700
+07-08 14:20:51.909 25253 25253 D nativeloader: Configuring clns-shared-4 for other apk /system/framework/org.apache.http.legacy.jar. target_sdk_version=37, uses_libraries=ALL, library_path=/apex/com.android.permission/priv-app/GooglePermissionController@370549180/lib/arm64:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.google.android.permissioncontroller:/apex/com.android.permission/priv-app/GooglePermissionController@370549180:/system/lib64:/system_ext/lib64
+07-08 14:20:51.909 25253 25253 D nativeloader: Extending system_exposed_libraries: libmisys_jni.xiaomi.so:libbinauralrenderer_wrapper.qti.so:libhoaeffects.qti.so:libQOC.qti.so:libupdateprof.qti.so:libthermalclient.qti.so:libQOC.qti.so:libdiag_system.qti.so:libqape.qti.so:libqesdk_ndk_platform.qti.so:liblistenjni.qti.so:libpag.hyperos.so:libffavc.hyperos.so:libxiaomi_modemdumpsdx55_jni.modem.so:libxiaomi_modemdump_jni.modem.so:libmodemsmartengine_jni.modem.so
+07-08 14:20:51.952 24511 24511 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.954 25253 25253 D nativeloader: Configuring clns-shared-5 for other apk /apex/com.android.permission/priv-app/GooglePermissionController@370549180/GooglePermissionController.apk. target_sdk_version=37, uses_libraries=, library_path=/apex/com.android.permission/priv-app/GooglePermissionController@370549180/lib/arm64:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.google.android.permissioncontroller:/apex/com.android.permission/priv-app/GooglePermissionController@370549180:/system/lib64:/system_ext/lib64
+07-08 14:20:51.954  1121  1121 W SurfaceFlingerInspector: Slow frame composition:  prepareFrame took 69 ms
+07-08 14:20:51.955  1121  1121 E FrameTimeline: sf.trace threshold:120000000 mToken:3821750 spend:136695157 (35586016312985 - 35585879617828) layerName:com.psihumanis.app/com.psihumanis.app.MainActivity#5117
+07-08 14:20:51.960 25253 25253 D nativeloader: InitApexLibraries:
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_adservices: libhpke_jni.so:libtflite_support_classifiers_native.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_appsearch: libappsearchservice.so:libicing_anywhere.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_art: libartservice.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_conscrypt: libjavacrypto.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_mediaprovider: libpdfclient.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_ondevicepersonalization: libfcp_cpp_dep_jni.so:libfcp_hpke_jni.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_os_statsd: libstats_jni.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_tethering: libandroid_net_connectivity_com_android_net_module_util_jni.so:libandroid_net_connectivity_com_android_net_module_util_jni_CommonConnectivityJni.so:libcrypto_httpengine.so:libframework-connectivity-jni.so:libframework-connectivity-tiramisu-jni.so:libhttpengine.so:libservice-connectivity.so:libservice-thread-jni.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_uwb: libuwb_uci_jni_rust.so
+07-08 14:20:51.960 25253 25253 D nativeloader:   com_android_virt: libvirtualizationservice_jni.so:libvirtualmachine_jni.so
+07-08 14:20:51.960  1386  1386 I adbd    : adbd service requested 'shell,v2:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-t' '200''
+07-08 14:20:51.975  1908  2195 E FileUtils: err open mi_exception_log errno=2
+07-08 14:20:51.975  1908  2195 E FileUtils: err write to mi_exception_log
+07-08 14:20:51.975  6118  6369 I AudioManager: In isBluetoothScoOn() calling application: com.huaqin.sarcontroller
+07-08 14:20:51.976  1908  8418 D AS.BtHelper: isBluetoothScoOn() mBluetoothHeadset is null: true
+07-08 14:20:51.976  1908  8418 V AS.AudioDeviceBroker: isBluetoothScoOn return false when sco/ble device is not connect.
+07-08 14:20:51.976  6118  6369 I AudioManager: In isSpeakerphoneOn() calling application: com.huaqin.sarcontroller
+07-08 14:20:51.976  1908  8418 D AS.BtHelper: isBluetoothScoOn() mBluetoothHeadset is null: true
+07-08 14:20:51.976  1908  8418 V AS.AudioDeviceBroker: requestedCommunicationDevice: null mode owner pid: 0 crc: null
+07-08 14:20:51.981  1908  2622 I InputReader: Reconfiguring input devices, changes=KEYBOARD_LAYOUTS

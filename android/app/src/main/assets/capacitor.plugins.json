@@ -8,7 +8,7 @@
 		"classpath": "com.capacitorjs.plugins.haptics.HapticsPlugin"
 	},
 	{
-		"pkg": "capacitor-push-notifications",
+		"pkg": "@capacitor/push-notifications",
 		"classpath": "com.psihumanis.app.SafePushNotificationsPlugin"
 	}
 ]
