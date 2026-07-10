@@ -98,20 +98,15 @@ export function OnboardingTour() {
     // Hide while we scroll
     setReady(false)
 
-    // Scroll element into view
-    el.scrollIntoView({ behavior: "smooth", block: "center" })
+    // Scroll instantly — no timing issues
+    el.scrollIntoView({ behavior: "instant", block: "center" })
 
-    // Wait for scroll to finish, then measure
-    const waitAndMeasure = () => {
-      const rect = el.getBoundingClientRect()
-      const pos = calcPosition(rect, s.placement, TW, TH)
-      setTargetRect(rect)
-      setTooltipPos(pos)
-      setReady(true)
-    }
-
-    // Smooth scroll takes ~300-500ms, measure after it finishes
-    setTimeout(waitAndMeasure, 500)
+    // Measure immediately after instant scroll
+    const rect = el.getBoundingClientRect()
+    const pos = calcPosition(rect, s.placement, TW, TH)
+    setTargetRect(rect)
+    setTooltipPos(pos)
+    setReady(true)
   }, [])
 
   useEffect(() => {
@@ -124,20 +119,29 @@ export function OnboardingTour() {
     }
   }, [showStep])
 
-  // Re-measure on resize
+  // Re-measure on resize and scroll
   useEffect(() => {
     if (!active || !ready) return
-    const onResize = () => {
-      const s = steps[step]
-      const el = document.querySelector(s.target)
-      if (!el) return
-      const rect = el.getBoundingClientRect()
-      const pos = calcPosition(rect, s.placement, TW, TH)
-      setTargetRect(rect)
-      setTooltipPos(pos)
+    let timer: ReturnType<typeof setTimeout>
+    const reposition = () => {
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        const s = steps[step]
+        const el = document.querySelector(s.target)
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        const pos = calcPosition(rect, s.placement, TW, TH)
+        setTargetRect(rect)
+        setTooltipPos(pos)
+      }, 50)
     }
-    window.addEventListener("resize", onResize)
-    return () => window.removeEventListener("resize", onResize)
+    window.addEventListener("resize", reposition)
+    window.addEventListener("scroll", reposition, { passive: true })
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener("resize", reposition)
+      window.removeEventListener("scroll", reposition)
+    }
   }, [active, step, ready])
 
   const finish = () => {
