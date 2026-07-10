@@ -1,206 +1,238 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { X, ChevronRight, ChevronLeft, Check, Sparkles, Calendar, Users, Video, FileText, DollarSign, Settings, BookOpen } from "lucide-react"
+import { useState, useEffect, useRef, useCallback } from "react"
+import { X, ChevronRight, ChevronLeft, Check, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
-interface Step {
+interface TourStep {
+  target: string
   title: string
-  description: string
-  icon: React.ReactNode
-  color: string
+  text: string
+  placement: "top" | "bottom" | "left" | "right"
 }
 
-const steps: Step[] = [
+const steps: TourStep[] = [
   {
-    title: "Bem-vindo ao PsiHumanis",
-    description: "Sua plataforma completa para gestão de consultório psicológico. Vamos apresentar as principais funcionalidades.",
-    icon: <Sparkles className="h-6 w-6" />,
-    color: "from-teal-500 to-emerald-600",
+    target: "[data-tour='dashboard-hero']",
+    title: "Seu Painel",
+    text: "Visão completa do consultório: próxima consulta, receita e atalhos rápidos.",
+    placement: "bottom",
   },
   {
-    title: "Agenda Inteligente",
-    description: "Organize suas consultas com calendário visual, lembretes automáticos por email e WhatsApp, e confirmação com um clique.",
-    icon: <Calendar className="h-6 w-6" />,
-    color: "from-blue-500 to-indigo-600",
+    target: "[data-tour='today-sessions']",
+    title: "Sessões de Hoje",
+    text: "Todas as consultas do dia em tempo real. Clique para entrar na sala virtual.",
+    placement: "bottom",
   },
   {
-    title: "Gestão de Pacientes",
-    description: "Cadastre pacientes, acompanhe histórico completo, prontuários digitais, questionários (PHQ-9, GAD-7) e diário emocional.",
-    icon: <Users className="h-6 w-6" />,
-    color: "from-violet-500 to-purple-600",
+    target: "[data-tour='dashboard-stats']",
+    title: "Métricas",
+    text: "Total de pacientes, consultas, receita e pagamentos pendentes.",
+    placement: "bottom",
   },
   {
-    title: "Videochamadas Seguras",
-    description: "Atenda pacientes online com sala de espera, controles de câmera/mic, e conexão criptografada via LiveKit Cloud.",
-    icon: <Video className="h-6 w-6" />,
-    color: "from-cyan-500 to-teal-600",
+    target: "[data-tour='quick-actions']",
+    title: "Ações Rápidas",
+    text: "Cadastrar paciente, prontuário, sala virtual e relatórios com um clique.",
+    placement: "left",
   },
   {
-    title: "Prontuários Digitais",
-    description: "Documente sessões em formato SOAP, assine digitalmente e gere automaticamente com inteligência artificial.",
-    icon: <FileText className="h-6 w-6" />,
-    color: "from-amber-500 to-orange-600",
-  },
-  {
-    title: "Controle Financeiro",
-    description: "Registre receitas e despesas, gere faturas via Stripe, emita recibos e acompanhe a evolução do consultório.",
-    icon: <DollarSign className="h-6 w-6" />,
-    color: "from-emerald-500 to-green-600",
-  },
-  {
-    title: "Tudo Pronto!",
-    description: "Explore o painel, cadastre seu primeiro paciente e agende uma consulta. Estamos aqui para ajudar!",
-    icon: <Check className="h-6 w-6" />,
-    color: "from-teal-500 to-emerald-600",
+    target: "[data-tour='sidebar-menu']",
+    title: "Menu Lateral",
+    text: "Navegue por todas as funcionalidades: agenda, pacientes, financeiro e mais.",
+    placement: "right",
   },
 ]
 
-const KEY = "psihumanis-tour-v14"
+const KEY = "psihumanis-tour-v15"
 
 export function OnboardingTour() {
-  const [open, setOpen] = useState(false)
+  const [active, setActive] = useState(false)
   const [step, setStep] = useState(0)
-  const [visible, setVisible] = useState(false)
+  const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({})
+  const overlayRef = useRef<HTMLDivElement>(null)
+
+  const measure = useCallback((stepIdx: number) => {
+    const s = steps[stepIdx]
+    const el = document.querySelector(s.target)
+    if (!el) return false
+    const rect = el.getBoundingClientRect()
+    setTargetRect(rect)
+
+    const gap = 12
+    const tw = 320
+    const th = 140
+    let top = 0, left = 0
+
+    switch (s.placement) {
+      case "bottom":
+        top = rect.bottom + gap
+        left = Math.max(16, Math.min(rect.left + rect.width / 2 - tw / 2, window.innerWidth - tw - 16))
+        break
+      case "top":
+        top = Math.max(16, rect.top - gap - th)
+        left = Math.max(16, Math.min(rect.left + rect.width / 2 - tw / 2, window.innerWidth - tw - 16))
+        break
+      case "right":
+        top = Math.max(16, Math.min(rect.top + rect.height / 2 - th / 2, window.innerHeight - th - 16))
+        left = Math.min(rect.right + gap, window.innerWidth - tw - 16)
+        break
+      case "left":
+        top = Math.max(16, Math.min(rect.top + rect.height / 2 - th / 2, window.innerHeight - th - 16))
+        left = Math.max(16, rect.left - gap - tw)
+        break
+    }
+
+    // Keep within viewport
+    if (top + th > window.innerHeight) top = window.innerHeight - th - 16
+    if (left + tw > window.innerWidth) left = window.innerWidth - tw - 16
+    if (top < 16) top = 16
+    if (left < 16) left = 16
+
+    setTooltipStyle({ position: "fixed", top, left, width: tw, zIndex: 10001 })
+    el.scrollIntoView({ behavior: "smooth", block: "center" })
+    return true
+  }, [])
 
   useEffect(() => {
     if (!localStorage.getItem(KEY)) {
       const t = setTimeout(() => {
-        setVisible(true)
-        setOpen(true)
-      }, 800)
+        setActive(true)
+        measure(0)
+      }, 1000)
       return () => clearTimeout(t)
     }
-  }, [])
+  }, [measure])
+
+  useEffect(() => {
+    if (active) measure(step)
+  }, [active, step, measure])
+
+  useEffect(() => {
+    if (!active) return
+    const onResize = () => measure(step)
+    window.addEventListener("resize", onResize)
+    window.addEventListener("scroll", onResize, { passive: true })
+    return () => {
+      window.removeEventListener("resize", onResize)
+      window.removeEventListener("scroll", onResize)
+    }
+  }, [active, step, measure])
 
   const finish = () => {
-    setOpen(false)
-    setTimeout(() => {
-      localStorage.setItem(KEY, "true")
-      setStep(0)
-      setVisible(false)
-    }, 300)
+    setActive(false)
+    localStorage.setItem(KEY, "true")
+    setStep(0)
+    setTargetRect(null)
   }
 
-  const next = () => {
-    if (step === steps.length - 1) {
-      finish()
-    } else {
-      setStep(step + 1)
-    }
+  const go = (n: number) => {
+    setStep(n)
   }
 
-  if (!visible) return null
+  if (!active || !targetRect) return null
 
   const s = steps[step]
   const pct = ((step + 1) / steps.length) * 100
   const last = step === steps.length - 1
+  const pad = 6
 
   return (
-    <div
-      className={cn(
-        "fixed inset-0 z-[100] flex items-center justify-center transition-all duration-300",
-        open ? "opacity-100" : "opacity-0 pointer-events-none"
-      )}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-
-      {/* Modal */}
+    <>
+      {/* Overlay with spotlight hole */}
       <div
-        className={cn(
-          "relative w-full max-w-md mx-4 transition-all duration-300",
-          open ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
-        )}
-      >
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
-          {/* Header gradient */}
-          <div className={cn("h-2 bg-gradient-to-r", s.color)} />
+        ref={overlayRef}
+        className="fixed inset-0 z-[9999]"
+        style={{
+          background: `radial-gradient(
+            ellipse ${targetRect.width + pad * 2}px ${targetRect.height + pad * 2}px at ${targetRect.left + targetRect.width / 2}px ${targetRect.top + targetRect.height / 2}px,
+            transparent 0%,
+            transparent 60%,
+            rgba(0,0,0,0.5) 100%
+          )`,
+          transition: "background 0.3s ease",
+        }}
+        onClick={finish}
+      />
 
-          {/* Close button */}
-          <button
-            onClick={finish}
-            className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition-colors z-10"
-          >
-            <X className="h-4 w-4" />
-          </button>
+      {/* Highlighted element glow */}
+      <div
+        className="fixed z-[10000] pointer-events-none rounded-xl"
+        style={{
+          top: targetRect.top - pad,
+          left: targetRect.left - pad,
+          width: targetRect.width + pad * 2,
+          height: targetRect.height + pad * 2,
+          boxShadow: "0 0 0 2px rgba(13,148,136,0.8), 0 0 20px rgba(13,148,136,0.3)",
+          transition: "all 0.3s ease",
+        }}
+      />
 
-          {/* Content */}
-          <div className="p-8 text-center">
-            {/* Icon */}
-            <div className={cn("inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br text-white shadow-lg mb-5", s.color)}>
-              {s.icon}
-            </div>
-
-            {/* Step indicator */}
-            <div className="flex items-center justify-center gap-1.5 mb-4">
+      {/* Tooltip card */}
+      <div style={tooltipStyle} className="pointer-events-auto">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          {/* Progress dots */}
+          <div className="flex items-center justify-between px-4 pt-3 pb-1">
+            <div className="flex items-center gap-1">
               {steps.map((_, i) => (
                 <div
                   key={i}
                   className={cn(
-                    "h-1.5 rounded-full transition-all duration-300",
-                    i === step ? "w-8 bg-teal-500" : i < step ? "w-3 bg-teal-300" : "w-3 bg-slate-200 dark:bg-slate-700"
+                    "h-1.5 rounded-full transition-all duration-300 cursor-pointer",
+                    i === step ? "w-6 bg-teal-500" : i < step ? "w-1.5 bg-teal-300" : "w-1.5 bg-slate-200 dark:bg-slate-700"
                   )}
+                  onClick={() => go(i)}
                 />
               ))}
             </div>
-
-            {/* Title + Description */}
-            <h2 className="text-xl font-bold mb-2">{s.title}</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">{s.description}</p>
+            <button
+              onClick={finish}
+              className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
           </div>
 
-          {/* Progress bar */}
-          <div className="px-8">
-            <div className="h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 transition-all duration-500 rounded-full"
-                style={{ width: `${pct}%` }}
-              />
+          {/* Content */}
+          <div className="px-4 pb-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="h-3.5 w-3.5 text-teal-500" />
+              <h3 className="text-sm font-bold">{s.title}</h3>
             </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">{s.text}</p>
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between px-8 py-6">
-            <button
-              onClick={finish}
-              className="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-            >
-              Pular tour
-            </button>
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-[10px] text-muted-foreground">
+              {step + 1}/{steps.length}
+            </span>
+            <div className="flex items-center gap-1.5">
               {step > 0 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setStep(step - 1)}
-                  className="h-9"
+                <button
+                  onClick={() => go(step - 1)}
+                  className="h-7 px-2.5 rounded-lg text-[11px] font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Voltar
-                </Button>
+                  <ChevronLeft className="h-3 w-3" />
+                </button>
               )}
-              <Button
-                size="sm"
-                onClick={next}
+              <button
+                onClick={() => last ? finish() : go(step + 1)}
                 className={cn(
-                  "h-9 px-5 text-white shadow-md",
+                  "h-7 px-3 rounded-lg text-[11px] font-semibold text-white shadow-sm transition-all flex items-center gap-1",
                   last
-                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400"
-                    : "bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500"
+                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600"
+                    : "bg-gradient-to-r from-teal-600 to-teal-700"
                 )}
               >
-                {last ? (
-                  <><Check className="h-4 w-4 mr-1" />Concluir</>
-                ) : (
-                  <>Próximo<ChevronRight className="h-4 w-4 ml-1" /></>
-                )}
-              </Button>
+                {last ? <><Check className="h-3 w-3" />Concluir</> : <>Avançar<ChevronRight className="h-3 w-3" /></>}
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
