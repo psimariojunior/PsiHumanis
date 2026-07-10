@@ -17,6 +17,7 @@ import {
 import { getInitials } from "@/lib/utils"
 import { Menu, LogOut, User, Settings, Moon, Sun, Search } from "lucide-react"
 import { NotificationDropdown } from "@/components/comunicacao/notification-dropdown"
+import { QuickNotesDropdown } from "@/components/dashboard/quick-notes-dropdown"
 import { useTheme } from "next-themes"
 import { cn } from "@/lib/utils"
 
@@ -90,6 +91,7 @@ export function Header({ onMenuClick, onPaletteOpen }: HeaderProps) {
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
 
+          <QuickNotesDropdown />
           <NotificationDropdown />
 
           <DropdownMenu>

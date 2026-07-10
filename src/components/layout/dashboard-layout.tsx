@@ -7,10 +7,7 @@ import { redirect } from "next/navigation"
 import { Sidebar } from "./sidebar"
 import { Header } from "./header"
 import { CommandPalette } from "@/components/command-palette"
-import { KeyboardShortcutsHint } from "@/components/keyboard-shortcuts"
 import { OnboardingTour } from "@/components/onboarding-tour"
-import { GuidedTour } from "@/components/guided-tour"
-import { SpotlightTour } from "@/components/spotlight-tour"
 import { PushNotificationPrompt } from "@/components/push-notification-prompt"
 import { ArrivalNotification } from "@/components/recepcao/arrival-notification"
 import { AIAssistant } from "@/components/ai-assistant"
@@ -27,6 +24,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [trialInfo, setTrialInfo] = useState<{ plan: string; expiresAt: string } | null>(null)
   const [trialExpired, setTrialExpired] = useState(false)
   const [trialExpiredReason, setTrialExpiredReason] = useState("")
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
   const { data: session, status } = useSession()
   const pathname = usePathname()
   const router = useRouter()
@@ -53,6 +51,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         .catch(() => {})
     }
   }, [status])
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "?" && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+        e.preventDefault()
+        setShortcutsOpen((v) => !v)
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
 
   if (status === "unauthenticated") {
     redirect("/login")
@@ -149,12 +158,42 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </AnimatePresence>
         </main>
         <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
-        <KeyboardShortcutsHint />
         <OnboardingTour />
-        <SpotlightTour />
         <PushNotificationPrompt />
         <ArrivalNotification />
         <AIAssistant />
+
+        {/* Keyboard Shortcuts Modal */}
+        {shortcutsOpen && (
+          <div className="fixed inset-0 z-[99] flex items-center justify-center" onClick={() => setShortcutsOpen(false)}>
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+            <div className="relative bg-background rounded-2xl border shadow-2xl w-full max-w-sm mx-4 p-6 animate-in zoom-in-95 fade-in duration-200" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold">Atalhos de Teclado</h3>
+                <button onClick={() => setShortcutsOpen(false)} className="text-muted-foreground hover:text-foreground text-sm">Fechar</button>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { keys: ["⌘", "K"], label: "Paleta de comandos" },
+                  { keys: ["N"], label: "Novo paciente" },
+                  { keys: ["?"], label: "Ver atalhos" },
+                ].map((s) => (
+                  <div key={s.label} className="flex items-center justify-between py-1.5">
+                    <span className="text-sm text-muted-foreground">{s.label}</span>
+                    <div className="flex items-center gap-0.5">
+                      {s.keys.map((k, i) => (
+                        <span key={i} className="inline-flex items-center justify-center min-w-[22px] h-6 px-1.5 rounded-md border bg-accent text-accent-foreground text-[11px] font-mono font-semibold">{k}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-4 text-center">
+                Pressione <kbd className="inline-flex items-center justify-center h-5 px-1.5 rounded border bg-muted text-[10px] font-mono">?</kbd> para abrir
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

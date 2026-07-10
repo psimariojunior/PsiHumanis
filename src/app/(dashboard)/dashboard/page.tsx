@@ -10,12 +10,11 @@ import { OnboardingChecklist } from "@/components/onboarding-checklist"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Calendar, UserPlus, FileText, Video, Sparkles, ArrowRight, BarChart3, TrendingUp, Users, DollarSign, Clock, Activity, CalendarDays, Sun, Moon, AlertTriangle, Zap, Target, Shield } from "lucide-react"
+import { Calendar, UserPlus, FileText, Video, Sparkles, ArrowRight, BarChart3, TrendingUp, Users, DollarSign, Clock, Activity, Sun, Moon, AlertTriangle, Zap, Target, Shield } from "lucide-react"
 import Link from "next/link"
 import toast from "react-hot-toast"
 import { cn, formatTime } from "@/lib/utils"
-import { motion } from "framer-motion"
-import { QuickNotesFab } from "@/components/dashboard/quick-notes-fab"
+
 import { TodaySessions } from "@/components/dashboard/today-sessions"
 import { BirthdayAlert } from "@/components/dashboard/birthday-alert"
 import { WeeklyOccupancy } from "@/components/dashboard/weekly-occupancy"
@@ -454,8 +453,6 @@ export default function DashboardHome() {
 
         <RecentPatients patients={recentPatients} />
       </div>
-
-      <QuickNotesFab />
 
       {/* Feedback Prompt */}
       <FeedbackPrompt trigger="session_completed" />
