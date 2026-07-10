@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { X, ChevronRight, ChevronLeft, Check, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -44,48 +44,66 @@ const steps: TourStep[] = [
   },
 ]
 
-const KEY = "psihumanis-tour-v16"
+const KEY = "psihumanis-tour-v17"
 
-function calcPosition(rect: DOMRect, placement: string, tw: number, th: number) {
-  const gap = 12
-  let top = 0, left = 0
-
-  switch (placement) {
-    case "bottom":
-      top = rect.bottom + gap
-      left = rect.left + rect.width / 2 - tw / 2
-      break
-    case "top":
-      top = rect.top - gap - th
-      left = rect.left + rect.width / 2 - tw / 2
-      break
-    case "right":
-      top = rect.top + rect.height / 2 - th / 2
-      left = rect.right + gap
-      break
-    case "left":
-      top = rect.top + rect.height / 2 - th / 2
-      left = rect.left - gap - tw
-      break
+function getElementAbsoluteCenter(el: Element) {
+  const rect = el.getBoundingClientRect()
+  const scrollY = window.scrollY || window.pageYOffset
+  const scrollX = window.scrollX || window.pageXOffset
+  return {
+    viewport: rect,
+    absTop: rect.top + scrollY,
+    absLeft: rect.left + scrollX,
+    absBottom: rect.bottom + scrollY,
+    absRight: rect.right + scrollX,
+    centerX: rect.left + rect.width / 2 + scrollX,
+    centerY: rect.top + rect.height / 2 + scrollY,
+    width: rect.width,
+    height: rect.height,
   }
-
-  // Clamp to viewport
-  left = Math.max(16, Math.min(left, window.innerWidth - tw - 16))
-  top = Math.max(16, Math.min(top, window.innerHeight - th - 16))
-
-  return { top, left }
 }
 
 export function OnboardingTour() {
   const [active, setActive] = useState(false)
   const [step, setStep] = useState(0)
   const [ready, setReady] = useState(false)
-  const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
-  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 })
+  const [spot, setSpot] = useState({ x: 0, y: 0, w: 0, h: 0 })
+  const [tooltip, setTooltip] = useState({ top: 0, left: 0 })
+  const scrollEndRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const TW = 320
-  const TH = 140
-  const PAD = 6
+  const TW = 300
+  const PAD = 8
+
+  const positionTooltip = useCallback((rect: DOMRect, placement: string) => {
+    let top = 0, left = 0
+    const th = 130
+
+    switch (placement) {
+      case "bottom":
+        top = rect.bottom + PAD + window.scrollY
+        left = rect.left + rect.width / 2 - TW / 2 + window.scrollX
+        break
+      case "top":
+        top = rect.top - PAD - th + window.scrollY
+        left = rect.left + rect.width / 2 - TW / 2 + window.scrollX
+        break
+      case "right":
+        top = rect.top + rect.height / 2 - th / 2 + window.scrollY
+        left = rect.right + PAD + window.scrollX
+        break
+      case "left":
+        top = rect.top + rect.height / 2 - th / 2 + window.scrollY
+        left = rect.left - PAD - TW + window.scrollX
+        break
+    }
+
+    // Clamp to viewport width
+    const vw = window.innerWidth
+    if (left < 16 + window.scrollX) left = 16 + window.scrollX
+    if (left + TW > vw - 16 + window.scrollX) left = vw - TW - 16 + window.scrollX
+
+    return { top, left }
+  }, [])
 
   const showStep = useCallback((stepIdx: number) => {
     const s = steps[stepIdx]
@@ -95,19 +113,65 @@ export function OnboardingTour() {
       return
     }
 
-    // Hide while we scroll
     setReady(false)
 
-    // Scroll instantly — no timing issues
-    el.scrollIntoView({ behavior: "instant", block: "center" })
-
-    // Measure immediately after instant scroll
+    // Scroll element to center of viewport
     const rect = el.getBoundingClientRect()
-    const pos = calcPosition(rect, s.placement, TW, TH)
-    setTargetRect(rect)
-    setTooltipPos(pos)
-    setReady(true)
-  }, [])
+    const scrollTarget = rect.top + window.scrollY - window.innerHeight / 2 + rect.height / 2
+
+    window.scrollTo({ top: Math.max(0, scrollTarget), behavior: "instant" })
+
+    // Measure after scroll (instant = same frame, but use rAF to be safe)
+    requestAnimationFrame(() => {
+      const newRect = el.getBoundingClientRect()
+      const scrollY = window.scrollY
+      const scrollX = window.scrollX
+
+      // Spotlight position (absolute, moves with scroll)
+      setSpot({
+        x: newRect.left + scrollX - PAD,
+        y: newRect.top + scrollY - PAD,
+        w: newRect.width + PAD * 2,
+        h: newRect.height + PAD * 2,
+      })
+
+      // Tooltip position (absolute, moves with scroll)
+      setTooltip(positionTooltip(newRect, s.placement))
+      setReady(true)
+    })
+  }, [positionTooltip])
+
+  // Keep spotlight synced on scroll
+  useEffect(() => {
+    if (!active || !ready) return
+    let raf: number
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const s = steps[step]
+        const el = document.querySelector(s.target)
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        const scrollY = window.scrollY
+        const scrollX = window.scrollX
+
+        setSpot({
+          x: rect.left + scrollX - PAD,
+          y: rect.top + scrollY - PAD,
+          w: rect.width + PAD * 2,
+          h: rect.height + PAD * 2,
+        })
+        setTooltip(positionTooltip(rect, s.placement))
+      })
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+    }
+  }, [active, step, ready, positionTooltip])
 
   useEffect(() => {
     if (!localStorage.getItem(KEY)) {
@@ -119,37 +183,11 @@ export function OnboardingTour() {
     }
   }, [showStep])
 
-  // Re-measure on resize and scroll
-  useEffect(() => {
-    if (!active || !ready) return
-    let timer: ReturnType<typeof setTimeout>
-    const reposition = () => {
-      clearTimeout(timer)
-      timer = setTimeout(() => {
-        const s = steps[step]
-        const el = document.querySelector(s.target)
-        if (!el) return
-        const rect = el.getBoundingClientRect()
-        const pos = calcPosition(rect, s.placement, TW, TH)
-        setTargetRect(rect)
-        setTooltipPos(pos)
-      }, 50)
-    }
-    window.addEventListener("resize", reposition)
-    window.addEventListener("scroll", reposition, { passive: true })
-    return () => {
-      clearTimeout(timer)
-      window.removeEventListener("resize", reposition)
-      window.removeEventListener("scroll", reposition)
-    }
-  }, [active, step, ready])
-
   const finish = () => {
     setActive(false)
     setReady(false)
     localStorage.setItem(KEY, "true")
     setStep(0)
-    setTargetRect(null)
   }
 
   const go = (n: number) => {
@@ -157,43 +195,55 @@ export function OnboardingTour() {
     showStep(n)
   }
 
-  if (!active || !targetRect || !ready) return null
+  if (!active || !ready) return null
 
   const s = steps[step]
   const last = step === steps.length - 1
 
   return (
     <>
-      {/* Dark overlay with spotlight hole */}
+      {/* Spotlight highlight — absolute position, moves with scroll */}
       <div
-        className="fixed inset-0 z-[9999]"
+        className="absolute z-[9998] pointer-events-none rounded-xl"
         style={{
+          position: "absolute",
+          top: spot.y,
+          left: spot.x,
+          width: spot.w,
+          height: spot.h,
+          boxShadow: "0 0 0 3px rgba(13,148,136,0.9), 0 0 30px rgba(13,148,136,0.3)",
+          transition: "all 0.15s ease-out",
+        }}
+      />
+
+      {/* Dark overlay — absolute, covers full document */}
+      <div
+        className="pointer-events-none z-[9997]"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
           background: `radial-gradient(
-            ellipse ${targetRect.width + PAD * 2}px ${targetRect.height + PAD * 2}px at ${targetRect.left + targetRect.width / 2}px ${targetRect.top + targetRect.height / 2}px,
+            ellipse ${spot.w + 40}px ${spot.h + 40}px at ${spot.x + spot.w / 2}px ${spot.y + spot.h / 2}px,
             transparent 0%,
-            transparent 65%,
-            rgba(0,0,0,0.55) 100%
+            transparent 60%,
+            rgba(0,0,0,0.5) 100%
           )`,
         }}
+      />
+
+      {/* Clickable backdrop to close */}
+      <div
+        className="fixed inset-0 z-[9996]"
         onClick={finish}
       />
 
-      {/* Glow border around target */}
+      {/* Tooltip — absolute position, moves with scroll */}
       <div
-        className="fixed z-[10000] pointer-events-none rounded-xl"
-        style={{
-          top: targetRect.top - PAD,
-          left: targetRect.left - PAD,
-          width: targetRect.width + PAD * 2,
-          height: targetRect.height + PAD * 2,
-          boxShadow: "0 0 0 2px rgba(13,148,136,0.9), 0 0 24px rgba(13,148,136,0.25)",
-        }}
-      />
-
-      {/* Tooltip */}
-      <div
-        className="fixed z-[10001] pointer-events-auto"
-        style={{ top: tooltipPos.top, left: tooltipPos.left, width: TW }}
+        className="absolute z-[10001] pointer-events-auto"
+        style={{ top: tooltip.top, left: tooltip.left, width: TW }}
       >
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
           {/* Progress dots */}
