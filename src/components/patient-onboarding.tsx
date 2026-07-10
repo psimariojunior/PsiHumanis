@@ -1,301 +1,309 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { Button } from "@/components/ui/button"
-import {
-  Calendar, BookOpen, ClipboardList, ListTodo, FileText,
-  ChevronRight, ChevronLeft, X, PartyPopper, Heart, Sparkles, Zap
-} from "lucide-react"
+import { useState, useEffect, useCallback } from "react"
+import { X, ChevronRight, ChevronLeft, Check, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const TOUR_KEY = "psihumanis-patient-tour"
-const TOUR_VERSION = "v4"
-
 interface TourStep {
-  icon: React.ElementType
+  target: string
   title: string
-  description: string
-  color: string
-  illustration: string
-  tip?: string
-  action?: { label: string; href: string }
-  demo?: "mood" | "agenda" | "diary"
+  text: string
+  placement: "top" | "bottom" | "left" | "right"
 }
 
 const steps: TourStep[] = [
   {
-    icon: Heart,
-    title: "Bem-vindo(a)!",
-    description: "Este é o seu espaço seguro. Tudo sobre seu tratamento está aqui.",
-    color: "from-teal-500 to-emerald-500",
-    illustration: "💚",
-    demo: "mood",
+    target: "[data-tour='patient-hero']",
+    title: "Seu Espaço",
+    text: "Acompanhe suas sessões, diário emocional e documentos em um lugar seguro.",
+    placement: "bottom",
   },
   {
-    icon: Calendar,
-    title: "Agenda",
-    description: "Veja suas consultas e remarque se precisar.",
-    color: "from-blue-500 to-indigo-500",
-    illustration: "📅",
-    tip: "O psicólogo agenda automaticamente.",
-    action: { label: "Ver agenda", href: "/paciente/agenda" },
-    demo: "agenda",
+    target: "[data-tour='patient-appointment']",
+    title: "Próxima Consulta",
+    text: "Veja detalhes da sua próxima sessão e entre na sala virtual no horário.",
+    placement: "bottom",
   },
   {
-    icon: BookOpen,
-    title: "Diário",
-    description: "Registre como se sente. Acompanhe sua evolução.",
-    color: "from-violet-500 to-purple-500",
-    illustration: "📝",
-    demo: "diary",
+    target: "[data-tour='patient-mood']",
+    title: "Como Você Se Sente?",
+    text: "Registre seu humor diariamente. Isso ajuda seu psicólogo a acompanhar sua evolução.",
+    placement: "bottom",
   },
   {
-    icon: ClipboardList,
-    title: "Questionários",
-    description: "PHQ-9, GAD-7 e outros. Responda no seu ritmo.",
-    color: "from-orange-500 to-amber-500",
-    illustration: "✅",
-  },
-  {
-    icon: ListTodo,
-    title: "Tarefas",
-    description: "Atividades enviadas pelo seu terapeuta.",
-    color: "from-rose-500 to-pink-500",
-    illustration: "📋",
-    action: { label: "Ver tarefas", href: "/paciente/tarefas" },
-  },
-  {
-    icon: PartyPopper,
-    title: "Tudo pronto!",
-    description: "Explore à vontade. Estamos aqui para ajudar.",
-    color: "from-teal-500 to-cyan-500",
-    illustration: "🎉",
+    target: "[data-tour='patient-quicklinks']",
+    title: "Acesso Rápido",
+    text: "Diário, questionários, tarefas, agenda e mais — tudo com um toque.",
+    placement: "top",
   },
 ]
 
-function MoodDemo({ onSelect }: { onSelect: (v: number) => void }) {
-  const [sel, setSel] = useState<number | null>(null)
-  return (
-    <div className="flex justify-center gap-1">
-      {[{ v: 1, e: "😔" }, { v: 2, e: "😟" }, { v: 3, e: "😐" }, { v: 4, e: "🙂" }, { v: 5, e: "😊" }].map((m) => (
-        <button
-          key={m.v}
-          onClick={() => { setSel(m.v); onSelect(m.v) }}
-          className={cn(
-            "text-xl p-1.5 rounded-lg transition-all",
-            sel === m.v ? "bg-teal-100 dark:bg-teal-900/50 scale-110" : "bg-muted/40 hover:bg-muted active:scale-95"
-          )}
-        >
-          {m.e}
-        </button>
-      ))}
-    </div>
-  )
-}
+const TOUR_KEY = "psihumanis-patient-tour-v2"
 
-function AgendaDemo() {
-  return (
-    <div className="flex gap-1">
-      {[
-        { t: "14:00", c: "bg-emerald-500" },
-        { t: "14:30", c: "bg-blue-500" },
-        { t: "15:00", c: "bg-amber-500" },
-      ].map((a, i) => (
-        <div key={i} className="flex items-center gap-1 rounded-md bg-background/60 px-1.5 py-0.5 text-[10px]">
-          <span className={cn("w-1 h-1 rounded-full", a.c)} />
-          <span className="text-muted-foreground">{a.t}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
+function calcPosition(rect: DOMRect, placement: string, tw: number, th: number) {
+  const gap = 12
+  let top = 0, left = 0
 
-function DiaryDemo() {
-  const [sel, setSel] = useState<number | null>(null)
-  return (
-    <div className="flex justify-center gap-1">
-      {[{ v: 1, e: "😔" }, { v: 2, e: "😟" }, { v: 3, e: "😐" }, { v: 4, e: "🙂" }, { v: 5, e: "😊" }].map((m) => (
-        <button
-          key={m.v}
-          onClick={() => setSel(m.v)}
-          className={cn(
-            "text-base p-1 rounded-md transition-all",
-            sel === m.v ? "bg-violet-100 dark:bg-violet-900/50 scale-110" : "bg-muted/30 hover:bg-muted active:scale-95"
-          )}
-        >
-          {m.e}
-        </button>
-      ))}
-    </div>
-  )
+  switch (placement) {
+    case "bottom":
+      top = rect.bottom + gap
+      left = rect.left + rect.width / 2 - tw / 2
+      break
+    case "top":
+      top = rect.top - gap - th
+      left = rect.left + rect.width / 2 - tw / 2
+      break
+    case "right":
+      top = rect.top + rect.height / 2 - th / 2
+      left = rect.right + gap
+      break
+    case "left":
+      top = rect.top + rect.height / 2 - th / 2
+      left = rect.left - gap - tw
+      break
+  }
+
+  const vw = window.innerWidth
+  left = Math.max(16, Math.min(left, vw - tw - 16))
+  top = Math.max(16, top)
+
+  return { top, left }
 }
 
 export function PatientOnboarding() {
-  const [show, setShow] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
-  const [animKey, setAnimKey] = useState(0)
-  const [demoAction, setDemoAction] = useState<string | null>(null)
-  const touchStartX = useRef(0)
+  const [active, setActive] = useState(false)
+  const [step, setStep] = useState(0)
+  const [ready, setReady] = useState(false)
+  const [spot, setSpot] = useState({ x: 0, y: 0, w: 0, h: 0 })
+  const [tooltip, setTooltip] = useState({ top: 0, left: 0 })
+
+  const TW = 300
+  const PAD = 8
+
+  const positionTooltip = useCallback((rect: DOMRect, placement: string) => {
+    let top = 0, left = 0
+    const th = 130
+
+    switch (placement) {
+      case "bottom":
+        top = rect.bottom + PAD + window.scrollY
+        left = rect.left + rect.width / 2 - TW / 2 + window.scrollX
+        break
+      case "top":
+        top = rect.top - PAD - th + window.scrollY
+        left = rect.left + rect.width / 2 - TW / 2 + window.scrollX
+        break
+      case "right":
+        top = rect.top + rect.height / 2 - th / 2 + window.scrollY
+        left = rect.right + PAD + window.scrollX
+        break
+      case "left":
+        top = rect.top + rect.height / 2 - th / 2 + window.scrollY
+        left = rect.left - PAD - TW + window.scrollX
+        break
+    }
+
+    const vw = window.innerWidth
+    if (left < 16 + window.scrollX) left = 16 + window.scrollX
+    if (left + TW > vw - 16 + window.scrollX) left = vw - TW - 16 + window.scrollX
+
+    return { top, left }
+  }, [])
+
+  const showStep = useCallback((stepIdx: number) => {
+    const s = steps[stepIdx]
+    const el = document.querySelector(s.target)
+    if (!el) {
+      setReady(false)
+      return
+    }
+
+    setReady(false)
+
+    const rect = el.getBoundingClientRect()
+    const scrollTarget = rect.top + window.scrollY - window.innerHeight / 2 + rect.height / 2
+    window.scrollTo({ top: Math.max(0, scrollTarget), behavior: "instant" })
+
+    requestAnimationFrame(() => {
+      const newRect = el.getBoundingClientRect()
+      const scrollY = window.scrollY
+      const scrollX = window.scrollX
+
+      setSpot({
+        x: newRect.left + scrollX - PAD,
+        y: newRect.top + scrollY - PAD,
+        w: newRect.width + PAD * 2,
+        h: newRect.height + PAD * 2,
+      })
+      setTooltip(positionTooltip(newRect, s.placement))
+      setReady(true)
+    })
+  }, [positionTooltip])
+
+  // Keep spotlight synced on scroll
+  useEffect(() => {
+    if (!active || !ready) return
+    let raf: number
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const s = steps[step]
+        const el = document.querySelector(s.target)
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        const scrollY = window.scrollY
+        const scrollX = window.scrollX
+
+        setSpot({
+          x: rect.left + scrollX - PAD,
+          y: rect.top + scrollY - PAD,
+          w: rect.width + PAD * 2,
+          h: rect.height + PAD * 2,
+        })
+        setTooltip(positionTooltip(rect, s.placement))
+      })
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+    }
+  }, [active, step, ready, positionTooltip])
 
   useEffect(() => {
-    const stored = localStorage.getItem(TOUR_KEY)
-    if (stored === TOUR_VERSION) return
-    const timer = setTimeout(() => setShow(true), 800)
-    return () => clearTimeout(timer)
-  }, [])
+    if (localStorage.getItem(TOUR_KEY)) return
+    const t = setTimeout(() => {
+      setActive(true)
+      showStep(0)
+    }, 1000)
+    return () => clearTimeout(t)
+  }, [showStep])
 
-  const step = steps[currentStep]
-  const isLast = currentStep === steps.length - 1
-  const isFirst = currentStep === 0
-
-  const dismiss = useCallback(() => {
-    localStorage.setItem(TOUR_KEY, TOUR_VERSION)
-    setShow(false)
-  }, [])
-  const next = useCallback(() => {
-    setDemoAction(null)
-    if (currentStep < steps.length - 1) { setCurrentStep(currentStep + 1); setAnimKey((k) => k + 1) }
-    else dismiss()
-  }, [currentStep, dismiss])
-  const prev = useCallback(() => {
-    setDemoAction(null)
-    if (currentStep > 0) { setCurrentStep(currentStep - 1); setAnimKey((k) => k + 1) }
-  }, [currentStep])
-
-  function onTouchStart(e: React.TouchEvent) { touchStartX.current = e.touches[0].clientX }
-  function onTouchEnd(e: React.TouchEvent) {
+  // Swipe support for mobile
+  const touchStartX = { current: 0 }
+  const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX }
+  const onTouchEnd = (e: React.TouchEvent) => {
     const dx = e.changedTouches[0].clientX - touchStartX.current
-    if (Math.abs(dx) > 60) { if (dx < 0 && !isLast) next(); else if (dx > 0 && !isFirst) prev() }
+    if (Math.abs(dx) > 60) {
+      if (dx < 0 && step < steps.length - 1) go(step + 1)
+      else if (dx > 0 && step > 0) go(step - 1)
+    }
   }
 
-  useEffect(() => {
-    const h = (e: KeyboardEvent) => {
-      if (!show) return
-      if (e.key === "Escape") dismiss()
-      if (e.key === "ArrowRight" || e.key === "Enter") next()
-      if (e.key === "ArrowLeft") prev()
-    }
-    window.addEventListener("keydown", h)
-    return () => window.removeEventListener("keydown", h)
-  }, [show, currentStep, next, prev, dismiss])
+  const finish = () => {
+    setActive(false)
+    setReady(false)
+    localStorage.setItem(TOUR_KEY, TOUR_KEY)
+    setStep(0)
+  }
 
-  if (!show) return null
-  const Icon = step.icon
+  const go = (n: number) => {
+    setStep(n)
+    showStep(n)
+  }
+
+  if (!active || !ready) return null
+
+  const s = steps[step]
+  const last = step === steps.length - 1
 
   return (
-    <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <>
+      {/* Spotlight highlight — absolute position, moves with scroll */}
       <div
+        className="absolute z-[9998] pointer-events-none rounded-xl"
+        style={{
+          position: "absolute",
+          top: spot.y,
+          left: spot.x,
+          width: spot.w,
+          height: spot.h,
+          boxShadow: "0 0 0 3px rgba(13,148,136,0.9), 0 0 30px rgba(13,148,136,0.3)",
+          transition: "all 0.15s ease-out",
+        }}
+      />
+
+      {/* Dark overlay — absolute, covers full document */}
+      <div
+        className="pointer-events-none z-[9997]"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: `radial-gradient(
+            ellipse ${spot.w + 40}px ${spot.h + 40}px at ${spot.x + spot.w / 2}px ${spot.y + spot.h / 2}px,
+            transparent 0%,
+            transparent 60%,
+            rgba(0,0,0,0.5) 100%
+          )`,
+        }}
+      />
+
+      {/* Clickable backdrop to close */}
+      <div className="fixed inset-0 z-[9996]" onClick={finish} />
+
+      {/* Tooltip — absolute position, moves with scroll */}
+      <div
+        className="absolute z-[10001] pointer-events-auto"
+        style={{ top: tooltip.top, left: tooltip.left, width: TW }}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        key={animKey}
-        className={cn(
-          "bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-[340px] overflow-hidden animate-tour-slide",
-          "flex flex-col"
-        )}
-        style={{ maxHeight: "calc(100dvh - 32px)" }}
       >
-        {/* Header — ultra compact */}
-        <div className={cn("relative h-20 bg-gradient-to-br flex items-center justify-center overflow-hidden shrink-0", step.color)}>
-          <div className="absolute inset-0 bg-noise opacity-5" />
-
-          {/* Progress */}
-          <div className="absolute top-2.5 left-2.5 right-2.5 flex gap-1">
-            {steps.map((_, i) => (
-              <div key={i} className={cn("h-1 rounded-full transition-all duration-500", i <= currentStep ? "bg-white flex-1" : "bg-white/25 flex-0.5")} />
-            ))}
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          {/* Progress dots */}
+          <div className="flex items-center justify-between px-4 pt-3 pb-1">
+            <div className="flex items-center gap-1">
+              {steps.map((_, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-1.5 rounded-full transition-all duration-300 cursor-pointer",
+                    i === step ? "w-6 bg-teal-500" : i < step ? "w-1.5 bg-teal-300" : "w-1.5 bg-slate-200 dark:bg-slate-700"
+                  )}
+                  onClick={() => go(i)}
+                />
+              ))}
+            </div>
+            <button onClick={finish} className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition-colors">
+              <X className="h-3.5 w-3.5" />
+            </button>
           </div>
 
-          <button onClick={dismiss} className="absolute top-2 right-2 text-white/60 hover:text-white p-1 rounded-full hover:bg-white/10 z-10" aria-label="Fechar">
-            <X className="h-3.5 w-3.5" />
-          </button>
-
-          <div className="relative animate-tour-pop" key={`ill-${animKey}`}>
-            <div className={cn("w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl", isLast && "animate-tour-glow")}>
-              <span className="text-2xl">{step.illustration}</span>
+          {/* Content */}
+          <div className="px-4 pb-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="h-3.5 w-3.5 text-teal-500" />
+              <h3 className="text-sm font-bold">{s.title}</h3>
             </div>
-            {isLast && <div className="absolute -inset-1 rounded-[18px] border-2 border-dashed border-white/30 animate-spin-slow" />}
+            <p className="text-xs text-muted-foreground leading-relaxed">{s.text}</p>
           </div>
 
-          <span className="absolute bottom-1.5 left-2.5 text-white/60 text-[9px] font-medium">{currentStep + 1}/{steps.length}</span>
-        </div>
-
-        {/* Content — scrollable but compact */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0">
-          {/* Title + description */}
-          <div className="flex items-start gap-2">
-            <div className={cn("w-6 h-6 rounded-md bg-gradient-to-br flex items-center justify-center shadow-sm shrink-0 mt-0.5", step.color)}>
-              <Icon className="h-3 w-3 text-white" />
-            </div>
-            <div className="min-w-0">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{step.title}</h3>
-              <p className="text-xs text-muted-foreground leading-snug mt-0.5">{step.description}</p>
-            </div>
-          </div>
-
-          {/* Demo */}
-          {step.demo === "mood" && (
-            <div>
-              <p className="text-[9px] text-muted-foreground mb-1 font-medium uppercase tracking-wider">Toque para testar:</p>
-              <MoodDemo onSelect={(v) => setDemoAction(`${v}/5`)} />
-              {demoAction && <p className="text-[9px] text-teal-600 dark:text-teal-400 text-center mt-0.5 animate-fade-in">✓ Registrado {demoAction}!</p>}
-            </div>
-          )}
-          {step.demo === "agenda" && (
-            <div>
-              <p className="text-[9px] text-muted-foreground mb-1 font-medium uppercase tracking-wider">Sua agenda:</p>
-              <AgendaDemo />
-            </div>
-          )}
-          {step.demo === "diary" && (
-            <div>
-              <p className="text-[9px] text-muted-foreground mb-1 font-medium uppercase tracking-wider">Registrar emoções:</p>
-              <DiaryDemo />
-            </div>
-          )}
-
-          {/* Tip */}
-          {step.tip && (
-            <div className="flex items-start gap-1 p-2 rounded-lg bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800">
-              <Zap className="h-3 w-3 shrink-0 mt-0.5 text-teal-500" />
-              <span className="text-[11px] text-muted-foreground leading-snug">{step.tip}</span>
-            </div>
-          )}
-
-          {/* Action */}
-          {step.action && (
-            <a href={step.action.href} className="inline-flex items-center gap-1 text-[11px] font-medium text-teal-600 dark:text-teal-400 hover:underline" onClick={dismiss}>
-              {step.action.label}<ChevronRight className="h-3 w-3" />
-            </a>
-          )}
-        </div>
-
-        {/* Footer — always visible, no scroll */}
-        <div className="shrink-0 border-t border-border p-3 space-y-1.5">
-          <div className="flex gap-2">
-            {!isFirst && (
-              <Button variant="outline" onClick={prev} className="h-8 text-xs px-3">
-                <ChevronLeft className="h-3 w-3 mr-0.5" />Voltar
-              </Button>
-            )}
-            <Button
-              onClick={next}
-              className={cn(
-                "flex-1 h-8 text-white font-semibold text-xs shadow-md",
-                isFirst || isLast
-                  ? "bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600"
-                  : "bg-teal-600 hover:bg-teal-700"
+          {/* Navigation */}
+          <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-[10px] text-muted-foreground">{step + 1}/{steps.length}</span>
+            <div className="flex items-center gap-1.5">
+              {step > 0 && (
+                <button onClick={() => go(step - 1)} className="h-7 px-2.5 rounded-lg text-[11px] font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1">
+                  <ChevronLeft className="h-3 w-3" />
+                </button>
               )}
-            >
-              {isFirst ? <><Sparkles className="h-3 w-3 mr-1" />Vamos lá!</>
-                : isLast ? <><PartyPopper className="h-3 w-3 mr-1" />Começar!</>
-                : <>Próximo<ChevronRight className="h-3 w-3 ml-1" /></>}
-            </Button>
+              <button
+                onClick={() => last ? finish() : go(step + 1)}
+                className={cn(
+                  "h-7 px-3 rounded-lg text-[11px] font-semibold text-white shadow-sm transition-all flex items-center gap-1",
+                  last ? "bg-gradient-to-r from-emerald-500 to-emerald-600" : "bg-gradient-to-r from-teal-600 to-teal-700"
+                )}
+              >
+                {last ? <><Check className="h-3 w-3" />Concluir</> : <>Avançar<ChevronRight className="h-3 w-3" /></>}
+              </button>
+            </div>
           </div>
-          <button onClick={dismiss} className="w-full text-center text-[10px] text-muted-foreground hover:text-foreground transition-colors">
-            Pular introdução
-          </button>
         </div>
       </div>
-    </div>
+    </>
   )
 }

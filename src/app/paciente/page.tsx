@@ -104,7 +104,7 @@ export default function PacienteDashboard() {
   return (
     <PullToRefresh onRefresh={async () => { fetchData() }}>
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-      <div className="relative overflow-hidden rounded-[1.75rem] border bg-gradient-to-br from-teal-950 via-teal-900 to-slate-950 p-6 text-white shadow-2xl shadow-teal-950/20">
+      <div data-tour="patient-hero" className="relative overflow-hidden rounded-[1.75rem] border bg-gradient-to-br from-teal-950 via-teal-900 to-slate-950 p-6 text-white shadow-2xl shadow-teal-950/20">
         <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-teal-400/20 blur-3xl" />
         <div className="absolute -bottom-20 left-10 h-44 w-44 rounded-full bg-cyan-400/10 blur-3xl" />
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -134,7 +134,7 @@ export default function PacienteDashboard() {
       {loadingAppt ? (
         <Card className="p-6"><div className="space-y-3"><div className="h-4 w-32 animate-shimmer rounded" /><div className="h-4 w-48 animate-shimmer rounded" /><div className="h-4 w-40 animate-shimmer rounded" /></div></Card>
       ) : nextAppointment ? (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 via-teal-700 to-indigo-800 p-6 text-white shadow-xl shadow-teal-500/20">
+        <div data-tour="patient-appointment" className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 via-teal-700 to-indigo-800 p-6 text-white shadow-xl shadow-teal-500/20">
           <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
           <div className="relative">
@@ -183,6 +183,7 @@ export default function PacienteDashboard() {
       <MoodChart entries={diaryEntries} />
 
       {/* Quick Mood Check-in */}
+      <div data-tour="patient-mood">
       <QuickMoodCheckin
         lastMood={diaryEntries.length > 0 ? diaryEntries[diaryEntries.length - 1].mood : undefined}
         onMoodSelected={(mood) => {
@@ -193,6 +194,7 @@ export default function PacienteDashboard() {
           })
         }}
       />
+      </div>
 
       {/* Streak Badge */}
       <StreakBadge
@@ -254,7 +256,7 @@ export default function PacienteDashboard() {
         ))}
       </div>
 
-      <div>
+      <div data-tour="patient-quicklinks">
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Acesso rápido</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {quickLinks.map((link) => (
