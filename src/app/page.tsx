@@ -137,7 +137,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link href="/" className="flex items-center gap-3 group">
               <div className="flex items-center justify-center w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-teal-500/20 transition-all duration-300 group-hover:scale-105">
-                <Image src="/logo-v2.png" alt="PsiHumanis" width={40} height={40} className="w-full h-full object-cover" priority />
+                <Image src="/logo.png" alt="PsiHumanis" width={40} height={40} className="w-full h-full object-cover" priority />
               </div>
               <div className={cn("flex-col transition-all duration-500", scrolled ? "opacity-100 translate-x-0 flex" : "opacity-0 -translate-x-2 hidden md:flex")}>
                 <span className="text-lg font-bold text-teal-700 dark:text-teal-400">PsiHumanis</span>
@@ -666,7 +666,7 @@ export default function LandingPage() {
             <div className="space-y-4">
               <Link href="/" className="flex items-center gap-3">
                 <div className="flex items-center justify-center w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-teal-500/20">
-                  <Image src="/logo-v2.png" alt="PsiHumanis" width={40} height={40} className="w-full h-full object-cover" />
+                  <Image src="/logo.png" alt="PsiHumanis" width={40} height={40} className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <span className="text-lg font-bold text-white">PsiHumanis</span>
