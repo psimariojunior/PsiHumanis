@@ -92,7 +92,45 @@ export function OnboardingTour() {
     if (left < 16) left = 16
 
     setTooltipStyle({ position: "fixed", top, left, width: tw, zIndex: 10001 })
+
+    // Scroll into view FIRST, then re-measure after scroll completes
     el.scrollIntoView({ behavior: "smooth", block: "center" })
+
+    // Re-measure after scroll finishes
+    const reMeasure = () => {
+      const newRect = el.getBoundingClientRect()
+      setTargetRect(newRect)
+
+      let newTop = 0, newLeft = 0
+      switch (s.placement) {
+        case "bottom":
+          newTop = newRect.bottom + gap
+          newLeft = Math.max(16, Math.min(newRect.left + newRect.width / 2 - tw / 2, window.innerWidth - tw - 16))
+          break
+        case "top":
+          newTop = Math.max(16, newRect.top - gap - th)
+          newLeft = Math.max(16, Math.min(newRect.left + newRect.width / 2 - tw / 2, window.innerWidth - tw - 16))
+          break
+        case "right":
+          newTop = Math.max(16, Math.min(newRect.top + newRect.height / 2 - th / 2, window.innerHeight - th - 16))
+          newLeft = Math.min(newRect.right + gap, window.innerWidth - tw - 16)
+          break
+        case "left":
+          newTop = Math.max(16, Math.min(newRect.top + newRect.height / 2 - th / 2, window.innerHeight - th - 16))
+          newLeft = Math.max(16, newRect.left - gap - tw)
+          break
+      }
+      if (newTop + th > window.innerHeight) newTop = window.innerHeight - th - 16
+      if (newLeft + tw > window.innerWidth) newLeft = window.innerWidth - tw - 16
+      if (newTop < 16) newTop = 16
+      if (newLeft < 16) newLeft = 16
+
+      setTooltipStyle({ position: "fixed", top: newTop, left: newLeft, width: tw, zIndex: 10001 })
+    }
+
+    setTimeout(reMeasure, 400)
+    setTimeout(reMeasure, 600)
+
     return true
   }, [])
 
@@ -114,10 +152,8 @@ export function OnboardingTour() {
     if (!active) return
     const onResize = () => measure(step)
     window.addEventListener("resize", onResize)
-    window.addEventListener("scroll", onResize, { passive: true })
     return () => {
       window.removeEventListener("resize", onResize)
-      window.removeEventListener("scroll", onResize)
     }
   }, [active, step, measure])
 
