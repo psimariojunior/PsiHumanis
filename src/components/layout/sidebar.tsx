@@ -124,7 +124,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       <div className="absolute inset-0 bg-gradient-to-b from-teal-500/[0.03] to-transparent pointer-events-none" />
       <div className="flex h-16 items-center justify-between px-4 border-b relative">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-teal-600 to-teal-700 shadow-lg shadow-teal-500/20 group-hover:shadow-teal-500/30 transition-all duration-300 group-hover:scale-105 ring-2 ring-teal-500/20">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-teal-500/20 group-hover:shadow-teal-500/30 transition-all duration-300 group-hover:scale-105 ring-2 ring-teal-500/20">
             <Image src="/logo.png" alt="PsiHumanis" width={40} height={40} className="w-full h-full object-cover" priority />
           </div>
           {!collapsed && (
