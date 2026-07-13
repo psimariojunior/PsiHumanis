@@ -20,7 +20,7 @@ export async function sendReminderNow(
   })
   if (!patient) {
     const msg = `Paciente não encontrado (${patientId})`
-    console.error("[sendReminderNow]", msg)
+    logger.error("Paciente não encontrado", { patientId })
     return { ok: false, error: msg }
   }
 
@@ -28,7 +28,7 @@ export async function sendReminderNow(
   const patientPhone = overrides?.phone ? overrides.phone : patient.phone
   const patientName = overrides?.name || patient.name
 
-  console.log("[sendReminderNow] request", {
+  logger.debug("sendReminderNow request", {
     patientId, channel, patientName,
     dbEmail: patient.email,
     overrideEmail: overrides?.email,
@@ -40,15 +40,14 @@ export async function sendReminderNow(
 
   if (channel === "EMAIL") {
     if (!patientEmail) {
-      const msg = "Paciente não tem e-mail cadastrado"
-      console.error("[sendReminderNow]", msg, { patientId, patientName })
-      return { ok: false, error: msg }
+      logger.error("Paciente não tem e-mail cadastrado", { patientId, patientName })
+      return { ok: false, error: "Paciente não tem e-mail cadastrado" }
     }
     const err = await sendAppointmentReminderEmail(
       patientEmail, patientName, psychologistName,
       appointmentDate || "", appointmentTime || "", "Atendimento", "online"
     )
-    console.log("[sendReminderNow] EMAIL result", { patientId, err })
+    logger.debug("EMAIL result", { patientId, err })
     return err ? { ok: false, error: err } : { ok: true }
   }
 
@@ -56,16 +55,15 @@ export async function sendReminderNow(
     const waPhoneId = process.env.WHATSAPP_PHONE_NUMBER_ID
     const waToken = process.env.WHATSAPP_API_TOKEN
     if (!waPhoneId || !waToken) {
-      console.log("[sendReminderNow] WHATSAPP not configured, skipping")
+      logger.debug("WHATSAPP not configured, skipping")
       return { ok: true }
     }
     if (!patientPhone) {
-      const msg = "Paciente não tem WhatsApp cadastrado"
-      console.error("[sendReminderNow]", msg, { patientId, patientName })
-      return { ok: false, error: msg }
+      logger.error("Paciente não tem WhatsApp cadastrado", { patientId, patientName })
+      return { ok: false, error: "Paciente não tem WhatsApp cadastrado" }
     }
     const ok = await sendAppointmentReminderWhatsApp(patientPhone, patientName, appointmentDate || "", appointmentTime || "")
-    console.log("[sendReminderNow] WHATSAPP result", { patientId, ok })
+    logger.debug("WHATSAPP result", { patientId, ok })
     return ok ? { ok: true } : { ok: false, error: "Falha ao enviar WhatsApp" }
   }
 

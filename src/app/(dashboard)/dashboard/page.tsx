@@ -144,7 +144,7 @@ export default function DashboardHome() {
       case "IN_PROGRESS": return t("dash.inProgress", locale)
       case "COMPLETED": return t("dash.completed", locale)
       case "CANCELLED": return t("dash.cancelled", locale)
-      case "NO_SHOW": return locale === "en" ? "No show" : "Faltou"
+      case "NO_SHOW": return t("dash.noShow", locale)
       default: return status
     }
   }
@@ -194,7 +194,7 @@ export default function DashboardHome() {
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               <Button size="sm" asChild className="bg-white text-slate-950 hover:bg-teal-50">
-                <Link href="/agenda"><Calendar className="mr-1.5 h-4 w-4" />{locale === "en" ? "Open calendar" : "Abrir agenda"}</Link>
+                <Link href="/agenda"><Calendar className="mr-1.5 h-4 w-4" />{t("dash.openCalendar", locale)}</Link>
               </Button>
               <Button size="sm" variant="outline" asChild className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white">
                 <Link href="/relatorios"><BarChart3 className="mr-1.5 h-4 w-4" />{t("dash.reports", locale)}</Link>
@@ -202,7 +202,7 @@ export default function DashboardHome() {
             </div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl min-w-[220px] transition-all duration-300 hover:bg-white/15">
-            <p className="text-xs uppercase tracking-[0.15em] text-teal-200 mb-2">{locale === "en" ? "Next focus" : "Próximo foco"}</p>
+            <p className="text-xs uppercase tracking-[0.15em] text-teal-200 mb-2">{t("dash.nextFocus", locale)}</p>
             <p className="text-lg font-semibold">
               {nextAppointment ? nextAppointment.patientName : t("dash.freeSchedule", locale)}
             </p>
@@ -217,7 +217,7 @@ export default function DashboardHome() {
                 <p className="text-lg font-bold">{todaysAppointments.length}</p>
               </div>
               <div className="rounded-xl bg-white/10 p-2.5 text-center backdrop-blur-sm">
-                <p className="text-teal-200 text-xs">{locale === "en" ? "Received" : "Recebido"}</p>
+                <p className="text-teal-200 text-xs">{t("dash.received", locale)}</p>
                 <p className="text-sm font-bold">{currency.format(financialSummary.received)}</p>
               </div>
             </div>
@@ -237,15 +237,15 @@ export default function DashboardHome() {
                 <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="font-semibold text-amber-800 dark:text-amber-200">{locale === "en" ? "Set your availability" : "Configure seus horários de atendimento"}</p>
+                <p className="font-semibold text-amber-800 dark:text-amber-200">{t("dash.setAvailability", locale)}</p>
                 <p className="text-sm text-amber-600 dark:text-amber-400">
-                  {locale === "en" ? "Patients won't be able to book until you set your schedule." : "Pacientes não poderão agendar consultas até que você configure sua agenda."}
+                  {t("dash.availabilityWarning", locale)}
                 </p>
               </div>
             </div>
             <Button asChild size="sm" className="bg-amber-600 hover:bg-amber-700 text-white shrink-0">
               <Link href="/disponibilidade">
-                <Clock className="mr-2 h-4 w-4" /> {locale === "en" ? "Set Now" : "Configurar Agora"}
+                <Clock className="mr-2 h-4 w-4" /> {t("dash.setNow", locale)}
               </Link>
             </Button>
           </div>
@@ -268,17 +268,17 @@ export default function DashboardHome() {
         ))}
         trend={stats.appointmentChange > 0 ? "up" : stats.appointmentChange < 0 ? "down" : "stable"}
         factors={[
-          { label: "Taxa de conclusão", value: Math.round(indicators.completionRate), max: 100, icon: <Target className="h-3 w-3" />, color: "text-emerald-500" },
-          { label: "Ocupação", value: Math.round(indicators.occupationRate), max: 100, icon: <Zap className="h-3 w-3" />, color: "text-teal-500" },
-          { label: "Presença", value: Math.round(100 - indicators.cancellationRate), max: 100, icon: <Shield className="h-3 w-3" />, color: "text-cyan-500" },
-          { label: "Ticket médio", value: Math.min(100, Math.round(indicators.averageTicket / 2)), max: 100, icon: <DollarSign className="h-3 w-3" />, color: "text-violet-500" },
+          { label: t("dash.scoreCompletion", locale), value: Math.round(indicators.completionRate), max: 100, icon: <Target className="h-3 w-3" />, color: "text-emerald-500" },
+          { label: t("dash.scoreOccupation", locale), value: Math.round(indicators.occupationRate), max: 100, icon: <Zap className="h-3 w-3" />, color: "text-teal-500" },
+          { label: t("dash.scorePresence", locale), value: Math.round(100 - indicators.cancellationRate), max: 100, icon: <Shield className="h-3 w-3" />, color: "text-cyan-500" },
+          { label: t("dash.scoreTicket", locale), value: Math.min(100, Math.round(indicators.averageTicket / 2)), max: 100, icon: <DollarSign className="h-3 w-3" />, color: "text-violet-500" },
         ]}
         message={
           indicators.completionRate > 80
-            ? "Excelente! Sua prática está saudável e seus pacientes estão engajados."
+            ? t("dash.excellent", locale)
             : indicators.completionRate > 60
-            ? "Bom trabalho! Continue focado na qualidade do atendimento."
-            : "Atenção: muitas sessões canceladas. Revise a agenda e comunicação."
+            ? t("dash.goodWork", locale)
+            : t("dash.attention", locale)
         }
       />
 
@@ -298,7 +298,7 @@ export default function DashboardHome() {
                   <div className="h-6 w-6 rounded-md bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
                     <TrendingUp className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  {locale === "en" ? "Monthly Revenue" : "Receita Mensal"}
+                  {t("dash.monthlyRevenue", locale)}
                 </CardTitle>
                 <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
                   {(["6", "12", "all"] as const).map((p) => (
@@ -320,7 +320,7 @@ export default function DashboardHome() {
                 <div className="h-6 w-6 rounded-md bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
                   <Calendar className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
                 </div>
-                {locale === "en" ? "Monthly Appointments" : "Agendamentos Mensais"}
+                {t("dash.monthlyAppointments", locale)}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -336,7 +336,7 @@ export default function DashboardHome() {
                 <div className="h-8 w-8 rounded-lg bg-white/15 flex items-center justify-center backdrop-blur-sm">
                   <Sparkles className="h-4 w-4 text-teal-200" />
                 </div>
-                <span className="font-semibold text-sm">{locale === "en" ? "Monthly Goal" : "Meta do Mês"}</span>
+                <span className="font-semibold text-sm">{t("dash.monthlyGoal", locale)}</span>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
@@ -368,7 +368,7 @@ export default function DashboardHome() {
                 <div className="h-6 w-6 rounded-md bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
                   <Activity className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" />
                 </div>
-                {locale === "en" ? "Indicators" : "Indicadores"}
+                {t("dash.indicators", locale)}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -403,7 +403,7 @@ export default function DashboardHome() {
               <div className="h-7 w-7 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
                 <Sun className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
               </div>
-              {locale === "en" ? "Today" : "Hoje"}
+              {t("dash.today", locale)}
               <Badge variant="secondary" className="ml-auto text-[10px]">{todaysAppointments.length}</Badge>
             </CardTitle>
           </CardHeader>
@@ -418,7 +418,7 @@ export default function DashboardHome() {
               <div className="h-7 w-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
                 <Moon className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
               </div>
-              {locale === "en" ? "Tomorrow" : "Amanhã"}
+              {t("dash.tomorrow", locale)}
               <Badge variant="secondary" className="ml-auto text-[10px]">{tomorrowsAppointments.length}</Badge>
             </CardTitle>
           </CardHeader>
@@ -433,7 +433,7 @@ export default function DashboardHome() {
               <div className="h-7 w-7 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
                 <Zap className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
               </div>
-              {locale === "en" ? "Quick Actions" : "Ações Rápidas"}
+              {t("dash.quickActions", locale)}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">

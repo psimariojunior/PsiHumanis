@@ -1,5 +1,6 @@
 import { Resend } from "resend"
 import { sanitizeHtml } from "./security"
+import { logger } from "./logger"
 
 function getResend(): Resend | null {
   const key = process.env.RESEND_API_KEY
@@ -19,13 +20,13 @@ async function sendViaResend(to: string, subject: string, html: string): Promise
       html,
     })
     if (error) {
-      console.error("[sendViaResend] error", error)
+      logger.error("Resend send error", { error })
       return `Resend: ${error.message}`
     }
-    console.log("[sendViaResend] success", { to, subject })
+    logger.debug("Email enviado via Resend", { to, subject })
     return null
   } catch (err: unknown) {
-    console.error("[sendViaResend] exception", String(err))
+    logger.error("Resend exception", { error: String(err) })
     return String(err)
   }
 }
@@ -53,13 +54,13 @@ async function sendViaSendGrid(to: string, subject: string, html: string): Promi
 
     if (!res.ok) {
       const body = await res.text()
-      console.error("[sendViaSendGrid] error", { status: res.status, body })
+      logger.error("SendGrid error", { status: res.status, body })
       return `SendGrid: ${body}`
     }
-    console.log("[sendViaSendGrid] success", { to, subject })
+    logger.debug("Email enviado via SendGrid", { to, subject })
     return null
   } catch (err: unknown) {
-    console.error("[sendViaSendGrid] exception", String(err))
+    logger.error("SendGrid exception", { error: String(err) })
     return String(err)
   }
 }

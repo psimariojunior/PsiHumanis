@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Send, Sparkles, FileText, Lightbulb, BarChart3, ListChecks, MessageSquare, Loader2, Copy, Check, X } from "lucide-react"
 import { toast } from "react-hot-toast"
+import Markdown from "react-markdown"
 
 interface Message {
   role: "user" | "assistant"
@@ -151,7 +152,9 @@ export function AIAssistant() {
                   : "bg-muted text-foreground"
               }`}
             >
-              {msg.content}
+              {msg.role === "assistant" ? (
+                <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1"><Markdown>{msg.content}</Markdown></div>
+              ) : msg.content}
               {msg.role === "assistant" && (
                 <button
                   onClick={() => copyMessage(msg.content, i)}

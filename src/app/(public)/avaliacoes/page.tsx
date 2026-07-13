@@ -25,6 +25,7 @@ import {
 } from "lucide-react"
 import toast from "react-hot-toast"
 import { cn, formatDate } from "@/lib/utils"
+import { t, getLocale } from "@/lib/i18n"
 
 interface Review {
   id: string
@@ -59,6 +60,7 @@ function Stars({ value, size = 16 }: { value: number; size?: number }) {
 }
 
 export default function AvaliacoesPage() {
+  const locale = getLocale()
   const [reviews, setReviews] = useState<Review[]>([])
   const [average, setAverage] = useState(0)
   const [total, setTotal] = useState(0)
@@ -92,17 +94,17 @@ export default function AvaliacoesPage() {
         setAverage(data.average || 0)
         setTotal(data.total || 0)
       })
-      .catch(() => toast.error("Erro ao carregar avaliações"))
+      .catch(() => toast.error(t("avaliacoes.errorLoad", locale)))
       .finally(() => setLoading(false))
   }, [selectedPsych])
 
   async function submitReview() {
     if (!form.patientName.trim() || !form.comment.trim()) {
-      toast.error("Preencha nome e comentário")
+      toast.error(t("avaliacoes.errorEmpty", locale))
       return
     }
     if (!selectedPsych) {
-      toast.error("Selecione um profissional")
+      toast.error(t("avaliacoes.errorSelect", locale))
       return
     }
     setSubmitting(true)
@@ -123,9 +125,9 @@ export default function AvaliacoesPage() {
       }
       setSubmitted(true)
       setForm({ patientName: "", rating: 5, comment: "" })
-      toast.success("Avaliação enviada! Será exibida após aprovação.")
+      toast.success(t("avaliacoes.successSent", locale))
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erro ao enviar avaliação")
+      toast.error(e instanceof Error ? e.message : t("avaliacoes.errorSubmit", locale))
     } finally {
       setSubmitting(false)
     }
@@ -136,22 +138,22 @@ export default function AvaliacoesPage() {
       <div className="container mx-auto px-4 py-12 max-w-5xl">
         <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar ao Início
+          {t("avaliacoes.back", locale)}
         </Link>
 
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
-            Avaliações de Pacientes
+            {t("avaliacoes.title", locale)}
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            A experiência de quem confiou no nosso trabalho. Suas avaliações nos ajudam a melhorar continuamente.
+            {t("avaliacoes.subtitle", locale)}
           </p>
         </div>
 
         {psychologists.length > 1 && (
           <div className="max-w-xs mx-auto mb-10">
             <Select value={selectedPsych} onValueChange={setSelectedPsych}>
-              <SelectTrigger><SelectValue placeholder="Selecione o profissional" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("avaliacoes.selectProfessional", locale)} /></SelectTrigger>
               <SelectContent>
                 {psychologists.map((p) => (
                   <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
@@ -170,7 +172,7 @@ export default function AvaliacoesPage() {
                 <div className="flex justify-center my-2">
                   <Stars value={Math.round(average)} size={22} />
                 </div>
-                <p className="text-teal-100 text-sm">{total} {total === 1 ? "avaliação" : "avaliações"}</p>
+                <p className="text-teal-100 text-sm">{total} {t("avaliacoes.ratings", locale)}</p>
               </div>
               <div className="hidden md:block w-px h-24 bg-white/20" />
               <div className="space-y-2 w-full max-w-xs">
@@ -198,7 +200,7 @@ export default function AvaliacoesPage() {
           <div className="lg:col-span-2 space-y-4">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Quote className="h-5 w-5 text-teal-500" />
-              O que dizem nossos pacientes
+              {locale === "en" ? "What our patients say" : "O que dizem nossos pacientes"}
             </h2>
             {loading ? (
               <div className="flex justify-center py-12">
@@ -209,7 +211,7 @@ export default function AvaliacoesPage() {
                 <CardContent className="py-12 text-center">
                   <Star className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
                   <p className="text-sm text-muted-foreground">
-                    Ainda não há avaliações aprovadas. Seja o primeiro a avaliar!
+                    {t("avaliacoes.noReviews", locale)}
                   </p>
                 </CardContent>
               </Card>
@@ -245,33 +247,33 @@ export default function AvaliacoesPage() {
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto mb-3" />
-                    <h3 className="font-semibold mb-1">Obrigado pela avaliação!</h3>
+                    <h3 className="font-semibold mb-1">{t("avaliacoes.successTitle", locale)}</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Sua avaliação será exibida após aprovação do profissional.
+                      {t("avaliacoes.successSubtitle", locale)}
                     </p>
                     <Button variant="outline" size="sm" onClick={() => setSubmitted(false)}>
-                      Enviar outra avaliação
+                      {t("avaliacoes.submitAnother", locale)}
                     </Button>
                   </div>
                 ) : (
                   <>
-                    <h3 className="font-semibold mb-1">Deixe sua avaliação</h3>
+                    <h3 className="font-semibold mb-1">{t("avaliacoes.formTitle", locale)}</h3>
                     <p className="text-xs text-muted-foreground mb-4">
-                      Sua opinião é importante e será publicada após moderação.
+                      {t("avaliacoes.formSubtitle", locale)}
                     </p>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="r-name">Seu nome</Label>
+                        <Label htmlFor="r-name">{t("avaliacoes.nameLabel", locale)}</Label>
                         <Input
                           id="r-name"
                           value={form.patientName}
                           onChange={(e) => setForm((f) => ({ ...f, patientName: e.target.value }))}
-                          placeholder="Como podemos te chamar?"
+                          placeholder={t("avaliacoes.namePlaceholder", locale)}
                           maxLength={120}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Sua nota</Label>
+                        <Label>{t("avaliacoes.ratingLabel", locale)}</Label>
                         <div className="flex items-center gap-1">
                           {[1, 2, 3, 4, 5].map((i) => (
                             <button
@@ -296,12 +298,12 @@ export default function AvaliacoesPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="r-comment">Comentário</Label>
+                        <Label htmlFor="r-comment">{t("avaliacoes.commentLabel", locale)}</Label>
                         <Textarea
                           id="r-comment"
                           value={form.comment}
                           onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
-                          placeholder="Conte como foi sua experiência..."
+                          placeholder={t("avaliacoes.commentPlaceholder", locale)}
                           rows={4}
                           maxLength={1000}
                         />
@@ -312,10 +314,10 @@ export default function AvaliacoesPage() {
                         ) : (
                           <Send className="mr-2 h-4 w-4" />
                         )}
-                        Enviar Avaliação
+                        {t("avaliacoes.submit", locale)}
                       </Button>
                       <p className="text-[11px] text-muted-foreground text-center">
-                        Ao enviar, você concorda em compartilhar seu nome publicamente.
+                        {t("avaliacoes.agreement", locale)}
                       </p>
                     </div>
                   </>
