@@ -11,6 +11,7 @@ const publicPages = [
 
 const publicPrefixes = [
   "/reset-password", "/sala-virtual/entrar", "/agendar", "/paciente", "/blog",
+  "/.well-known",
 ]
 
 const publicApiPrefixes = [
@@ -32,7 +33,7 @@ const publicApiPrefixes = [
 ]
 
 const staticPrefixes = ["/_next", "/static"]
-const staticExtensions = /\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|mp3|mp4|wav|ogg|woff2?|ttf|otf|eot)$/
+const staticExtensions = /\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|json|mp3|mp4|wav|ogg|woff2?|ttf|otf|eot)$/
 
 function isPublic(pathname: string): boolean {
   if (publicPages.includes(pathname)) return true
