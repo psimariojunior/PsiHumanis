@@ -10,16 +10,16 @@ export const dynamic = "force-dynamic"
 
 const updateSessionSchema = z.object({
   action: z.enum(["start", "pause", "resume", "end", "save"]).optional(),
-  subjective: z.string().max(10000).optional(),
-  objective: z.string().max(10000).optional(),
-  assessment: z.string().max(10000).optional(),
-  plan: z.string().max(10000).optional(),
-  notes: z.string().max(10000).optional(),
-  moodBefore: z.number().int().min(0).max(10).optional(),
-  moodAfter: z.number().int().min(0).max(10).optional(),
-  tags: z.string().max(500).optional(),
-  type: z.string().max(100).optional(),
-  isRemote: z.boolean().optional(),
+  subjective: z.string().max(10000).nullish(),
+  objective: z.string().max(10000).nullish(),
+  assessment: z.string().max(10000).nullish(),
+  plan: z.string().max(10000).nullish(),
+  notes: z.string().max(10000).nullish(),
+  moodBefore: z.number().int().min(0).max(10).nullish(),
+  moodAfter: z.number().int().min(0).max(10).nullish(),
+  tags: z.string().max(500).nullish(),
+  type: z.string().max(100).nullish(),
+  isRemote: z.boolean().nullish(),
 })
 
 type SessionUpdateData = z.infer<typeof updateSessionSchema>
