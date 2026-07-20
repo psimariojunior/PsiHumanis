@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { formatDate } from "@/lib/utils"
-import { ArrowLeft, FileText, Lock, Download, Printer, Trash2, Edit, Save, X } from "lucide-react"
+import { ArrowLeft, FileText, Lock, Download, Printer, Trash2, Edit, Save, X, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import toast from "react-hot-toast"
 import { usePDFExport } from "@/hooks/use-pdf-export"
@@ -51,6 +51,10 @@ export default function RecordDetailPage({ params }: { params: { id: string } })
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [editForm, setEditForm] = useState({ title: "", content: "", type: "", isConfidential: false })
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle")
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const editFormRef = useRef(editForm)
+  editFormRef.current = editForm
 
   function loadRecord() {
     setLoading(true)
@@ -66,29 +70,37 @@ export default function RecordDetailPage({ params }: { params: { id: string } })
 
   useEffect(loadRecord, [params.id])
 
-  function startEdit() {
-    if (record) {
-      setEditForm({ title: record.title, content: record.content, type: record.type, isConfidential: record.isConfidential })
-      setEditing(true)
-    }
-  }
-
-  async function saveEdit() {
-    setSaving(true)
+  const autoSave = useCallback(async () => {
+    if (!editing) return
+    setAutoSaveStatus("saving")
     try {
       const res = await fetch(`/api/records/${params.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editForm),
+        body: JSON.stringify(editFormRef.current),
       })
       if (!res.ok) throw new Error()
-      toast.success("Prontuário atualizado!")
-      setEditing(false)
-      loadRecord()
+      setAutoSaveStatus("saved")
+      setTimeout(() => setAutoSaveStatus("idle"), 2000)
     } catch {
-      toast.error("Erro ao salvar")
-    } finally {
-      setSaving(false)
+      setAutoSaveStatus("idle")
+    }
+  }, [editing, params.id])
+
+  function markDirty(newForm: typeof editForm) {
+    setEditForm(newForm)
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current)
+    autoSaveTimer.current = setTimeout(autoSave, 3000)
+  }
+
+  useEffect(() => {
+    return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current) }
+  }, [autoSave])
+
+  function startEdit() {
+    if (record) {
+      setEditForm({ title: record.title, content: record.content, type: record.type, isConfidential: record.isConfidential })
+      setEditing(true)
     }
   }
 
@@ -149,12 +161,24 @@ export default function RecordDetailPage({ params }: { params: { id: string } })
               <p className="text-muted-foreground">{record.patient.name}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-3">
+            {autoSaveStatus === "saving" && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Salvando...
+              </span>
+            )}
+            {autoSaveStatus === "saved" && (
+              <span className="text-xs text-emerald-600 flex items-center gap-1.5">
+                <CheckCircle className="h-3 w-3" />
+                Salvo
+              </span>
+            )}
             <Button variant="outline" onClick={() => setEditing(false)}>
-              <X className="mr-2 h-4 w-4" /> Cancelar
+              <X className="mr-2 h-4 w-4" /> Fechar
             </Button>
-            <Button onClick={saveEdit} disabled={saving}>
-              {saving ? <><div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> Salvando...</> : <><Save className="mr-2 h-4 w-4" /> Salvar</>}
+            <Button onClick={() => { autoSave(); }} disabled={saving || autoSaveStatus === "saving"}>
+              <Save className="mr-2 h-4 w-4" /> Salvar
             </Button>
           </div>
         </div>
@@ -167,11 +191,11 @@ export default function RecordDetailPage({ params }: { params: { id: string } })
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>Título</Label>
-                <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} />
+                <Input value={editForm.title} onChange={(e) => markDirty({ ...editForm, title: e.target.value })} />
               </div>
               <div className="space-y-2">
                 <Label>Tipo</Label>
-                <Select value={editForm.type} onValueChange={(v) => setEditForm({ ...editForm, type: v })}>
+                <Select value={editForm.type} onValueChange={(v) => markDirty({ ...editForm, type: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {Object.entries(typeLabels).map(([k, v]) => (
@@ -183,10 +207,10 @@ export default function RecordDetailPage({ params }: { params: { id: string } })
             </div>
             <div className="space-y-2">
               <Label>Conteúdo</Label>
-              <Textarea value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} rows={16} className="font-mono text-sm" />
+              <Textarea value={editForm.content} onChange={(e) => markDirty({ ...editForm, content: e.target.value })} rows={16} className="font-mono text-sm" />
             </div>
             <div className="flex items-center gap-3 rounded-lg border p-4">
-              <Switch checked={editForm.isConfidential} onCheckedChange={(v) => setEditForm({ ...editForm, isConfidential: v })} />
+              <Switch checked={editForm.isConfidential} onCheckedChange={(v) => markDirty({ ...editForm, isConfidential: v })} />
               <div>
                 <p className="text-sm font-medium">Prontuário Confidencial</p>
                 <p className="text-xs text-muted-foreground">Apenas você terá acesso</p>
