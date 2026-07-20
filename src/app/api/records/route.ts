@@ -12,7 +12,13 @@ export async function GET() {
 
     const records = await prisma.medicalRecord.findMany({
       where: { psychologistId },
-      include: {
+      select: {
+        id: true,
+        type: true,
+        title: true,
+        isConfidential: true,
+        sessionId: true,
+        createdAt: true,
         patient: { select: { id: true, name: true } },
       },
       orderBy: { createdAt: "desc" },

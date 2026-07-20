@@ -169,6 +169,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
           content,
           patientId: existing.patientId,
           psychologistId,
+          sessionId: params.id,
         },
       })
 

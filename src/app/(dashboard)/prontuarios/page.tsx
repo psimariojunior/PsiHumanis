@@ -17,6 +17,7 @@ interface MedicalRecordItem {
   title: string
   createdAt: string
   isConfidential: boolean
+  hasSession: boolean
 }
 
 const typeLabels: Record<string, string> = {
@@ -44,13 +45,14 @@ export default function ProntuariosPage() {
     fetch("/api/records")
       .then((res) => { if (!res.ok) throw new Error(); return res.json() })
       .then((data) => {
-        const mapped = (data || []).map((r: { id: string; patient: { name: string }; type: string; title: string; createdAt: string; isConfidential: boolean }) => ({
+        const mapped = (data || []).map((r: { id: string; patient: { name: string }; type: string; title: string; createdAt: string; isConfidential: boolean; sessionId: string | null }) => ({
           id: r.id,
           patientName: r.patient?.name || "Paciente",
           type: r.type,
           title: r.title,
           createdAt: r.createdAt,
           isConfidential: r.isConfidential,
+          hasSession: !!r.sessionId,
         }))
         setRecords(mapped)
       })
@@ -66,6 +68,9 @@ export default function ProntuariosPage() {
         <Link href={`/prontuarios/${row.original.id}`} className="flex items-center gap-2 hover:underline">
           <FileText className="h-4 w-4 text-primary" />
           <span className="font-medium">{row.original.title}</span>
+          {row.original.hasSession && (
+            <Badge variant="outline" className="text-[10px] px-1.5 py-0">Sessão</Badge>
+          )}
           {row.original.isConfidential && (
             <Lock className="h-3 w-3 text-amber-500" />
           )}

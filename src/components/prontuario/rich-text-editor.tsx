@@ -116,22 +116,24 @@ export function RichTextEditor({ value, onChange, placeholder, minHeight = "200p
           </button>
         )}
       </div>
-      <div
-        ref={editorRef}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        onPaste={handlePaste}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        data-placeholder={placeholder}
-        className={cn(
-          "prose prose-sm dark:prose-invert max-w-none p-4 outline-none overflow-y-auto",
-          "before:content-[attr(data-placeholder)] before:text-muted-foreground/50 before:pointer-events-none before:float-left before:h-0",
-          !value && "before:block before:h-0",
+      <div className="relative" style={{ minHeight }}>
+        {placeholder && !value && (
+          <div className="absolute inset-0 flex items-start pointer-events-none p-4">
+            <span className="text-muted-foreground/50 text-sm">{placeholder}</span>
+          </div>
         )}
-        style={{ minHeight }}
-      />
+        <div
+          ref={editorRef}
+          contentEditable
+          suppressContentEditableWarning
+          onInput={handleInput}
+          onPaste={handlePaste}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className="prose prose-sm dark:prose-invert max-w-none p-4 outline-none overflow-y-auto"
+          style={{ minHeight }}
+        />
+      </div>
     </div>
   )
 }

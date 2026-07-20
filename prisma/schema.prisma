@@ -307,6 +307,7 @@ model TherapySession {
   patient        Patient      @relation(fields: [patientId], references: [id])
   psychologistId String
   psychologist   User         @relation(fields: [psychologistId], references: [id])
+  medicalRecords MedicalRecord[]
 
   @@index([psychologistId])
   @@index([patientId])
@@ -319,6 +320,7 @@ model MedicalRecord {
   content        String
   isConfidential Boolean  @default(false)
   signature      String?
+  sessionId      String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -326,11 +328,13 @@ model MedicalRecord {
   patient        Patient @relation(fields: [patientId], references: [id])
   psychologistId String
   psychologist   User    @relation(fields: [psychologistId], references: [id])
+  session        TherapySession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
 
   attachments Attachment[]
 
   @@index([psychologistId])
   @@index([patientId])
+  @@index([sessionId])
 }
 
 model Attachment {
@@ -494,7 +498,7 @@ model TherapyResource {
   updatedAt   DateTime @updatedAt
 
   psychologistId String
-  psychologist   User          @relation(fields: [psychologistId], references: [id])
+  psychologist   User         @relation(fields: [psychologistId], references: [id])
   tasks          TherapyTask[]
 
   @@index([psychologistId])
