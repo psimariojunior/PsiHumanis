@@ -41,3 +41,9 @@ encryption_public_key.pem
 export-key.js
 run-pepk.bat
 exportar-chave.bat
+
+# Build artifacts
+*.apk
+*.aab
+psihumanis-*.apk
+psihumanis-*.aab

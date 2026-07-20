@@ -51,12 +51,6 @@ export default function PacienteDashboard() {
   const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([])
   const [sessionCount, setSessionCount] = useState(0)
 
-  useEffect(() => {
-    if (!token) return
-    fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
-
   const fetchData = useCallback(() => {
     if (!token) return
     Promise.all([
@@ -74,6 +68,11 @@ export default function PacienteDashboard() {
       .catch(() => {})
       .finally(() => setLoadingAppt(false))
   }, [token])
+
+  useEffect(() => {
+    if (!token) return
+    fetchData()
+  }, [token, fetchData])
 
   const formatDateTime = (iso: string) => {
     const d = new Date(iso)

@@ -9,7 +9,7 @@ import { requireAuth, apiError, apiSuccess } from "@/lib/api-helpers"
 export const dynamic = "force-dynamic"
 
 const updateSessionSchema = z.object({
-  action: z.enum(["start", "pause", "resume", "end"]).optional(),
+  action: z.enum(["start", "pause", "resume", "end", "save"]).optional(),
   subjective: z.string().max(10000).optional(),
   objective: z.string().max(10000).optional(),
   assessment: z.string().max(10000).optional(),

@@ -93,7 +93,7 @@ export default withAuth(
         "style-src 'self' 'unsafe-inline'",
         "img-src 'self' data: blob: https:",
         "font-src 'self' data:",
-        `connect-src 'self' ${LIVEKIT_WS} https://gestao-de-psicologia-0khxxf01.livekit.cloud wss://gestao-de-psicologia-0khxxf01.livekit.cloud https://api.sendgrid.com https://api.resend.com https://graph.facebook.com https://api.livekit.cloud https://api.stripe.com https://www.googletagmanager.com https://www.google-analytics.com`,
+        `connect-src 'self' ${LIVEKIT_WS} https://gestao-de-psicologia-0khxxf01.livekit.cloud wss://gestao-de-psicologia-0khxxf01.livekit.cloud https://api.sendgrid.com https://api.resend.com https://graph.facebook.com https://api.livekit.cloud https://api.stripe.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://www.google.com`,
         "media-src 'self' blob: mediastream:",
         "worker-src 'self' blob:",
         "child-src 'self' blob:",

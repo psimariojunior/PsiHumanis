@@ -96,7 +96,7 @@ export default function AvaliacoesPage() {
       })
       .catch(() => toast.error(t("avaliacoes.errorLoad", locale)))
       .finally(() => setLoading(false))
-  }, [selectedPsych])
+  }, [selectedPsych, locale])
 
   async function submitReview() {
     if (!form.patientName.trim() || !form.comment.trim()) {

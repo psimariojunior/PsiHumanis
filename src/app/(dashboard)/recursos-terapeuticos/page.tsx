@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -84,7 +84,7 @@ export default function RecursosTerapeuticosPage() {
   const [form, setForm] = useState({ name: "", description: "", type: "", content: "", category: "", tags: "" })
   const [submitting, setSubmitting] = useState(false)
 
-  async function loadResources() {
+  const loadResources = useCallback(async () => {
     try {
       const params = new URLSearchParams()
       if (search) params.set("search", search)
@@ -98,15 +98,15 @@ export default function RecursosTerapeuticosPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [search, filterType])
 
-  useEffect(() => { loadResources() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { loadResources() }, [loadResources])
 
   useEffect(() => {
     if (!search && !filterType) return
     const timer = setTimeout(() => loadResources(), 300)
     return () => clearTimeout(timer)
-  }, [search, filterType]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [search, filterType, loadResources])
 
   async function handleCreate() {
     if (!form.name.trim() || !form.type) { toast.error("Nome e tipo são obrigatórios"); return }
